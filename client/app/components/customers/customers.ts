@@ -1,11 +1,11 @@
 import {Component, OnInit} from 'angular2/core';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
 
-import {Customer, CustomerService} from '../data_access/customer';
+import {Customer, CustomerService} from '../../services/customer';
 
 @Component({
   selector: 'customers',
-  templateUrl: 'app/views/customers.html',
+  templateUrl: 'app/components/customers/customers.html',
   directives: [ROUTER_DIRECTIVES]
 })
 

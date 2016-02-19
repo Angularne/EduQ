@@ -1,4 +1,4 @@
-/// <reference path="../../../server/typings/tsd.d.ts"/>
+/// <reference path="../../../../server/typings/tsd.d.ts"/>
 
 import {Component, OnInit, OnDestroy} from 'angular2/core';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
@@ -11,7 +11,7 @@ let SERVER_ADDRESS = 'http://localhost:3000';
 
 @Component({
   selector: 'socket',
-  templateUrl: 'app/views/socket.html',
+  templateUrl: 'app/components/socket/socket.html',
   directives: [ROUTER_DIRECTIVES],
   providers: [Title]
 })

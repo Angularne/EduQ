@@ -9,6 +9,5 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false
-  },
-  "compileOnSave":true
+  }
 }

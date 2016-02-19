@@ -1,5 +1,5 @@
 import {Component, Input, Output, EventEmitter} from 'angular2/core';
-import {Equipment} from '../data_access/equipment/equipment';
+import {Equipment} from '../services/equipment/equipment';
 
 @Component({
   selector: 'equipment-detail',

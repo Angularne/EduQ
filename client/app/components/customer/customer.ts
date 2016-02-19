@@ -1,11 +1,11 @@
 import {Component, OnInit} from 'angular2/core';
 import {RouteParams} from 'angular2/router';
 
-import {Customer, CustomerService} from '../data_access/customer';
+import {Customer, CustomerService} from '../../services/customer';
 
 @Component({
   selector: 'customer',
-  templateUrl: 'app/views/customer.html'
+  templateUrl: 'app/components/customer/customer.html'
 })
 
 export class CustomerController implements OnInit {

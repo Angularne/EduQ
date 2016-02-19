@@ -1,9 +1,10 @@
 import {Component} from 'angular2/core';
 import {Router, RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
-import {CustomersController} from './controllers/customers';
-import {CustomerController} from './controllers/customer';
-import {CustomerService} from './data_access/customer';
-import {SocketController} from "./controllers/socket";
+import {CustomersController} from './components/customers/customers';
+import {CustomerController} from './components/customer/customer';
+import {CustomerService} from './services/customer';
+import {SocketController} from "./components/socket/socket";
+import {LoginComponent} from "./components/login/login";
 
 @Component({
   selector: 'my-app',
@@ -19,7 +20,8 @@ import {SocketController} from "./controllers/socket";
 @RouteConfig([
   {path: '/', component: CustomersController, useAsDefault: true, as: "CustomersPath"},
   {path: '/customer/:id', component: CustomerController, as: "CustomerPath"},
-  {path: '/socket', component: SocketController, as: 'SocketPath'}
+  {path: '/socket', component: SocketController, as: 'SocketPath'},
+  {path: 'login', component: LoginComponent, as: 'LoginPath'}
 ])
 
 export class App { }
