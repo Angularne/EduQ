@@ -1,6 +1,5 @@
 import {Component} from 'angular2/core';
 import {Router, RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
-
 import {CustomersController} from './controllers/customers';
 import {CustomerController} from './controllers/customer';
 import {CustomerService} from './data_access/customer';

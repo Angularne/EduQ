@@ -11,7 +11,7 @@
 1. Clone the repository from github:
 
   ```
-git clone https://github.com/Angularne/angular2-express-mysql-typescript-seed.git
+git clone https://github.com/Angularne/kosystem.git
   ```
 
 2. Once you have the repository, download all the required modules from npm with
