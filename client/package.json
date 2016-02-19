@@ -10,13 +10,13 @@
   "author": "Angularne",
   "license": "MIT",
   "dependencies": {
-    "angular2": "latest",
-    "es6-promise": "latest",
-    "es6-shim": "latest",
-    "reflect-metadata": "latest",
-    "rxjs": "latest",
+    "angular2": "^2.0.0-beta.7",
+    "es6-promise": "^3.1.2",
+    "es6-shim": "^0.34.4",
+    "reflect-metadata": "^0.1.3",
+    "rxjs": "^5.0.0-beta.2",
     "socket.io": "^1.4.5",
     "systemjs": "0.19.16",
-    "zone.js": "latest"
+    "zone.js": "^0.5.15"
   }
 }

@@ -1,22 +1,10 @@
-import {Component, OnInit} from 'angular2/core';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
-
-
+import {Component} from 'angular2/core';
 
 @Component({
   selector: 'login',
-  templateUrl: 'app/components/login/login.html',
-  directives: [ROUTER_DIRECTIVES]
+  templateUrl: 'app/components/login/login.html'
 })
 
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
-
-  constructor() {
-
-  }
-
-  ngOnInit() {
-    console.log('login init')
-   }
 }

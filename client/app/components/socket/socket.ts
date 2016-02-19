@@ -32,10 +32,6 @@ export class SocketController implements OnDestroy, OnInit{
       this.text = data.text;
       this.clientsConnected = data.clients;
     });
-
-console.log('local: ' + localStorage.getItem('socket'));
-console.log('session: ' + sessionStorage.getItem('socket'));
-
   }
   ngOnDestroy() {
     this.socket.close();
