@@ -1,0 +1,22 @@
+{
+  "name": "server_template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "install": "tsd install",
+    "start": "nodemon ./build/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Ole Christian Eidheim",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.3",
+    "mysql": "^2.10.2",
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^1.8.1"
+  }
+}

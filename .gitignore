@@ -1,0 +1,5 @@
+*/node_modules
+*/typings
+*.js
+*/build
+.DS_Store

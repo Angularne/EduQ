@@ -1,0 +1,17 @@
+Customers:
+<div *ngFor="#customer of customers">
+  <a [routerLink]="['CustomerPath', {id:customer.id}]">{{customer.name}}</a>
+</div>
+<br>
+<div>
+  Add Customer:<br>
+  <form #f="ngForm" (ngSubmit)="onNewCustomer()">
+    <label>Name:</label>
+    <input type="text" [(ngModel)]="newCustomer.name" (keyup)="send()" required>
+    <label>City:</label>
+    <input type="text" [(ngModel)]="newCustomer.city" required>
+    <button type="submit" [disabled]="!f.valid">Submit</button>
+  </form>
+</div>
+
+<a [routerLink]="['SocketPath']">Socket</a>
