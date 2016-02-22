@@ -12,22 +12,23 @@ This project requires [ntypescript](https://www.npmjs.com/package/ntypescript), 
 1. Clone the repository from github:
 
   ```
-  git clone https://github.com/Angularne/kosystem.git
+git clone https://github.com/Angularne/kosystem.git
   ```
 
 2. Once you have the repository, download all the required modules from npm with
   ```
-  npm install ntypescript typings nodemon -g
-  npm install
+cd kosystem
+npm install ntypescript typings nodemon -g
+npm install
   ```
 
 3. Run a Typescript transpiler to build the project
   ```
-  npm run build
+npm run build
   ```
 
 4. To run the server, start the server.js file with node
   ```
-  npm start
+npm start
   ```
 5. Use your favorite browser to access your new website at [localhost:3000](http://localhost:3000)
