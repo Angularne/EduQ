@@ -30,10 +30,10 @@ import {SubjectsComponent} from "./components/subjects/subjects";
   {path: '/', component: CustomersController, useAsDefault: true, as: "CustomersPath"},
   {path: '/customer/:id', component: CustomerController, as: "CustomerPath"},
   {path: '/socket', component: SocketController, as: 'SocketPath'},
-  {path: 'login', component: LoginComponent, as: 'LoginPath'},
-  {path: 'main', component: MainComponent, as: 'MainPath'},
-  {path: 'queue', component: QueueComponent, as: 'QueuePath'},
-  {path: 'subjects', component: SubjectsComponent, as: 'SubjectsPath'}
+  {path: '/login', component: LoginComponent, as: 'LoginPath'},
+  {path: '/main', component: MainComponent, as: 'MainPath'},
+  {path: '/queue', component: QueueComponent, as: 'QueuePath'},
+  {path: '/subjects', component: SubjectsComponent, as: 'SubjectsPath'}
 ])
 
 export class App { }
