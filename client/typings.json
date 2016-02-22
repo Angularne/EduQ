@@ -1,0 +1,8 @@
+{
+  "name": "client",
+  "dependencies": {},
+  "devDependencies": {},
+  "ambientDependencies": {
+    "socket.io-client": "github:DefinitelyTyped/DefinitelyTyped/socket.io-client/socket.io-client.d.ts#495f2734927a644e913f9ed8f4d7d903f276f41d"
+  }
+}

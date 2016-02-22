@@ -1,5 +1,3 @@
-/// <reference path="../../../../server/typings/tsd.d.ts"/>
-
 import {Component, OnInit, OnDestroy} from 'angular2/core';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
 import {Title} from 'angular2/platform/browser';

@@ -7,26 +7,27 @@
 3. ++++
 
 ## Setup
+This project requires [ntypescript](https://www.npmjs.com/package/ntypescript), [typings](https://www.npmjs.com/package/typings) and [nodemon](https://www.npmjs.com/package/nodemon) installed globally.
 
 1. Clone the repository from github:
 
   ```
-git clone https://github.com/Angularne/kosystem.git
+  git clone https://github.com/Angularne/kosystem.git
   ```
 
 2. Once you have the repository, download all the required modules from npm with
   ```
-npm install
+  npm install ntypescript typings nodemon -g
+  npm install
   ```
 
 3. Run a Typescript transpiler to build the project
   ```
-tsc -p client
-tsc -p server
+  npm run build
   ```
 
 4. To run the server, start the server.js file with node
   ```
-npm start
+  npm start
   ```
-5. Use your favorite browser to access your new website at localhost:3000
+5. Use your favorite browser to access your new website at [localhost:3000](http://localhost:3000)

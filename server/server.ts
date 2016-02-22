@@ -1,4 +1,4 @@
-/// <reference path="./typings/tsd.d.ts"/>
+/// <reference path="./typings/main.d.ts"/>
 
 import express = require('express');
 import socketio = require('socket.io');

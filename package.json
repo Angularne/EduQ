@@ -4,8 +4,9 @@
   "description": "kosystem",
   "main": "server/build/server.js",
   "scripts": {
-    "install": "cd server && npm install && tsd install && cd ../client && npm install",
+    "install": "cd server && npm install && typings install && cd ../client && npm install && typings install",
     "start": "nodemon ./server/build/server.js",
+    "build": "ntsc -p server && ntsc -p client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,10 +15,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Angularne/kosystem.git"
-  },
-  "devDependencies": {
-    "nodemon": "^1.8.1",
-    "tsc": "^1.20150623.0",
-    "tsd": "^0.6.5"
   }
 }
