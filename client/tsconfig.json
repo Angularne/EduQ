@@ -30,7 +30,8 @@
     "app/components/queue/queue.ts",
     "app/components/socket/socket.ts",
     "app/components/subjects/subjects.ts",
-    "app/services/customer.ts"
+    "app/services/customer.ts",
+    "app/services/subjects.ts"
   ],
   "atom": {
     "rewriteTsconfig": true

@@ -10,6 +10,7 @@ import {QueueComponent} from "./components/queue/queue";
 import {SubjectsComponent} from "./components/subjects/subjects";
 import {isLoggedin} from './components/main/is-loggedin';
 import {Authentication} from './components/login/authentication';
+import {Subject, SubjectService} from './services/subject';
 
 @Component({
   selector: 'my-app',
@@ -18,14 +19,22 @@ import {Authentication} from './components/login/authentication';
   <a [routerLink]="['SocketPath']">Socket</a>
   <a [routerLink]="['MainPath']">Main</a>
   <a [routerLink]="['QueuePath']">Queue</a>
-  <a [routerLink]="['SubjectsPath']">Subject</a>
+  <div class="dropdown">
+  <button (click)="toggleDrop()">
+Subjects
+<span class="caret"></span>
+  </button>
+  <ul *ngIf="checkToggle()">
+  <li *ngFor="#subject of subjects"> <a [routerLink]="['SubjectsPath', {id:subject.id}]">{{subject.name}}</a> </li>
+  </ul>
+  </div>
   <a href="#" (click)="onLogout()">Logout</a>
   </div>
   <a *ngIf="!checkLogin()" [routerLink]="['LoginPath']">Login</a>
   <br>
-  <router-outlet></router-outlet>`,
+  <router-outlet [id]="id"></router-outlet>`,
   directives: [ROUTER_DIRECTIVES],
-  providers: [CustomerService]
+  providers: [CustomerService, SubjectService]
 })
 
 @RouteConfig([
@@ -37,8 +46,17 @@ import {Authentication} from './components/login/authentication';
 ])
 
 export class App {
-
-  constructor(public auth: Authentication, public router: Router) {}
+  subjects: Subject[] = [];
+  toggleDropdown: boolean = false;
+  constructor(public auth: Authentication, public router: Router, public subjectservice: SubjectService) {
+    this.subjects = this.subjectservice.getSubjects();
+  }
+  toggleDrop() {
+    this.toggleDropdown = !this.toggleDropdown;
+  }
+  checkToggle() {
+    return this.toggleDropdown;
+  }
 
   checkLogin() {
     return isLoggedin();

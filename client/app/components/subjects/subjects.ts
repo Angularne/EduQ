@@ -1,5 +1,5 @@
 import {Component} from 'angular2/core';
-import {CanActivate} from 'angular2/router';
+import {CanActivate, RouteParams} from 'angular2/router';
 import {isLoggedin}  from '../main/is-loggedin';
 
 @Component({
@@ -9,5 +9,8 @@ import {isLoggedin}  from '../main/is-loggedin';
 
 @CanActivate(() => isLoggedin())
 export class SubjectsComponent {
-
+  id: string;
+  constructor(private _params: RouteParams) {
+    this.id = _params.get('id');
+  }
 }

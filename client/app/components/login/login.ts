@@ -1,6 +1,7 @@
 import {Component} from 'angular2/core';
 import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup, NgIf} from 'angular2/common';
-import {Router} from 'angular2/router';
+import {Router, CanActivate} from 'angular2/router';
+import {isLoggedin}  from '../main/is-loggedin';
 import {Authentication} from './authentication';
 
 @Component({
@@ -9,6 +10,7 @@ import {Authentication} from './authentication';
   directives: [FORM_DIRECTIVES, NgIf],
 })
 
+@CanActivate(() => !isLoggedin())
 export class LoginComponent {
   form: ControlGroup;
   error: boolean = false;
