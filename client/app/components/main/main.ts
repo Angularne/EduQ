@@ -1,6 +1,5 @@
 import {Component} from 'angular2/core';
-import {Router, CanActivate} from 'angular2/router';
-import {Authentication} from '../login/authentication';
+import {CanActivate} from 'angular2/router';
 import {isLoggedin}  from './is-loggedin';
 
 @Component({
@@ -10,12 +9,5 @@ import {isLoggedin}  from './is-loggedin';
 
 @CanActivate(() => isLoggedin())
 export class MainComponent {
-  constructor(public auth: Authentication, public router: Router) {}
 
-  onLogout() {
-    this.auth.logout()
-      .subscribe(
-        () => this.router.navigate(['LoginPath'])
-      );
-  }
 }

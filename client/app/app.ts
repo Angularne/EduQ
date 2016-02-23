@@ -8,18 +8,20 @@ import {LoginComponent} from "./components/login/login";
 import {MainComponent} from "./components/main/main";
 import {QueueComponent} from "./components/queue/queue";
 import {SubjectsComponent} from "./components/subjects/subjects";
-
+import {isLoggedin} from './components/main/is-loggedin';
+import {Authentication} from './components/login/authentication';
 
 @Component({
   selector: 'my-app',
   template: `
-  <a [routerLink]="['CustomersPath']">Customers</a>
+  <div *ngIf="checkLogin()">
   <a [routerLink]="['SocketPath']">Socket</a>
-  <a [routerLink]="['LoginPath']">Login</a>
   <a [routerLink]="['MainPath']">Main</a>
   <a [routerLink]="['QueuePath']">Queue</a>
   <a [routerLink]="['SubjectsPath']">Subject</a>
-
+  <a href="#" (click)="onLogout()">Logout</a>
+  </div>
+  <a *ngIf="!checkLogin()" [routerLink]="['LoginPath']">Login</a>
   <br>
   <router-outlet></router-outlet>`,
   directives: [ROUTER_DIRECTIVES],
@@ -27,13 +29,25 @@ import {SubjectsComponent} from "./components/subjects/subjects";
 })
 
 @RouteConfig([
-  {path: '/', component: CustomersController, useAsDefault: true, as: "CustomersPath"},
-  {path: '/customer/:id', component: CustomerController, as: "CustomerPath"},
+  {path: '/', component: MainComponent, as: "MainPath"},
   {path: '/socket', component: SocketController, as: 'SocketPath'},
-  {path: '/login', component: LoginComponent, as: 'LoginPath'},
-  {path: '/main', component: MainComponent, as: 'MainPath'},
+  {path: '/login', component: LoginComponent, useAsDefault: true, as: 'LoginPath'},
   {path: '/queue', component: QueueComponent, as: 'QueuePath'},
   {path: '/subjects', component: SubjectsComponent, as: 'SubjectsPath'}
 ])
 
-export class App { }
+export class App {
+
+  constructor(public auth: Authentication, public router: Router) {}
+
+  checkLogin() {
+    return isLoggedin();
+  }
+
+  onLogout() {
+    this.auth.logout()
+      .subscribe(
+        () => this.router.navigate(['LoginPath'])
+      );
+  }
+}
