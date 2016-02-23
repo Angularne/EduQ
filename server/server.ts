@@ -1,24 +1,27 @@
 /// <reference path="./typings/main.d.ts"/>
 
 import express = require('express');
-import socketio = require('socket.io');
+import logger = require('morgan');
 import path = require('path');
+import bodyParser = require('body-parser');
 
+//import minimist = require('minimist');
+//var argv = minimist(process.argv.slice(2));
+//console.log(argv);
 
 var app = express();
-
+//.use(logger('dev'));
+app.use(bodyParser.json());
 app.use(express.static(__dirname+"/../../client"));
 app.use(express.static(__dirname+"/../../client/node_modules"));
 
-app.get('/test', function (req, res) {
-  res.send("hello");
-});
 
+// api
+app.use('/api', require('./api/api.js'));
+app.use('/auth', require('./api/auth.js'));
 app.get('/*', (req, res) => {
   res.sendFile(path.resolve(__dirname + '/../../client/index.html'));
 });
-
-
 
 var server = app.listen(3000, function () {
   var host:string = server.address().address;
@@ -27,43 +30,10 @@ var server = app.listen(3000, function () {
   console.log('Example app listening at http://%s:%s', host, port);
 });
 
-var io = socketio(server);
-var text: string = 'sup?';
-var clientsConnected: number = 0;
-io.on('connection', (socket) => {
-  clientsConnected++;
-  console.log('socket:connection - ' + clientsConnected);
-  io.emit('change',
-  {
-    text: text,
-    clients: clientsConnected
-  });
+require('./api/socket.js')(server);
 
-  socket.on('send', (data) => {
-    text = data.text;
-    console.log(data);
-    socket.broadcast.emit('change',   {
-        text: text,
-        clients: clientsConnected
-      });
-  });
 
-  socket.on('close', (socket)=>{
-    clientsConnected--;
-    console.log('socket:close - ' + clientsConnected);
-    io.emit('change',
-    {
-      text: text,
-      clients: clientsConnected
-    });
-  });
-  socket.on('disconnect', (socket)=>{
-    clientsConnected--;
-    console.log('socket:disconnect - ' + clientsConnected);
-    io.emit('change',
-    {
-      text: text,
-      clients: clientsConnected
-    });
-  });
-});
+console.log(JSON.stringify({
+    username: 'test',
+    password: 'test'
+  }));

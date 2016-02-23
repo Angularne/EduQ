@@ -3,9 +3,8 @@
 
 import {bootstrap} from 'angular2/platform/browser'
 import {App} from './app'
-import {provide} from 'angular2/core';
+import {provide,} from 'angular2/core';
 import {ROUTER_PROVIDERS, LocationStrategy, HashLocationStrategy} from 'angular2/router';
+import {HTTP_PROVIDERS} from "angular2/http";
 
-console.log('bootstraping');
-
-bootstrap(App, [ROUTER_PROVIDERS]);
+bootstrap(App, [ROUTER_PROVIDERS, HTTP_PROVIDERS]);

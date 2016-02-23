@@ -4,10 +4,15 @@
   "description": "kosystem",
   "main": "server/build/server.js",
   "scripts": {
-    "install": "cd server && npm install && typings install && cd ../client && npm install && typings install",
     "start": "nodemon ./server/build/server.js",
-    "build": "ntsc -p server && ntsc -p client",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "npm run install.npm && npm run install.typings",
+    "install.npm": "cd server && npm install && cd ../client && npm install",
+    "install.typings": "cd server && typings install && cd ../client && typings install",
+    "build": "npm run build.server & npm run build.client",
+    "build.server": "ntsc -p server",
+    "build.client": "ntsc -p client",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf node_modules/ server/build/ server/node_modules/ server/typings client/build/ client/node_modules/ client/typings"
   },
   "keywords": [],
   "author": "Angularne",
@@ -15,5 +20,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Angularne/kosystem.git"
+  },
+  "devDependencies": {
+    "nodemon": "^1.9.0",
+    "ntypescript": "^1.201602212305.1",
+    "typings": "^0.6.8"
   }
 }
