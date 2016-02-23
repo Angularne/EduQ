@@ -12,8 +12,27 @@
     "moduleResolution": "node"
   },
   "compileOnSave": true,
-  "exclude": [
-    "node_modules",
-    "typings"
-  ]
+  "filesGlob": [
+    "**/*.ts",
+    "**/*.tsx",
+    "!node_modules/**",
+    "!typings/**"
+  ],
+  "files": [
+    "app/app.ts",
+    "app/boot.ts",
+    "app/components/customer/customer.ts",
+    "app/components/customers/customers.ts",
+    "app/components/login/authentication.ts",
+    "app/components/login/login.ts",
+    "app/components/main/is-loggedin.ts",
+    "app/components/main/main.ts",
+    "app/components/queue/queue.ts",
+    "app/components/socket/socket.ts",
+    "app/components/subjects/subjects.ts",
+    "app/services/customer.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": true
+  }
 }

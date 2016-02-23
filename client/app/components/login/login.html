@@ -1,1 +1,14 @@
-Hei
+<form [ngFormModel]="form">
+      <div *ngIf="error">Check your password</div>
+      <div>
+        <label for="username">Username</label>
+        <input type="text" ngControl="username">
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" ngControl="password">
+      </div>
+      <div class="form-group">
+        <button type="submit" [disabled]="!form.valid" (click)="onSubmit(form.value)">Login</button>
+      </div>
+    </form>
