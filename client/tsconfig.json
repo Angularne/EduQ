@@ -32,7 +32,8 @@
     "app/components/socket/socket.ts",
     "app/components/subjects/subjects.ts",
     "app/services/customer.ts",
-    "app/services/subject.ts"
+    "app/services/subject.ts",
+    "app/services/user.ts"
   ],
   "atom": {
     "rewriteTsconfig": true

@@ -1,8 +1,9 @@
 import {Component} from 'angular2/core';
 import {Router, ROUTER_DIRECTIVES} from 'angular2/router';
 import {isLoggedin} from '../main/is-loggedin';
-import {Subject, SubjectService} from '../../services/subject';
 import {Authentication} from '../login/authentication';
+import {Subject} from '../../services/user';
+import {SubjectsComponent} from '../subjects/subjects';
 
 @Component({
   selector: 'siteheader',
@@ -15,20 +16,19 @@ import {Authentication} from '../login/authentication';
   <span class="caret"></span>
   </button>
   <ul *ngIf="checkToggle()">
-  <li *ngFor="#subject of subjects"> <a [routerLink]="['SubjectsPath', {id:subject.id}]">{{subject.name}}</a> </li>
+  <li *ngFor="#subject of subjects"> <a [routerLink]="['SubjectsPath', {code:subject.subject.code}]">{{subject.subject.name}}</a> </li>
   </ul>
   </span>
   <a href="#" (click)="onLogout()">Logout</a>
   `,
-  directives: [ROUTER_DIRECTIVES],
-  providers: [SubjectService]
+  directives: [ROUTER_DIRECTIVES, SubjectsComponent],
+  inputs: ['subjects']
 })
 
 export class SiteHeaderComponent {
-  subjects: Subject[] = [];
+  subjects: Subject[];
   toggleDropdown: boolean=false;
-  constructor(public router: Router, public subjectservice: SubjectService, public auth: Authentication) {
-    this.subjects = this.subjectservice.getSubjects();
+  constructor(public router: Router, public auth: Authentication) {
   }
   checkLogin() {
     return isLoggedin();

@@ -8,8 +8,8 @@ import {isLoggedin}  from '../main/is-loggedin';
 })
 
 export class SubjectsComponent {
-  id: string;
+  code: string;
   constructor(private _params: RouteParams) {
-    this.id = _params.get('id');
+    this.code = _params.get('code');
   }
 }
