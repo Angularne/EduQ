@@ -15,7 +15,7 @@ let SERVER_ADDRESS = 'http://localhost:3000';
   directives: [ROUTER_DIRECTIVES],
   providers: [Title]
 })
-@CanActivate(() => isLoggedin())
+
 export class SocketController implements OnDestroy, OnInit{
   text: string = ' ';
   clientsConnected: number;

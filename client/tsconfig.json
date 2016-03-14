@@ -28,10 +28,11 @@
     "app/components/main/is-loggedin.ts",
     "app/components/main/main.ts",
     "app/components/queue/queue.ts",
+    "app/components/siteheader/siteheader.ts",
     "app/components/socket/socket.ts",
     "app/components/subjects/subjects.ts",
     "app/services/customer.ts",
-    "app/services/subjects.ts"
+    "app/services/subject.ts"
   ],
   "atom": {
     "rewriteTsconfig": true

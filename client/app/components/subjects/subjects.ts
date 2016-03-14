@@ -7,7 +7,6 @@ import {isLoggedin}  from '../main/is-loggedin';
   templateUrl: 'app/components/subjects/subjects.html'
 })
 
-@CanActivate(() => isLoggedin())
 export class SubjectsComponent {
   id: string;
   constructor(private _params: RouteParams) {
