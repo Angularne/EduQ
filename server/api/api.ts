@@ -1,25 +1,20 @@
-import {User} from './models/user';
 import express = require('express');
 
 var router = express.Router();
 
-
-// Authentication
-router.use(require('./auth.js'));
+/** Authentication */
+router.use(require('./routes/auth.js'));
 
 /** User */
-let user = require('./routes/user');
-router.use('/user', user);
+router.use('/user', require('./routes/user'));
 
 /** Subject */
-let subject = require('./routes/subject');
-router.use('/subject', subject);
+router.use('/subject', require('./routes/subject'));
 
 /** Method Not Allowed */
 router.get('/*', (req, res, next) => {
   res.status(405);
   res.end();
 });
-
 
 module.exports = router;
