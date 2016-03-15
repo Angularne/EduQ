@@ -8,7 +8,7 @@ export interface IUser extends mongoose.Document {
   password: string;
   subjects: [
     {
-      subject:string;
+      subject:any;
       role:string;
       tasks: [number];
     }

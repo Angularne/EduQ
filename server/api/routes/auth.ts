@@ -1,4 +1,4 @@
-import {User} from "./models/user";
+import {User} from "../models/user";
 import express = require('express');
 import jwt = require('jsonwebtoken');
 

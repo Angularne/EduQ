@@ -39,6 +39,7 @@ let subjectSchema = new mongoose.Schema({
   broadcasts: [
     {
       author: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
+      title: String,
       content: String
     }
   ],

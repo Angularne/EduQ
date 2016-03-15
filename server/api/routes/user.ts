@@ -40,14 +40,15 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
 /** PUT: Update user */
 router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
   var id = req.params.id;
-
+  /*
   User.update({_id: id}, req.body).exec((err, user) => {
     if (!err) {
       res.json(user);
     } else {
       res.json(err);
     }
-  })
+  });
+  */
 
   User.findOneAndUpdate({_id: id}, req.body, (err: any, user: IUser) => {
     if (!err) {
@@ -56,7 +57,7 @@ router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
       res.json(err);
     }
   });
-})
+});
 
 
 module.exports = router;
