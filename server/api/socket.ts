@@ -1,7 +1,7 @@
 import socketio = require('socket.io');
 
 
-module.exports = function(server) {
+export function start(server) {
   var io = socketio(server);
   var text: string = 'sup?';
   var clientsConnected: number = 0;

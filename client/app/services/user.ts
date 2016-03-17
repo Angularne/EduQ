@@ -1,72 +1,41 @@
 import {Injectable, Inject} from 'angular2/core';
 import {Http, Headers} from "angular2/http";
-
-export interface Subject {
-  	code: string;
-  	name: string;
- 	  broadcasts: [{
-      		author: User;
-      		title: string;
-      		content: string;
-      		created: Date;
-    	}],
- 	  queue: {
-    		active: Boolean;
-    		list: [{
-        			users: [User];
-        			helper?: string;
-        			timeEntered: Date;
-      		}]
-        },
-  	tasks: {
-    		requirements: [{
-      			start: number;
-        			end: number;
-        			required: number;
-  		}]
-    }
-}
-
-export interface User {
-  firstname: string;
-  lastname: string;
-	email: string;
-	password: string;
-  subjects: [
-    		{
-      		subject: any;
-      		role:string;
-      		tasks: [number];
-    	}
-  ];
-
-}
+import {Subject} from '../interfaces/subject';
+import {User} from "../interfaces/user";
+import {AuthService} from './auth.service';
 
 @Injectable()
-export class IUserService {
+export class UserService {
   user: User;
-  http: Http;
-  token: string;
-  contructor(@Inject(Http) http: Http) {
-    this.token = localStorage.getItem('token');
-    //this.getUserInit();
+
+
+  constructor(public http: Http, public authService: AuthService) {
+    console.log('UserService Constructor');
+    this.fetchUser();
   }
-  getUserInit() {
-    return this.http
-    .get('/user', {
-      headers: new Headers({
-        'x-security-token': this.token
-      })
-    })
-    .map((res : any) => {
-      console.log(res);
-      let data = res.json();
-      this.user = data.user;
-      localStorage.setItem('user', JSON.stringify(this.user));
-    });
+
+  fetchUser() {
+    return this.http.get('/api/user', {
+       headers: new Headers({
+         'x-access-token': this.authService.getToken()
+       })
+     })
+     .map((res : any) => {
+       let data = res.json();
+       this.user = data;
+       localStorage.setItem('user', JSON.stringify(this.user));
+       return this.user;
+     });
   }
+
   getUser() {
-    return USER;
+    return new Promise<User>((resolve, reject) => {
+      if (!this.user) {
+        this.fetchUser().subscribe((user) => resolve(user));
+      } else {
+        resolve(this.user);
+      }
+    });
   }
   removeLocalUser() {
     this.user = undefined;
@@ -74,6 +43,8 @@ export class IUserService {
   }
 }
 
+
+/*
 var USER: User = {
     "firstname" : "Håvard",
     "lastname" : "Tollefsen",
@@ -104,3 +75,4 @@ var USER: User = {
       }
     ]
 }
+*/

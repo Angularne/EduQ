@@ -1,8 +1,8 @@
-import {Component} from 'angular2/core';
+import {Component, Inject} from 'angular2/core';
 import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup, NgIf} from 'angular2/common';
 import {Router, CanActivate} from 'angular2/router';
 import {isLoggedin}  from '../main/is-loggedin';
-import {Authentication} from './authentication';
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'login',
@@ -14,7 +14,10 @@ import {Authentication} from './authentication';
 export class LoginComponent {
   form: ControlGroup;
   error: boolean = false;
-  constructor(fb: FormBuilder, public auth: Authentication, public router: Router) {
+  auth: AuthService;
+
+  constructor(fb: FormBuilder, @Inject(AuthService) auth: AuthService, public router: Router) {
+    this.auth = auth;
     this.form = fb.group({
       username:  ['', Validators.required],
       password:  ['', Validators.required]
@@ -22,10 +25,13 @@ export class LoginComponent {
   }
 
   onSubmit(value: any) {
-    this.auth.login(value.username, value.password)
+    this.auth.authenticate(value.username, value.password)
       .subscribe(
-        (token: any) => this.router.navigate(['MainPath']),
-        () => { this.error = true; }
+        (token: any) => {
+          this.router.navigate(['MainPath']);
+          console.log('loggin in: ' + token);
+        },
+        (err) => {console.log(err); this.error = true; }
       );
   }
 }

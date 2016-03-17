@@ -1,15 +1,17 @@
-import {Component} from 'angular2/core';
+import {Component, Inject} from 'angular2/core';
 import {ComponentInstruction, Router, RouteConfig, ROUTER_DIRECTIVES, CanDeactivate} from 'angular2/router';
 import {LoginComponent} from "./components/login/login";
 import {MainComponent} from "./components/main/main";
 import {isLoggedin} from './components/main/is-loggedin';
-
+import {SocketController} from "./components/socket/socket";
+import {SubjectsComponent} from './components/subjects/subjects';
+import {AuthService} from './services/auth.service';
 
 @Component({
   selector: 'my-app',
   template: `
   <router-outlet></router-outlet>`,
-  directives: [ROUTER_DIRECTIVES]
+  directives: [ROUTER_DIRECTIVES],
 })
 
 @RouteConfig([
@@ -19,17 +21,15 @@ import {isLoggedin} from './components/main/is-loggedin';
 
 
 export class App implements CanDeactivate{
-  constructor(public router: Router) {
+  auth: AuthService;
 
-    if (isLoggedin()) {
+  constructor(public router: Router, @Inject(AuthService) auth: AuthService) {
+    this.auth = auth;
+    if (this.auth.isAuthenticated()) {
       this.router.navigate(['MainPath']);
     } else {
       this.router.navigate(['LoginPath']);
     }
-  }
-
-  checkLogin() {
-    return isLoggedin();
   }
 
   routerCanDeactivate(next: ComponentInstruction, prev: ComponentInstruction) {

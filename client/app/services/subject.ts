@@ -1,19 +1,39 @@
-export class Subject {
-  id: number;
-  name: string;
-  constructor(id:number, name:string) {
-    this.id = id;
-    this.name = name;
-  }
-}
+import {Injectable, Inject} from 'angular2/core';
+import {Http, Headers} from "angular2/http";
+import {User} from '../interfaces/user';
+import {Subject} from '../interfaces/subject';
+import {AuthService} from './auth.service';
 
+@Injectable()
 export class SubjectService {
-  subjects: Subject[] = [];
-  constructor() {
-    this.subjects.push(new Subject(1, "Maths"));
-    this.subjects.push(new Subject(2, "Computers"));
+  subject: Subject;
+
+  constructor(public http: Http, public authService: AuthService) {
+    console.log("ISubjectService");
+    this.http = http;
   }
-  getSubjects() {
-    return this.subjects;
+
+  fetchSubject(code: string) {
+    return this.http.get(`/api/subject/${code}`, {
+       headers: new Headers({
+         'x-access-token': this.authService.getToken()
+       })
+     })
+     .map((res : any) => {
+       let data = res.json();
+       this.subject = data;
+       return this.subject;
+     });
+  }
+
+
+  getSubject(code: string){
+    return new Promise<Subject>((resolve, reject) => {
+      if (this.subject && this.subject.code === code) {
+        resolve(this.subject);
+      } else {
+        this.fetchSubject(code).subscribe((sub)=>{resolve(sub)});
+      }
+    });
   }
 }

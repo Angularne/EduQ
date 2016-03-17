@@ -3,16 +3,17 @@ import {ROUTER_DIRECTIVES} from 'angular2/router';
 import {Title} from 'angular2/platform/browser';
 import {CanActivate} from 'angular2/router';
 import {isLoggedin}  from '../main/is-loggedin';
+import {ProtectedDirective} from "../../directives/protected.directive";
 
 //let SERVER_ADDRESS = 'http://109.189.16.142:3000';
-//let SERVER_ADDRESS = 'http://158.38.186.59:3000';
-let SERVER_ADDRESS = 'http://localhost:3000';
+let SERVER_ADDRESS = 'http://158.38.188.119:3000';
+//let SERVER_ADDRESS = 'http://localhost:3000';
 
 
 @Component({
   selector: 'socket',
   templateUrl: 'app/components/socket/socket.html',
-  directives: [ROUTER_DIRECTIVES],
+  directives: [ROUTER_DIRECTIVES, ProtectedDirective],
   providers: [Title]
 })
 
@@ -35,7 +36,9 @@ export class SocketController implements OnDestroy, OnInit{
     });
   }
   ngOnDestroy() {
-    this.socket.close();
+    if (this.socket) {
+      this.socket.close();
+    }
   }
 
   send() {
