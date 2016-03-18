@@ -41,6 +41,21 @@ export class UserService {
     this.user = undefined;
     localStorage.removeItem('user');
   }
+  getUserRole(code: string) {
+    return new Promise<string>((resolve, reject) => {
+      if (!this.user) {
+        this.fetchUser();
+      } else {
+        var index = -1;
+        for (var i = 0; i < this.user.subjects.length; i++) {
+          if (this.user.subjects[i].subject.code === code) index = i;
+        }
+        if (index != -1) {
+          resolve(this.user.subjects[index].role);
+        }
+      }
+    });
+  }
 }
 
 
