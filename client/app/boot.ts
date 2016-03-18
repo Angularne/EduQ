@@ -8,7 +8,6 @@ import {ROUTER_PROVIDERS, LocationStrategy, HashLocationStrategy} from 'angular2
 import {HTTP_PROVIDERS, RequestOptions} from "angular2/http";
 import {UserService} from "./services/user";
 import {AuthService} from "./services/auth.service";
-import {AuthRequestOptions} from './services/requestoptions';
 
 bootstrap(App, [
   ROUTER_PROVIDERS,

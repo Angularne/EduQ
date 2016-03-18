@@ -35,7 +35,6 @@
     "app/interfaces/user.ts",
     "app/services/auth.service.ts",
     "app/services/customer.ts",
-    "app/services/requestoptions.ts",
     "app/services/subject.ts",
     "app/services/user.ts"
   ],

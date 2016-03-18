@@ -14,11 +14,9 @@ router.post('/auth/login', (req: Request, res: Response, next: NextFunction) => 
     /** Basic Auth *//*
     var user = basicAuth(req);
     if (user && user.name && user.pass) {
-
-      console.log(user);
-
       User.findOne({email:user.name, password:user.pass}).populate('subjects.subject', 'code name').lean().exec((err, u) => {
         if (!err && u) {
+          req.authenticatedUser = u;
           res.sendStatus(200);
         } else {
           unauthorized(res);
@@ -86,7 +84,6 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 router.use((req, res, next) => {
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  console.log(token);
   // decode token
   if (token) {
 

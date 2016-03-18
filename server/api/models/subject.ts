@@ -6,6 +6,7 @@ export interface ISubject extends mongoose.Document {
   name: string;
   broadcasts: [
     {
+      _id: string;
       author: string;
       title: string;
       content: string;
@@ -16,6 +17,7 @@ export interface ISubject extends mongoose.Document {
     active: Boolean;
     list: [
       {
+        _id: string;
         users: [string];
         helper?: string;
         timeEntered: Date;
@@ -25,6 +27,7 @@ export interface ISubject extends mongoose.Document {
   tasks: {
     requirements: [
       {
+        _id: string;
         start: number;
         end: number;
         required: number;
@@ -34,13 +37,14 @@ export interface ISubject extends mongoose.Document {
 }
 
 let subjectSchema = new mongoose.Schema({
-  code: String,
+  code: {type:String, unique: true},
   name: String,
   broadcasts: [
     {
       author: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
       title: String,
-      content: String
+      content: String,
+      created: Date
     }
   ],
   queue: {
