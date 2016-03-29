@@ -8,4 +8,5 @@ export interface Queue {
 export interface List {
   timeEntered: Date;
   users: User[];
+  helper: string;
 }

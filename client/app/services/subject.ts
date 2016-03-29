@@ -2,12 +2,17 @@ import {Injectable, Inject} from 'angular2/core';
 import {Http, Headers} from "angular2/http";
 import {User} from '../interfaces/user';
 import {Subject} from '../interfaces/subject';
+import {Queue} from '../interfaces/queue';
+import {Broadcast} from '../interfaces/broadcast';
 import {AuthService} from './auth.service';
 import {UserService} from './user';
+import {Binding} from './binding';
 
 @Injectable()
 export class SubjectService {
   subject: Subject;
+  queue: Binding<Queue> = new Binding<Queue>();
+  broadcasts: Binding<Broadcast[]> = new Binding<Broadcast[]>();
 
   constructor(public http: Http, public authService: AuthService, public userService: UserService) {
     console.log("ISubjectService");
@@ -23,6 +28,8 @@ export class SubjectService {
      .map((res : any) => {
        let data = res.json();
        this.subject = data;
+       this.queue.value = this.subject.queue;
+       this.broadcasts.value = this.subject.broadcasts;
        return this.subject;
      });
   }

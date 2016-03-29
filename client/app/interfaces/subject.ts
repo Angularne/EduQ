@@ -1,22 +1,12 @@
 import {User} from "./user";
+import {Queue} from './queue';
+import {Broadcast} from './broadcast';
 
 export interface Subject {
   	code: string;
   	name: string;
- 	  broadcasts: [{
-      		author: User;
-      		title: string;
-      		content: string;
-      		created: Date;
-    	}],
- 	  queue: {
-    		active: Boolean;
-    		list: [{
-        			users: [User];
-        			helper?: string;
-        			timeEntered: Date;
-      		}]
-        },
+ 	  broadcasts: [Broadcast],
+ 	  queue: Queue,
   	tasks: {
     		requirements: [{
       			start: number;

@@ -39,6 +39,7 @@
     "app/interfaces/subject.ts",
     "app/interfaces/user.ts",
     "app/services/auth.service.ts",
+    "app/services/binding.ts",
     "app/services/customer.ts",
     "app/services/subject.ts",
     "app/services/user.ts"

@@ -1,10 +1,11 @@
+<h2>Queue</h2>
 <button (click)="toggleQueueButton()">Activate/Deactivate Queue</button>
-<div *ngIf="queueObj?.active">
+<div *ngIf="queue?.active">
   <button (click)="addElement()">Queue</button>
-  <ul *ngFor="#element of queueObj?.list">
+  <ul *ngFor="#element of queue?.list">
     <li> <queue-element [element]="element" (removeElement)="removeElement(element)">Loading queue-element...</queue-element></li>
   </ul>
 </div>
-<div *ngIf="!queueObj?.active">
+<div *ngIf="!queue?.active">
   <h2>The queue is not active</h2>
 </div>

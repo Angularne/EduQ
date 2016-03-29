@@ -4,32 +4,34 @@ import {isLoggedin}  from '../main/is-loggedin';
 import {AuthService} from '../../services/auth.service';
 import {Queue} from '../../interfaces/queue';
 import {QueueElementComponent} from '../queue-element/queue-element';
+import {SubjectService} from '../../services/subject';
 
 
 @Component({
   selector: 'queue',
   templateUrl: 'app/components/queue/queue.html',
-  inputs: ['queueObj'],
   directives: [QueueElementComponent]
 })
 
 export class QueueComponent {
-  queueObj: Queue;
+  queue: Queue;
   @Output() toggleQueue = new EventEmitter();
+  constructor(public subjectService: SubjectService) {
+    this.subjectService.queue.subscribe((value) => {
+      this.queue = value;
+    })
+  }
   toggleQueueButton() {
-    this.queueObj.active = !this.queueObj.active;
+    this.queue.active = !this.queue.active;
   }
   //TODO - interaction with queue.list is only local, move to backend
   addElement() {
-    this.queueObj.list.push({
-      users: null,
-      timeEntered: new Date()
-    })
+
   }
   removeElement(element: any) {
     //Make sure we find the element, or else the last element would be deleted.
-    if (this.queueObj.list.indexOf(element) != -1) {
-      this.queueObj.list.splice(this.queueObj.list.indexOf(element), 1);
+    if (this.queue.list.indexOf(element) != -1) {
+      this.queue.list.splice(this.queue.list.indexOf(element), 1);
     }
   }
 }

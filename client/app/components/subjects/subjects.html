@@ -1,4 +1,5 @@
+<h2>Subject</h2>
 {{subjectString}}
 <h3>{{userRole}}</h3>
-<queue [queueObj]="subject?.queue" (toggleQueue)="toggleQueue()"> Loading queue...</queue>
-<broadcasts [broadcasts]="subject?.broadcasts" (updateBroadcast)="updateBroadcast()">Loading broadcasts...</broadcasts>
+<queue (toggleQueue)="toggleQueue()"> Loading queue...</queue>
+<broadcasts (updateBroadcast)="updateBroadcast()">Loading broadcasts...</broadcasts>
