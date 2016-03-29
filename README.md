@@ -15,9 +15,8 @@ Estimated time of development completion: Late May 2016
 
 ## To-Do
 
-1. Give the site a REST api
-2. Set up site authorization and authentication
-3. +++++
+1. Set up site authorization and authentication
+2. +++++
 
 ## Setup
 
