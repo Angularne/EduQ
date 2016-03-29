@@ -1,10 +1,23 @@
 # Køsystem
 
+NTNU Bachelor's degree Project
+
+Estimated time of development completion: Late May 2016
+
+## Features
+
+1. Mongoose
+2. Node.js
+3. Express
+4. Basic Angular 2 "infrastructure"
+5. MongoDB database
+6. REST api
+
 ## To-Do
 
-1. Actually set up mysql
-2. Give the site a REST api
-3. ++++
+1. Give the site a REST api
+2. Set up site authorization and authentication
+3. +++++
 
 ## Setup
 
