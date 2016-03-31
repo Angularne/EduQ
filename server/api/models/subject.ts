@@ -12,18 +12,19 @@ export interface ISubject extends mongoose.Document {
       content: string;
       created: Date;
     }
-  ],
+  ]
   queue: {
     active: Boolean;
     list: [
       {
-        _id: string;
-        users: [string];
+        _id?: string;
+        users: string[];
         helper?: string;
         timeEntered: Date;
+        room: string;
       }
     ]
-  },
+  }
   tasks: {
     requirements: [
       {
@@ -32,8 +33,13 @@ export interface ISubject extends mongoose.Document {
         end: number;
         required: number;
       }
-    ]
+    ];
+    count: number;
+
   }
+  students: string[];
+  assistents: string[];
+  teachers: string[];
 }
 
 let subjectSchema = new mongoose.Schema({
@@ -53,7 +59,8 @@ let subjectSchema = new mongoose.Schema({
       {
         users: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
         helper: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
-        timeEntered: Date
+        timeEntered: Date,
+        room: {type: mongoose.Schema.Types.ObjectId, res: 'Location.rooms'}
       }
     ]
   },
@@ -62,10 +69,14 @@ let subjectSchema = new mongoose.Schema({
       {
         start: Number,
         end: Number,
-        required: Number,
+        required: Number
       }
-    ]
-  }
+    ],
+    count: Number
+  },
+  students: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
+  assistents: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
+  teachers: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}]
 });
 
 export const Subject = mongoose.model<ISubject>('Subject', subjectSchema);

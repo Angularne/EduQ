@@ -7,7 +7,7 @@ var router = express.Router();
 
 /** GET: Get authenticated user */
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
-  User.findById(req.authenticatedUser._id).populate('subjects.subject', 'code name').lean().exec((err, user) => {
+  User.findById(req.authenticatedUser._id).populate('subjects.subject', 'code name tasks').lean().exec((err, user) => {
     if (!err) {
       res.json(user);
     } else {
@@ -20,7 +20,7 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
   /** TODO Hvem kan hente brukerinfo */
   let id: string = req.params.id;
-  User.findById(id).populate('subjects.subject', 'code name').lean().exec((err, user) => {
+  User.findById(id).populate('subjects.subject', 'code name tasks').lean().exec((err, user) => {
     if (!err) {
       res.json(user);
     } else {
