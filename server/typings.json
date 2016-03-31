@@ -3,7 +3,7 @@
   "dependencies": {},
   "devDependencies": {},
   "ambientDependencies": {
-    "basic-auth": "registry:dt/basic-auth#0.0.0+20151006194026",
+    "basic-auth": "registry:dt/basic-auth#0.0.0+20160316155526",
     "body-parser": "github:DefinitelyTyped/DefinitelyTyped/body-parser/body-parser.d.ts#9a2c50ea846ee6ae36feaea0accc77ae7b08a748",
     "colors": "github:DefinitelyTyped/DefinitelyTyped/colors/colors.d.ts#b83eea746f8583a6c9956c19d8b553f2b66ce577",
     "es6-promise": "github:DefinitelyTyped/DefinitelyTyped/es6-promise/es6-promise.d.ts#830e8ebd9ef137d039d5c7ede24a421f08595f83",

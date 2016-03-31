@@ -6,7 +6,9 @@ import path = require('path');
 import bodyParser = require('body-parser');
 import mongoose = require("mongoose");
 import socket = require('./api/socket');
+import socketio = require("socket.io");
 var config = require('../config');
+import {QueueSocket} from './api/socket';
 
 //import minimist = require('minimist');
 //var argv = minimist(process.argv.slice(2));
@@ -47,4 +49,8 @@ var server = app.listen(config.port || 3000, function () {
 });
 
 
-socket.start(server);
+
+
+
+QueueSocket.startServer(server);
+QueueSocket.openQueue('TDAT3001-A');

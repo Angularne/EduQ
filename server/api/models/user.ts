@@ -6,11 +6,13 @@ export interface IUser extends mongoose.Document {
   lastname: string;
   email: string;
   password: string;
+  classOf?: string; // Ikke lagt til i Schema
+
   subjects: [
     {
       subject:any;
       role:string;
-      tasks: [number];
+      tasks: number[];
     }
   ]
 }
@@ -23,10 +25,14 @@ let UserSchema: mongoose.Schema = new mongoose.Schema({
   subjects: [
     {
       subject: {type: mongoose.Schema.Types.ObjectId, ref: 'Subject'},
-      role:String,
+      role:{type: String, enum: ['Student', 'Assistent', 'Teacher']},
       tasks: [Number]
     }
   ]
 });
 
 export const User = mongoose.model<IUser>('User', UserSchema);
+
+export function authenticateUser(username: string, password: string, cb: (err, user: IUser) => void) {
+  User.findOne({email:username, password:password}).populate('subjects.subject', 'code name').lean().exec(cb);
+}
