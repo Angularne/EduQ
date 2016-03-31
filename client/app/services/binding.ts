@@ -28,4 +28,6 @@ export class Binding<T> {
       sub(this._value);
     }
   }
+
+  //TODO - add unsubscribe! May cause errors when posting updates to destroyed components
 }

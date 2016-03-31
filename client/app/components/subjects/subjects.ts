@@ -35,5 +35,6 @@ export class SubjectsComponent {
   //TODO - toggleQueue is only clientside, needs to do changes on server
   toggleQueue() {
     this.subject.queue.active = !this.subject.queue.active;
+    //this.subjectService.toggleQueueActive();
   }
 }

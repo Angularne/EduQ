@@ -1,6 +1,18 @@
 <h2>Queue</h2>
 <button (click)="toggleQueueButton()">Activate/Deactivate Queue</button>
 <div *ngIf="queue?.active">
+  <div>
+    Users in subject: <br>
+    <select multiple *ngFor="#user of students">
+      <option (click)="selectUser(user)">Hello{{user._id}}{{user.firstname}} {{user.lastname}}</option>
+    </select>
+  </div>
+  <div>
+    User to add: <br>
+    <ul *ngFor="#selectedUser of usersSelected">
+      <li>Good Bye {{selectedUser._id}} {{selectedUser.firstname}} {{selectedUser.lastname}}</li>
+    </ul>
+  </div>
   <button (click)="addElement()">Queue</button>
   <ul *ngFor="#element of queue?.list">
     <li> <queue-element [element]="element" (removeElement)="removeElement(element)">Loading queue-element...</queue-element></li>

@@ -1,8 +1,9 @@
-import {Injector, Component, Output, EventEmitter} from 'angular2/core';
+import {Injector, Component, Output, EventEmitter, OnInit} from 'angular2/core';
 import {CanActivate} from 'angular2/router';
 import {isLoggedin}  from '../main/is-loggedin';
 import {AuthService} from '../../services/auth.service';
 import {Queue} from '../../interfaces/queue';
+import {User} from '../../interfaces/user';
 import {QueueElementComponent} from '../queue-element/queue-element';
 import {SubjectService} from '../../services/subject';
 
@@ -13,25 +14,46 @@ import {SubjectService} from '../../services/subject';
   directives: [QueueElementComponent]
 })
 
-export class QueueComponent {
+export class QueueComponent{
   queue: Queue;
+  students: User[] = [];
+  usersSelected: User[] = [];
   @Output() toggleQueue = new EventEmitter();
   constructor(public subjectService: SubjectService) {
     this.subjectService.queue.subscribe((value) => {
       this.queue = value;
+    });
+    this.subjectService.students.subscribe((value) => {
+      this.students = value;
     })
   }
+
+  selectUser(user: User) {
+    if (this.usersSelected.indexOf(user) === -1) {
+      this.usersSelected.push(user);
+    }
+  }
+
   toggleQueueButton() {
     this.queue.active = !this.queue.active;
   }
-  //TODO - interaction with queue.list is only local, move to backend
-  addElement() {
-
+  addElement(users: User[]) {
+    //this.subjectService.addQueueElement(users);
   }
   removeElement(element: any) {
     //Make sure we find the element, or else the last element would be deleted.
     if (this.queue.list.indexOf(element) != -1) {
       this.queue.list.splice(this.queue.list.indexOf(element), 1);
     }
+    //this.subjectService.removeQueueElement(element);
+  }
+  helpQueueElement() {
+    console.error('Error: QueueComponent.helpQueueElement not implemented!');
+  }
+  delayQueueElement() {
+    console.error('Error: QueueComponent.delayQueueElement not implemented!');
+  }
+  acceptTask() {
+    console.error('Error: QueueComponent.acceptTask not implemented!');
   }
 }

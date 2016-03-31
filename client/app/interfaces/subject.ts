@@ -5,6 +5,7 @@ import {Broadcast} from './broadcast';
 export interface Subject {
   	code: string;
   	name: string;
+    students: [User];
  	  broadcasts: [Broadcast],
  	  queue: Queue,
   	tasks: {
