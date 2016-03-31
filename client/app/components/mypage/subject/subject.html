@@ -1,0 +1,7 @@
+<span *ngIf="completed">Du har godkjent øvingsopplegget</span>
+<span *ngIf="!completed">Du har enda ikke godkjent øvingsopplegget</span>
+<ul>
+  <li *ngFor="#task of tasks; #i = index">
+    {{i + 1}}: {{task}}
+  </li>
+</ul>

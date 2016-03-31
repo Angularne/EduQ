@@ -1,0 +1,6 @@
+<ul>
+  <li *ngFor="#subject of user?.subjects">
+    {{subject.subject.name}}
+    <subject-tasks [subject]="subject">Subject tasks loading...</subject-tasks>
+  </li>
+</ul>

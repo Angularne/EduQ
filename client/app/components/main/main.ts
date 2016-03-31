@@ -11,6 +11,7 @@ import {User} from "../../interfaces/user";
 import {Subject} from "../../interfaces/subject";
 import {AuthService} from '../../services/auth.service';
 import {HTTP_PROVIDERS} from 'angular2/http';
+import {MypageComponent} from "../mypage/mypage";
 
 @Component({
   templateUrl: 'app/components/main/main.html',
@@ -20,7 +21,8 @@ import {HTTP_PROVIDERS} from 'angular2/http';
 
 @RouteConfig([
   {path: '/socket', component: SocketController, as: 'SocketPath', useAsDefault: true},
-  {path: '/subjects/:code', component: SubjectsComponent, as: 'SubjectsPath'}
+  {path: '/subjects/:code', component: SubjectsComponent, as: 'SubjectsPath'},
+  {path: '/mypage', component: MypageComponent, as: 'MypagePath'}
 ])
 
 @CanActivate(() => {

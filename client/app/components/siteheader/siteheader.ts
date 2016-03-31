@@ -24,6 +24,8 @@ import {SubjectsComponent} from '../subjects/subjects';
     </ul>
   </span>
 
+  <a [routerLink]="['MypagePath']">Mypage</a>
+
   <a href="#" (click)="onLogout()">Logout</a>
   `,
   directives: [ROUTER_DIRECTIVES, SubjectsComponent],
