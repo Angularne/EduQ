@@ -13,6 +13,7 @@ export interface Subject {
       			start: number;
         			end: number;
         			required: number;
-  		}]
+  		}],
+      count: number;
     }
 }

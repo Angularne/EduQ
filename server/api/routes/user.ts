@@ -8,7 +8,7 @@ var router = express.Router();
 /** GET: Get user */
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
   console.log(req.authenticatedUser);
-  User.findById(req.authenticatedUser._id).populate('subjects.subject', 'code name').lean().exec((err, user) => {
+  User.findById(req.authenticatedUser._id).populate('subjects.subject', 'code name tasks').lean().exec((err, user) => {
     if (!err) {
       res.json(user);
     } else {

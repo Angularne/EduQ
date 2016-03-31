@@ -28,6 +28,8 @@
     "app/components/login/login.ts",
     "app/components/main/is-loggedin.ts",
     "app/components/main/main.ts",
+    "app/components/mypage/mypage.ts",
+    "app/components/mypage/subject/subject.ts",
     "app/components/queue-element/queue-element.ts",
     "app/components/queue/queue.ts",
     "app/components/siteheader/siteheader.ts",
