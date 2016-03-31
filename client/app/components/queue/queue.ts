@@ -33,6 +33,12 @@ export class QueueComponent{
       this.usersSelected.push(user);
     }
   }
+  unselectUser(user: User) {
+    var index = this.usersSelected.indexOf(user);
+    if (index != -1) {
+      this.usersSelected.splice(index, 1);
+    }
+  }
 
   toggleQueueButton() {
     this.queue.active = !this.queue.active;
