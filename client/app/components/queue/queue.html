@@ -9,8 +9,8 @@
   </div>
   <div>
     User to add: <br>
-    <ul *ngFor="#selectedUser of usersSelected">
-      <li>Good Bye {{selectedUser._id}} {{selectedUser.firstname}} {{selectedUser.lastname}}</li>
+    <ul>
+      <li *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">Good Bye {{selectedUser._id}} {{selectedUser.firstname}} {{selectedUser.lastname}}</li>
     </ul>
   </div>
   <button (click)="addElement()">Queue</button>
