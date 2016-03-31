@@ -12,9 +12,9 @@ let SERVER_ADDRESS = 'http://158.38.188.119:3001';
 
 @Injectable()
 export class SubjectService {
-/*
-  private socket: SocketIOClient.Socket;
 
+  private socket: SocketIOClient.Socket;
+/*
   private setupSocket() {
     console.log('setupSocket');
     if (!this.socket) {
@@ -38,7 +38,7 @@ export class SubjectService {
     this.queue.value = data.queue;
     this.broadcasts.value = data.broadcasts;
   }
-
+*/
   addQueueElement(users: User[]) {
     console.error('Error: SubjectService.addQueueElement not implemented!');
     //this.socket.emit('addQueueElement', users);
@@ -58,7 +58,7 @@ export class SubjectService {
     console.error('Error: SubjectService.acceptTask not implemented!');
   }
 
-  delayQueueElement(places: int) {
+  delayQueueElement(places: number) {
     console.error('Error: SubjectService.delayQueueElement not implemented!');
     //this.socket.emit('delayQueueElement', places);
   }
@@ -67,7 +67,7 @@ export class SubjectService {
     console.error('Error: SubjectService.toggleQueueActive not implemented!');
     //this.socket.emit('toggleQueueActive');
   }
-*/
+
 
   subject: Subject;
   queue: Binding<Queue> = new Binding<Queue>();
