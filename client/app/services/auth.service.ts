@@ -1,30 +1,35 @@
 import {Injectable, Inject} from 'angular2/core';
 import {Observable} from 'rxjs/Rx';
 import {Http, Headers, Response} from "angular2/http";
+import {authHeaders} from '../common/headers';
+import {User} from '../interfaces/user';
+import {Binding} from './binding';
 
 @Injectable()
 export class AuthService {
-  authenticated: boolean = false;
+
+  get authenticated() {
+    return this.authenticated$.value;
+  }
+  authenticated$ : Binding<boolean> = new Binding<boolean>(false);
   token: string;
-  http: Http;
+
+  user: User;
 
 
-
-  constructor(@Inject(Http) http: Http) {
-    console.log('auth.service');
-    this.token = localStorage.getItem('token');
+  constructor(private http: Http) {
+    this.token = sessionStorage.getItem('authToken');
     //this.authenticated = !!this.token;
-    this.http = http;
 
-
-    var authToken = sessionStorage.getItem('authToken');
-    if (authToken) {
-      console.log('authenticating');
-      this.http.post('/api/auth/login','')
-        .map((res : any) => {
-          console.log(res);
+    if (this.token) {
+      this.http.get('/api/user/', {headers: new Headers({
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${this.token}`
+      })})
+      .subscribe((res) => {
           if (res.status == 200) {
-            this.authenticated = true;
+            this.user = res.json();
+            this.authenticated$.value = true;
             console.log('Authenticated');
           }
         });
@@ -35,46 +40,42 @@ export class AuthService {
     return this.authenticated;
   }
 
-  authenticate(username: String, password: String) {
-    let authToken = btoa(`${username}:${password}`);
 
-    return this.http.post('/api/auth/login', JSON.stringify({username:username,password:password}), {
-        headers: new Headers({
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${authToken}`
+  authenticate(username: string, password: string) {
+    return new Promise<boolean>((resolve, reject) => {
+      let authToken = btoa(`${username}:${password}`);
+
+      this.http.post('/api/auth/login', JSON.stringify({username:username,password:password}), {
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${authToken}`
+          })
         })
-      })
-      .map((res : Response) => {
-        if (res.status == 200) {
-          let data = res.json();
-          this.token = data.token;
-          localStorage.setItem('token', data.token);
-          sessionStorage.setItem('authToken', authToken);
-          this.authenticated = true;
-          console.log('Authenticated');
-        }
-        return res;
-      });
-
+        .map(
+          (res : Response) => {
+            if (res.status == 200) {
+              return true;
+            }
+            return false;
+          }//,
+          //(err) => {reject(err);}
+        ).subscribe((res) => {
+          if (res) {
+            sessionStorage.setItem('authToken', authToken);
+              this.authenticated$.value = true;
+          } else {
+            this.token = null;
+            this.authenticated$.value = false;
+          }
+          resolve(this.authenticated);
+        });
+    });
   }
 
   logout() {
-    /*
-     * If we had a login api, we would have done something like this
-
-    return this.http.get(this.config.serverUrl + '/auth/logout', {
-      headers: new Headers({
-        'x-security-token': this.token
-      })
-    })
-    .map((res : any) => {
-      this.token = undefined;
-      localStorage.removeItem('token');
-    });
-     */
 
     this.token = undefined;
-    this.authenticated = false;
+    this.authenticated$.value = false;
     sessionStorage.removeItem('authToken');
     localStorage.removeItem('token');
 
@@ -82,18 +83,35 @@ export class AuthService {
   }
 
   getUser() {
-    console.log('Get User');
-    return this.http.get('/api/user', {
-       headers: new Headers({
-         'x-access-token': this.token
-       })
-     })
-     .map((res : any) => {
-       console.log(res);
-       let data = res.json();
-       localStorage.setItem('user', JSON.stringify(data));
-       return data;
-     });
+
+
+    return new Promise<User>((resolve, reject) => {
+      if (this.user) {
+        return resolve(this.user);
+      }
+
+      if (this.authenticated) {
+        this.http.get('/api/user', {
+           headers: authHeaders()
+         })
+         .map((res) => {
+           console.log(res);
+           if (res.status == 200) {
+             return res.json();
+           }
+           return false;
+         }).subscribe((user) => {
+           console.log(user);
+           if (user) {
+             resolve(user)
+           } else {
+             reject(user);
+           }
+         });
+       } else {
+         reject(false);
+       }
+    });
   }
 
   getToken() {

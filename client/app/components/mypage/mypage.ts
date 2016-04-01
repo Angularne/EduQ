@@ -15,6 +15,8 @@ export class MypageComponent{
   constructor(public userService:UserService){
     this.userService.getUser().then((user) =>{
       this.user = user;
+
+
     });
   }
 }

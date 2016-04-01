@@ -16,6 +16,19 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
+/** GET: Get all user */
+router.get('/all', (req: Request, res: Response, next: NextFunction) => {
+  /** TODO Hvem kan hente brukerinfo */
+
+  User.find({}).populate('subjects.subject', 'code name tasks').lean().exec((err, user) => {
+    if (!err) {
+      res.json(user);
+    } else {
+      res.json(err);
+    }
+  });
+});
+
 /** GET: Get user */
 router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
   /** TODO Hvem kan hente brukerinfo */
@@ -88,6 +101,7 @@ router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
     }
   });
 });
+
 
 
 /**

@@ -21,6 +21,8 @@
   "files": [
     "app/app.ts",
     "app/boot.ts",
+    "app/common/headers.ts",
+    "app/common/LoggedInOutlet.ts",
     "app/components/broadcast/broadcast.ts",
     "app/components/broadcasts/broadcasts.ts",
     "app/components/customer/customer.ts",
