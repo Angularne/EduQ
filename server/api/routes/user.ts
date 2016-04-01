@@ -16,6 +16,7 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
+
 /** GET: Get user */
 router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
   /** TODO Hvem kan hente brukerinfo */
@@ -28,6 +29,7 @@ router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
     }
   });
 });
+
 
 /** POST: Create new user */
 router.post('/',(req: Request, res: Response, next: NextFunction) => {

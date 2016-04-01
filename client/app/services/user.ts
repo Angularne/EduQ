@@ -37,6 +37,7 @@ export class UserService {
       }
     });
   }
+
   removeLocalUser() {
     this.user = undefined;
     localStorage.removeItem('user');

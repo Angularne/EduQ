@@ -9,7 +9,6 @@ export class AuthService {
   http: Http;
 
 
-
   constructor(@Inject(Http) http: Http) {
     console.log('auth.service');
     this.token = localStorage.getItem('token');

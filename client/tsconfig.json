@@ -21,8 +21,10 @@
   "files": [
     "app/app.ts",
     "app/boot.ts",
+    "app/components/adminpage/adminpage.ts",
     "app/components/broadcast/broadcast.ts",
     "app/components/broadcasts/broadcasts.ts",
+    "app/components/commons/headers.ts",
     "app/components/customer/customer.ts",
     "app/components/customers/customers.ts",
     "app/components/login/login.ts",
