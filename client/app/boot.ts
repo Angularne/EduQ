@@ -12,6 +12,6 @@ import {AuthService} from "./services/auth.service";
 bootstrap(App, [
   ROUTER_PROVIDERS,
   HTTP_PROVIDERS,
-  provide(LocationStrategy, {useClass: HashLocationStrategy}),
+//  provide(LocationStrategy, {useClass: HashLocationStrategy}),
   AuthService
 ]);

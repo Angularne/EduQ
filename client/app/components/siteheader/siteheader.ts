@@ -16,6 +16,7 @@ import {User} from '../../interfaces/user';
 
 export class SiteHeaderComponent implements OnInit {
   user: User;
+  activeSite: string;
 
   constructor(public router: Router, public auth: AuthService) {
   }
@@ -25,7 +26,6 @@ export class SiteHeaderComponent implements OnInit {
 
   ngOnInit() {
     this.auth.authenticated$.subscribe((val) => {
-      console.log('loggen in: ' + val);
       if (val) {
         this.auth.getUser().then((user) => {
           this.user = user;
@@ -33,6 +33,10 @@ export class SiteHeaderComponent implements OnInit {
       } else {
         this.user = null;
       }
+    });
+
+    this.router.subscribe((path: string)=> {
+      this.activeSite = path.split('/')[0];
     });
 
 

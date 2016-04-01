@@ -18,7 +18,6 @@ import {SiteHeaderComponent} from './components/siteheader/siteheader';
   <br>
   <br>
   <br>
-  <br>
   <auth-router-outlet></auth-router-outlet>`,
   directives: [LoggedInRouterOutlet, SiteHeaderComponent],
   providers:[UserService]
@@ -33,20 +32,6 @@ import {SiteHeaderComponent} from './components/siteheader/siteheader';
 ])
 
 
-export class App implements CanDeactivate{
-  auth: AuthService;
-
-  constructor(public router: Router, @Inject(AuthService) auth: AuthService) {
-    this.auth = auth;
-    if (this.auth.isAuthenticated()) {
-    //  this.router.navigate(['MainPath']);
-    } else {
-    //  this.router.navigate(['LoginPath']);
-    }
-  }
-
-  routerCanDeactivate(next: ComponentInstruction, prev: ComponentInstruction) {
-    return isLoggedin();
-  }
-
+export class App {
+  constructor(public router: Router, public auth: AuthService) {}
 }

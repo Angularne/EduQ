@@ -77,11 +77,10 @@ export class AuthService {
 
   logout() {
 
-    this.token = undefined;
-    this.authenticated$.value = false;
+    this.token = null;
+    this.user = null;
     sessionStorage.removeItem('authToken');
-    localStorage.removeItem('token');
-
+    this.authenticated$.value = false;
     return Observable.of(true);
   }
 
@@ -108,6 +107,7 @@ export class AuthService {
            if (user) {
              resolve(user)
            } else {
+             this.logout();
              reject(user);
            }
          });
