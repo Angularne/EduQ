@@ -26,12 +26,13 @@ export class LoginComponent {
 
   onSubmit(value: any) {
     this.auth.authenticate(value.username, value.password)
-      .subscribe(
-        (token: any) => {
-          this.router.navigate(['MainPath']);
-          console.log('loggin in: ' + token);
-        },
-        (err) => {console.log(err); this.error = true; }
-      );
+    .then((authenticated: boolean) => {
+      if (authenticated) {
+          this.router.navigate(['SocketPath']);
+        }
+      }).catch((err) => {
+        console.log(err);
+        this.error = true;
+      });
   }
 }

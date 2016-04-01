@@ -8,7 +8,7 @@ import basicAuth = require('basic-auth');
 var router = express.Router();
 
 let secret = 'qwerty';
-let authType = 'JWT';
+let authType = 'Basic Auth';
 
 router.post('/auth/login', (req: Request, res: Response, next: NextFunction) => {
 
@@ -24,6 +24,47 @@ router.post('/auth/login', (req: Request, res: Response, next: NextFunction) => 
 
     default:
     res.end();
+  }
+});
+
+router.post('/auth/validate', (req: Request, res: Response, next: NextFunction) => {
+  let data = basicAuth(req);
+  if (data && data.name && data.pass) {
+    authenticateUser(data.name, data.pass, (err, user) => {
+      if (!err && user) {
+        // Correct username and password
+        res.end();
+      } else {
+        res.status(403);
+        res.end();
+      }
+    });
+  } else {
+    unauthorized(res);
+  }
+});
+
+router.post('/auth/token', (req: Request, res: Response, next: NextFunction) => {
+  // check header or url parameters or post parameters for token
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  // decode token
+  if (token) {
+
+    // verifies secret and checks exp
+    jwt.verify(token, secret,
+      (err, decoded) => {
+        if (err) {
+          res.status(403);
+          res.json({ success: false, message: 'Failed to authenticate token.' });
+          res.end();
+        } else {
+          res.json({});
+        }
+      }
+    );
+  } else {
+    res.status(403);
+    res.json({ success: false, message: 'Failed to authenticate token.' });
   }
 });
 
@@ -82,9 +123,9 @@ function authenticateJWT(req: Request, res: Response, next: NextFunction) {
 }
 
 
-switch (authType) {
-  case 'JWT':
+
   /** Using jwt to authenticate */
+  /*
   router.use((req, res, next) => {
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -113,9 +154,7 @@ switch (authType) {
       res.json({ success: false, message: 'Failed to authenticate token.' });
     }
   });
-  break;
 
-  case 'Basic Auth':
   /** Using basic auth */
   router.use((req: Request, res: Response, next: NextFunction) => {
     let data = basicAuth(req);
@@ -133,8 +172,7 @@ switch (authType) {
       unauthorized(res);
     }
   });
-  break;
-}
+
 
 
 function unauthorized(res) {

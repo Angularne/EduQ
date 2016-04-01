@@ -7,6 +7,7 @@ import {Broadcast} from '../interfaces/broadcast';
 import {AuthService} from './auth.service';
 import {UserService} from './user';
 import {Binding} from './binding';
+import {authHeaders} from '../common/headers';
 
 let SERVER_ADDRESS = 'http://158.38.188.119:3001';
 
@@ -83,9 +84,7 @@ export class SubjectService {
 //http://158.38.188.119:3000/api/subject/${code}
   fetchSubject(code: string) {
     return this.http.get(`api/subject/${code}`, {
-       headers: new Headers({
-         'x-access-token': this.authService.getToken()
-       })
+       headers: authHeaders()
      })
      .map((res : any) => {
        let data = res.json();

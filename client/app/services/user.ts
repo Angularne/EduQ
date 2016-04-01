@@ -3,22 +3,27 @@ import {Http, Headers} from "angular2/http";
 import {Subject} from '../interfaces/subject';
 import {User} from "../interfaces/user";
 import {AuthService} from './auth.service';
-
+import {authHeaders} from '../common/headers';
 @Injectable()
 export class UserService {
   user: User;
 
 
   constructor(public http: Http, public authService: AuthService) {
-    console.log('UserService Constructor');
-    this.fetchUser();
+    this.authService.authenticated$.subscribe((auth) => {
+      if (auth) {
+        this.authService.getUser().then((user) => {
+          this.user = user;
+        }).catch((err)=>{});
+      } else {
+        this.user = null;
+      }
+    });
   }
 
   fetchUser() {
     return this.http.get('/api/user', {
-       headers: new Headers({
-         'x-access-token': this.authService.getToken()
-       })
+       headers: authHeaders()
      })
      .map((res : any) => {
        let data = res.json();
@@ -31,7 +36,13 @@ export class UserService {
   getUser() {
     return new Promise<User>((resolve, reject) => {
       if (!this.user) {
-        this.fetchUser().subscribe((user) => resolve(user));
+        //this.fetchUser().subscribe((user) => resolve(user));
+        this.authService.getUser().then((user) => {
+          this.user = user;
+          resolve(user);
+        }).catch((err)=>{
+          reject(err);
+        })
       } else {
         resolve(this.user);
       }
@@ -55,6 +66,26 @@ export class UserService {
           resolve(this.user.subjects[index].role);
         }
       }
+    });
+  }
+
+  getAllUsers() {
+
+    return new Promise<User[]>((resolve, reject) => {
+      this.http.get('/api/user/all', {headers: authHeaders()}).map(res=>{
+        if (res.status == 200) {
+          return res.json();
+        } else {
+          return false;
+        }
+
+      }).subscribe((res)=>{
+        if (res) {
+          resolve(res);
+        } else {
+          reject(false);
+        }
+      });
     });
   }
 }
