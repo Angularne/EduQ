@@ -24,6 +24,7 @@
     "app/common/headers.ts",
     "app/common/LoggedInOutlet.ts",
     "app/components/adminpage/adminpage.ts",
+    "app/components/adminpage/editsubject/editsubject.ts",
     "app/components/broadcast/broadcast.ts",
     "app/components/broadcasts/broadcasts.ts",
     "app/components/commons/headers.ts",

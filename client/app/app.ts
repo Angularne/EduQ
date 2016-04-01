@@ -7,6 +7,7 @@ import {SocketController} from "./components/socket/socket";
 import {SubjectsComponent} from './components/subjects/subjects';
 import {AuthService} from './services/auth.service';
 import {MypageComponent} from './components/mypage/mypage';
+import {AdminpageComponent} from "./components/adminpage/adminpage";
 import {LoggedInRouterOutlet} from './common/LoggedInOutlet';
 import {UserService} from './services/user';
 import {SiteHeaderComponent} from './components/siteheader/siteheader';
@@ -29,7 +30,8 @@ import {SiteHeaderComponent} from './components/siteheader/siteheader';
   {path: '/login', component: LoginComponent, as: 'LoginPath'},
   {path: '/socket', component: SocketController, as: 'SocketPath', useAsDefault: true},
   {path: '/subjects/:code', component: SubjectsComponent, as: 'SubjectsPath'},
-  {path: '/mypage', component: MypageComponent, as: 'MypagePath'}
+  {path: '/mypage', component: MypageComponent, as: 'MypagePath'},
+  {path: '/adminpage', component: AdminpageComponent, as: 'AdminpagePath'}
 ])
 
 

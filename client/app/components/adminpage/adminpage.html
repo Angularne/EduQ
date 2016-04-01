@@ -1,0 +1,6 @@
+<ul>
+  <li *ngFor="#subject of subjects">
+    <editsubject [subject]="subject" (onEnd)="closeEditPane($event)"> </editsubject>
+  </li>
+</ul>
+<editsubject (onEnd)="closeEditPane($event)"></editsubject>

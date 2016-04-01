@@ -105,6 +105,26 @@ export class SubjectService {
       }
     });
   }
+
+  getAllSubjects() {
+    return new Promise<Subject[]>((resolve, reject) => {
+      this.http.get('/api/subject/', {headers: authHeaders()}).map(res=>{
+        if (res.status == 200) {
+          return res.json();
+        } else {
+          return false;
+        }
+
+      }).subscribe((res)=>{
+        if (res) {
+          resolve(res);
+        } else {
+          reject(false);
+        }
+      });
+    });
+  }
+
   getUserSubjectRole(code: string) {
     return new Promise<string>((resolve, reject) => {
       if (this.subject && this.subject.code === code) {
@@ -112,6 +132,30 @@ export class SubjectService {
       } else {
         this.fetchSubject(code).subscribe(() =>resolve(this.userService.getUserRole(code)));
       }
+    });
+  }
+
+  addNewSubject(subject:Subject){
+    return new Promise<Subject>((resolve, reject) => {
+      this.http.post("api/subject/",JSON.stringify(subject), {headers: authHeaders()}).subscribe((res)=>{
+        if(res.status==201){
+          resolve(res.json());
+        }else{
+          reject(res);
+        }
+      });
+    });
+  }
+
+  updateSubject(subject: Subject) {
+    return new Promise<Subject>((resolve, reject) => {
+      this.http.put("api/subject/" + subject.code,JSON.stringify(subject), {headers: authHeaders()}).subscribe((res)=>{
+        if(res.status==201){
+          resolve(res.json());
+        }else{
+          reject(res);
+        }
+      });
     });
   }
 }

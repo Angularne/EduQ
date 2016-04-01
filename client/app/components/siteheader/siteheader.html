@@ -15,6 +15,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li *ngIf="user" class="active"><a [routerLink]="['MypagePath']">Mypage</a></li>
+        <li *ngIf="user"><a [routerLink]="['AdminpagePath']">Adminpage</a></li>
         <li *ngIf="user" class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Subjects <span class="caret"></span></a>
           <ul class="dropdown-menu">

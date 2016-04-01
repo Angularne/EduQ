@@ -6,5 +6,6 @@ export function authHeaders() {
   if (batoken) {
     headers.append('Authorization', `Basic ${batoken}`);
   }
+  headers.append("Content-Type","application/json");
   return headers;
 }
