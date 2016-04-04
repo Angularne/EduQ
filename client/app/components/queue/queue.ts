@@ -18,7 +18,6 @@ export class QueueComponent{
   queue: Queue;
   students: User[] = [];
   usersSelected: User[] = [];
-  @Output() toggleQueue = new EventEmitter();
   constructor(public subjectService: SubjectService) {
     this.subjectService.queue.subscribe((value) => {
       this.queue = value;
@@ -41,17 +40,16 @@ export class QueueComponent{
   }
 
   toggleQueueButton() {
-    this.queue.active = !this.queue.active;
+    this.subjectService.toggleQueueActive(this.queue.active);
   }
-  addElement(users: User[]) {
-    //this.subjectService.addQueueElement(users);
+  addQueueElement() {
+    this.subjectService.addQueueElement(this.usersSelected);
   }
-  removeElement(element: any) {
-    //Make sure we find the element, or else the last element would be deleted.
-    if (this.queue.list.indexOf(element) != -1) {
-      this.queue.list.splice(this.queue.list.indexOf(element), 1);
-    }
-    //this.subjectService.removeQueueElement(element);
+  deleteFromQueue() {
+    this.subjectService.deleteFromQueue();
+  }
+  removeQueueElement(element: any) {
+    this.subjectService.removeQueueElement(element);
   }
   helpQueueElement() {
     console.error('Error: QueueComponent.helpQueueElement not implemented!');
@@ -59,7 +57,7 @@ export class QueueComponent{
   delayQueueElement() {
     console.error('Error: QueueComponent.delayQueueElement not implemented!');
   }
-  acceptTask() {
+  acceptTask(element: any) {
     console.error('Error: QueueComponent.acceptTask not implemented!');
   }
 }

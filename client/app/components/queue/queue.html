@@ -3,8 +3,8 @@
 <div *ngIf="queue?.active">
   <div>
     Users in subject: <br>
-    <select multiple *ngFor="#user of students">
-      <option (click)="selectUser(user)">Hello{{user._id}}{{user.firstname}} {{user.lastname}}</option>
+    <select multiple>
+      <option (click)="selectUser(user)" *ngFor="#user of students">Hello{{user._id}}{{user.firstname}} {{user.lastname}}</option>
     </select>
   </div>
   <div>
@@ -13,9 +13,9 @@
       <li *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">Good Bye {{selectedUser._id}} {{selectedUser.firstname}} {{selectedUser.lastname}}</li>
     </ul>
   </div>
-  <button (click)="addElement()">Queue</button>
+  <button (click)="addQueueElement()">Queue</button>
   <ul *ngFor="#element of queue?.list">
-    <li> <queue-element [element]="element" (removeElement)="removeElement(element)">Loading queue-element...</queue-element></li>
+    <li> <queue-element [element]="element" (removeElement)="removeQueueElement(element)">Loading queue-element...</queue-element></li>
   </ul>
 </div>
 <div *ngIf="!queue?.active">
