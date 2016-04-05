@@ -4,12 +4,14 @@ import {SubjectService} from '../../services/subject';
 import {Subject} from '../../interfaces/subject';
 import {QueueComponent} from '../queue/queue';
 import {BroadcastComponent} from '../broadcasts/broadcasts';
+import {EditSubjectComponent} from '../edit.subject/edit.subject';
+import {EditSubjectUsersComponent} from '../edit.subject.users/edit.subject.users';
 
 @Component({
   selector: 'subjects',
   templateUrl: 'app/components/subjects/subjects.html',
   providers: [SubjectService],
-  directives: [QueueComponent, BroadcastComponent]
+  directives: [QueueComponent, BroadcastComponent, EditSubjectComponent, EditSubjectUsersComponent]
 })
 
 export class SubjectsComponent {

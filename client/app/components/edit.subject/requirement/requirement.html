@@ -1,0 +1,44 @@
+<div class="col-xs-offset-2 col-sm-offset-2 col-md-offset-2" [bscol]="10">
+  <div class="row">
+    <div [bscol]="11">
+      <span class="label label-default">Fra</span>
+
+      <select [ngModel]=" requirement.start" (ngModelChange)="setStart($event)">
+        <option *ngFor="#i of (requirement.end | range)" [value]="i">
+          {{i}}
+        </option>
+      </select>
+
+      <span class="label label-default">til</span>
+
+      <select [ngModel]=" requirement.end" (ngModelChange)="setEnd($event)">
+        <option *ngFor="#i of ([requirement.start, count] | range)" [value]="i">
+          {{i}}
+        </option>
+      </select>
+
+      <span class="label label-default">må</span>
+
+      <select [ngModel]="requirement.required" (ngModelChange)="setRequired($event)">
+        <option *ngFor="#i of ([1, requirement.end - requirement.start + 1] | range)" [value]="i">
+          {{i}}
+        </option>
+      </select>
+
+      <span class="label label-default">
+        <span  [ngSwitch]="requirement.required">
+          <template [ngSwitchWhen]="1">
+            øving være godkjent
+          </template>
+          <template ngSwitchDefault>
+            øvinger være godkjente
+          </template>
+        </span>
+      </span>
+    </div>
+    <div [bscol]="1">
+      <span class="label label-danger btn" (click)="remove.emit('')">-</span>
+    </div>
+  </div>
+  <hr>
+</div>

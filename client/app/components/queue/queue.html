@@ -3,14 +3,14 @@
 <div *ngIf="queue?.active">
   <div>
     Users in subject: <br>
-    <select multiple *ngFor="#user of students">
-      <option (click)="selectUser(user)">Hello{{user._id}}{{user.firstname}} {{user.lastname}}</option>
+    <select multiple >
+      <option *ngFor="#user of students" (click)="selectUser(user)">{{user.firstname}} {{user.lastname}}</option>
     </select>
   </div>
   <div>
     User to add: <br>
     <ul>
-      <li *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">Good Bye {{selectedUser._id}} {{selectedUser.firstname}} {{selectedUser.lastname}}</li>
+      <li *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</li>
     </ul>
   </div>
   <button (click)="addElement()">Queue</button>

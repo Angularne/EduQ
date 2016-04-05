@@ -1,0 +1,50 @@
+<h3>Edit Subject <span class="label label-success" *ngIf="new">New</span></h3>
+<form class="container">
+
+  <!-- Code -->
+  <div class="form-group row">
+    <label class="form-control-label" [bscol]="1" for="code">Code</label>
+    <div [bscol]="6" >
+      <input class="form-control"  name="code" [(ngModel)]="subject.code" required [disabled]="!new">
+    </div>
+  </div>
+
+  <!-- Name -->
+  <div class="form-group row">
+    <label class="form-control-label" [bscol]="1" for="name">Name</label>
+    <div [bscol]="6">
+      <input class="form-control" name="name" [(ngModel)]="subject.name" required>
+    </div>
+  </div>
+  <hr>
+  <!-- Tasks -->
+  <div class="form-group row">
+    <label class="form-control-label" [bscol]="1" for="count">Tasks</label>
+    <div [bscol]="6">
+      <input class="form-control" type="number" name="count" [(ngModel)]="subject.tasks.count" min="0" >
+    </div>
+  </div>
+
+  <!-- Requirements -->
+  <div class="form-group row">
+    <div [bscol]="2">
+      <label class="form-control-label">Requirements</label>
+    </div>
+    <div class="col-sm-offset-9 btn-group" [bscol]="1">
+      <span class="label label-success btn" (click)="addRequirement()">+</span>
+    </div>
+  </div>
+
+  <edit-requirement class="row" *ngFor="#req of subject.tasks.requirements; #i = index" [count]="subject.tasks.count" [requirement]="req" (remove)="removeRequirement(i)"></edit-requirement>
+  <hr>
+
+  <!-- Cancel Save buttons -->
+  <div class="row">
+    <div class="col-xs-offset-8 col-sm-offset-8 col-md-offset-8 col-lg-offset-8" [bscol]="2">
+      <button class="btn btn-default" type="button">Cancel</button>
+    </div>
+    <div [bscol]="2">
+      <button class="btn btn-success" type="button">Save</button>
+    </div>
+  </div>
+</form>
