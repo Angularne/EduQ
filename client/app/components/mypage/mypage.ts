@@ -3,10 +3,12 @@ import {UserService} from "../../services/user";
 import {User} from "../../interfaces/user";
 import {SubjectTaskDetailComponent} from "./subject/subject";
 
+import {EditUserComponent} from '../edit.user/edit.user';
+
 @Component({
   selector: 'mypage',
   templateUrl: 'app/components/mypage/mypage.html',
-  directives: [SubjectTaskDetailComponent]
+  directives: [SubjectTaskDetailComponent, EditUserComponent]
 })
 
 export class MypageComponent{

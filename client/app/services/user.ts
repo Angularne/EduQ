@@ -1,5 +1,5 @@
 import {Injectable, Inject} from 'angular2/core';
-import {Http, Headers} from "angular2/http";
+import {Http, Headers, Request, RequestMethod} from "angular2/http";
 import {Subject} from '../interfaces/subject';
 import {User} from "../interfaces/user";
 import {AuthService} from './auth.service';
@@ -88,6 +88,36 @@ export class UserService {
       });
     });
   }
+
+  saveUser(user: User) {
+    var request: Request = new Request({
+      url: '/api/user/',
+      headers: authHeaders(),
+      body: JSON.stringify(user)
+    });
+
+    if (user._id) {
+      // _id exists - update user
+      request.method = RequestMethod.Put;
+      request.url += user._id;
+    } else {
+      // create new user
+      request.method = RequestMethod.Post;
+    }
+
+    return this.http.request(request).map((res) => {
+    
+      if (res.status == 200 || res.status == 201) {
+        // User saved
+        return res.json();
+      } else {
+        // Error
+        console.error(res);
+        return false;
+      }
+    });
+  }
+
 }
 
 

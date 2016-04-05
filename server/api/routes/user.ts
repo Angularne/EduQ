@@ -77,10 +77,21 @@ router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
   if (String(req.authenticatedUser._id) === id) {
 
     // Remove subjects from update
-    var user = req.params.body;
+    var user = req.body;
     delete user.subjects;
+    delete user.__v;
 
-    User.findOneAndUpdate({_id: id}, user, (err: any, user: IUser) => {
+    var cond: any = {
+      _id: id
+    };
+
+    if (user.password) {
+      cond.password = user.oldPassword;
+      
+      delete user.oldPassword;
+    }
+
+    User.findOneAndUpdate(cond, user, (err: any, user: IUser) => {
       if (!err) {
         res.json(user);
       } else {

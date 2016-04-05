@@ -1,0 +1,74 @@
+<h3><span *ngIf="new">Add</span><span *ngIf="!new">Edit</span> User  </h3>
+
+<form class="container">
+
+  <!-- Firstname -->
+  <div class="form-group row">
+    <label class="form-control-label" [bscol]="2" for="firstname">Firstname</label>
+    <div [bscol]="6" >
+      <input class="form-control"  name="firstname" [(ngModel)]="user.firstname" required [disabled]="!canEdit['name']">
+    </div>
+  </div>
+
+  <!-- Lastname -->
+  <div class="form-group row">
+    <label class="form-control-label" [bscol]="2" for="lastname">Lastname</label>
+    <div [bscol]="6">
+      <input class="form-control" name="lastname" [(ngModel)]="user.lastname" required [disabled]="!canEdit['name']">
+    </div>
+  </div>
+  <hr>
+
+  <!-- Email -->
+  <div class="form-group row">
+    <label class="form-control-label" [bscol]="2" for="email">Email</label>
+    <div [bscol]="6">
+      <input class="form-control" type="email" name="email" [(ngModel)]="user.email" [disabled]="!canEdit['email']" >
+    </div>
+  </div>
+  <hr>
+
+  <div class="" *ngIf="!new">
+    <!-- Old Password -->
+    <div class="form-group row">
+      <label class="form-control-label" [bscol]="2" for="oldpw" >Change Password</label>
+      <div [bscol]="6">
+        <input class="form-control" type="password" name="oldpw" [(ngModel)]="oldpw" placeholder="Old Password" [disabled]="!canEdit['password']">
+      </div>
+    </div>
+
+    <!-- New Password -->
+    <div class="form-group row">
+      <label class="form-control-label" [bscol]="2" for="oldpw" ></label>
+      <div [bscol]="6">
+        <input class="form-control" type="password" name="newpw" [(ngModel)]="newpw" min="0" placeholder="New Password" [disabled]="!canEdit['password']">
+      </div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="form-group row">
+      <label class="form-control-label" [bscol]="2" for="confpw" ></label>
+      <div [bscol]="6">
+        <input class="form-control" type="password" name="confpw" [(ngModel)]="confpw" placeholder="Confirm" [disabled]="!canEdit['password']">
+      </div>
+    </div>
+  </div>
+
+  <!-- New user needs password -->
+  <div class="" *ngIf="new">
+    <div class="form-group row">
+      <label class="form-control-label" [bscol]="2" for="pw" >Password</label>
+      <div [bscol]="6">
+        <input class="form-control" type="password" name="pw" [(ngModel)]="user.password" placeholder="Password">
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Save buttons -->
+  <div class="row">
+    <div class="text-right" [bscol]="8">
+      <button class="btn btn-default" type="button">Cancel</button>
+      <button class="btn btn-success" type="submit" (click)="onSubmit()">Save</button>
+    </div>
+  </div>
+</form>
