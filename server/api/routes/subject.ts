@@ -644,7 +644,9 @@ router.delete('/:code/task', (req: Request, res: Response, next: NextFunction) =
  * Check if user has access to subject. Use path = 'code' to compare code, defaults to '_id'
  */
 function checkAccess(user: IUser, subject, role: RegExp, path: string = '_id') {
-  /** TODO Hvis superbruker, gi tilgang?*/
+  if (user.rights == 'Admin') {
+    return true;
+  }
   switch (path) {
     case 'code':
     for (var sub of user.subjects) {

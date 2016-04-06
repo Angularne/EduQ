@@ -13,14 +13,9 @@ export class AuthService {
   }
   authenticated$ : Binding<boolean> = new Binding<boolean>(false);
   token: string;
-
   user: User;
 
-
-
   constructor(private http: Http) {
-
-    //this.authenticated = !!this.token;
     this.token = sessionStorage.getItem("authToken")
     if (this.token) {
       this.http.get('/api/user/', {headers: new Headers({
@@ -31,14 +26,9 @@ export class AuthService {
           if (res.status == 200) {
             this.user = res.json();
             this.authenticated$.value = true;
-            console.log('Authenticated');
           }
         });
     }
-  }
-
-  isAuthenticated() {
-    return this.authenticated;
   }
 
 
@@ -46,7 +36,7 @@ export class AuthService {
     return new Promise<boolean>((resolve, reject) => {
       let authToken = btoa(`${username}:${password}`);
 
-      this.http.post('/api/auth/login', JSON.stringify({username:username,password:password}), {
+      this.http.post('/api/auth/login', '', {
           headers: new Headers({
             'Content-Type': 'application/json',
             'Authorization': `Basic ${authToken}`
@@ -97,13 +87,11 @@ export class AuthService {
            headers: authHeaders()
          })
          .map((res) => {
-           console.log(res);
            if (res.status == 200) {
              return res.json();
            }
            return false;
          }).subscribe((user) => {
-           console.log(user);
            if (user) {
              resolve(user)
            } else {

@@ -6,8 +6,8 @@ export interface IUser extends mongoose.Document {
   lastname: string;
   email: string;
   password: string;
-  classOf?: string; // Ikke lagt til i Schema
-
+  rights: string;
+  classOf?: string;
   subjects: [
     {
       subject:any;
@@ -22,6 +22,8 @@ let UserSchema: mongoose.Schema = new mongoose.Schema({
   lastname: String,
   email: {type:String, unique: true},
   password: {type:String, select:false},
+  rights: {type: String, enum: ['Admin', 'Teacher', 'Student'], default: 'Student'},
+  classOf: String,
   subjects: [
     {
       subject: {type: mongoose.Schema.Types.ObjectId, ref: 'Subject'},

@@ -6,6 +6,9 @@ export interface User {
   lastname: string;
 	email: string;
 	password?: string;
+  classOf: string;
+  rights: string;
+
   subjects: UserSubjects[]
 }
 

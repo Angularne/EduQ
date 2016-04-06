@@ -1,7 +1,6 @@
 import {Component, Inject} from 'angular2/core';
 import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup, NgIf} from 'angular2/common';
 import {Router, CanActivate} from 'angular2/router';
-import {isLoggedin}  from '../main/is-loggedin';
 import {AuthService} from "../../services/auth.service";
 
 @Component({
@@ -10,7 +9,6 @@ import {AuthService} from "../../services/auth.service";
   directives: [FORM_DIRECTIVES, NgIf],
 })
 
-@CanActivate(() => !isLoggedin())
 export class LoginComponent {
   form: ControlGroup;
   error: boolean = false;
@@ -22,13 +20,23 @@ export class LoginComponent {
       username:  ['', Validators.required],
       password:  ['', Validators.required]
     });
+
+
+    this.auth.authenticated$.subscribe((authenticated) => {
+      if (authenticated) {
+        this.router.navigate(['MainPath']);
+
+      }
+    });
   }
+
+
 
   onSubmit(value: any) {
     this.auth.authenticate(value.username, value.password)
     .then((authenticated: boolean) => {
       if (authenticated) {
-          this.router.navigate(['SocketPath']);
+          this.router.navigate(['MainPath']);
         }
       }).catch((err) => {
         console.log(err);

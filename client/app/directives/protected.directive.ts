@@ -12,7 +12,7 @@ export class ProtectedDirective implements OnDestroy {
 
     constructor(private authService:AuthService, private router:Router, private location:Location) {
         console.log('ProtectedDirective');
-        if (!authService.isAuthenticated()) {
+        if (!authService.authenticated) {
             this.location.replaceState('/');
             this.router.navigate(['LoginPath']);
         }

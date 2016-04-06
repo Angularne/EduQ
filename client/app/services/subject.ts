@@ -76,12 +76,9 @@ export class SubjectService {
   students: Binding<User[]> = new Binding<User[]>();
 
   constructor(public http: Http, public authService: AuthService, public userService: UserService) {
-    console.log("ISubjectService");
-    this.http = http;
     //this.setupSocket();
   }
-  ///api/subject/${code}
-//http://158.38.188.119:3000/api/subject/${code}
+
   fetchSubject(code: string) {
     return this.http.get(`api/subject/${code}`, {
        headers: authHeaders()

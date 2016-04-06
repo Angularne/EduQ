@@ -22,20 +22,13 @@ export class EditUserComponent implements OnInit {
     } else {
       this._user = user;
     }
+    this.setEdits();
   }
 
   @Input() new: boolean = false;
 
 
-  @Input() set add(e) {
-    console.log(e);
-  }
-
-  private canEdit = {
-    'name': false,
-    'email': false,
-    'password': false
-  }
+  private canEdit: any = {};
 
 
   private oldpw: string;
@@ -51,16 +44,23 @@ export class EditUserComponent implements OnInit {
         firstname: '',
         lastname: '',
         email: '',
+        rights: 'Student',
+        classOf: '',
         subjects: []
       };
     }
 
+
+  }
+
+  setEdits() {
     this.auth.getUser().then((user) => {
-    //if (user.admin) {
+      this.canEdit = {};
+      if (user.rights == "Admin") {
         this.canEdit['name'] = true;
         this.canEdit['email'] = true;
-        this.canEdit['password'] = true;
-    //} else
+        this.canEdit['classOf'] = true;
+      }
       if (user._id == this.user._id) {
         // This is me
         this.canEdit['password'] = true;
@@ -72,7 +72,7 @@ export class EditUserComponent implements OnInit {
     return this.user.firstname.trim() != ''
     && this.user.lastname.trim() != ''
     && (!(this.oldpw || this.newpw || this.confpw) || (this.oldpw && this.newpw && this.newpw == this.confpw))
-    /** TODO: Match RegExp */
+    /** TODO: Match email RegExp */
     // && this.user.email
     ;
   }
@@ -83,13 +83,12 @@ export class EditUserComponent implements OnInit {
       console.log(this.user);
       var user: any = this.user;
 
-      if (this.oldpw && this.newpw && this.newpw == this.confpw) {
+      if (!this.new) {
         user.oldPassword = this.oldpw;
         user.password = this.newpw;
       }
-
       this.userService.saveUser(user).subscribe((user) => {
-        console.log(user);
+        console.log('User saved');
       });
     }
   }

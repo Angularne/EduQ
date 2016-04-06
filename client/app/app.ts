@@ -1,9 +1,7 @@
 import {Component, Inject} from 'angular2/core';
-import {ComponentInstruction, Router, RouteConfig, ROUTER_DIRECTIVES, CanDeactivate} from 'angular2/router';
+import {RouteConfig} from 'angular2/router';
 import {LoginComponent} from "./components/login/login";
 import {MainComponent} from "./components/main/main";
-import {isLoggedin} from './components/main/is-loggedin';
-import {SocketController} from "./components/socket/socket";
 import {SubjectsComponent} from './components/subjects/subjects';
 import {AuthService} from './services/auth.service';
 import {MypageComponent} from './components/mypage/mypage';
@@ -25,15 +23,16 @@ import {SiteHeaderComponent} from './components/siteheader/siteheader';
 })
 
 @RouteConfig([
-  //{path: '/...', component: MainComponent, as: "MainPath"},
+  {path: '/', component: MainComponent, as: 'MainPath', useAsDefault: true},
   {path: '/login', component: LoginComponent, as: 'LoginPath'},
-  {path: '/socket', component: SocketController, as: 'SocketPath', useAsDefault: true},
   {path: '/subjects/:code', component: SubjectsComponent, as: 'SubjectsPath'},
-  {path: '/mypage', component: MypageComponent, as: 'MypagePath'},
-  {path: '/adminpage', component: AdminpageComponent, as: 'AdminpagePath'}
+  {path: '/subjects/:code/edit', component: SubjectsComponent, as: 'SubjectEditPath'},
+  {path: '/me', component: MypageComponent, as: 'MypagePath'},
+  {path: '/adminpage', component: AdminpageComponent, as: 'AdminpagePath'},
+  {path: '/**', redirectTo:['MainPath']}
 ])
 
 
 export class App {
-  constructor(public router: Router, public auth: AuthService) {}
+  constructor(public auth: AuthService) {}
 }

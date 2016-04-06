@@ -26,6 +26,28 @@
       <input class="form-control" type="email" name="email" [(ngModel)]="user.email" [disabled]="!canEdit['email']" >
     </div>
   </div>
+
+
+  <!-- Class of -->
+  <div class="form-group row">
+    <label class="form-control-label" [bscol]="2" for="classOf">Class of</label>
+    <div [bscol]="6">
+      <input class="form-control" type="text" name="classOf" [(ngModel)]="user.classOf" [disabled]="!canEdit['classOf']" >
+    </div>
+  </div>
+
+
+  <!-- Rights -->
+  <div class="form-group row">
+    <label class="form-control-label" [bscol]="2" for="classOf">Rights</label>
+    <div [bscol]="6">
+      <select class="selectpicker form-control" name="rights" [(ngModel)]="user.rights">
+        <option *ngFor="#right of ['Student', 'Teacher', 'Admin'];" [value]="right">
+          {{right}}
+        </option>
+      </select>
+    </div>
+  </div>
   <hr>
 
   <div class="" *ngIf="!new">
@@ -54,6 +76,7 @@
     </div>
   </div>
 
+
   <!-- New user needs password -->
   <div class="" *ngIf="new">
     <div class="form-group row">
@@ -63,6 +86,8 @@
       </div>
     </div>
   </div>
+
+
 
   <!-- Cancel Save buttons -->
   <div class="row">

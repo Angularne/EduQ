@@ -28,20 +28,20 @@ export class SocketController implements OnDestroy, OnInit{
   }
 
   ngOnInit() {
-    this.socket = io.connect(SERVER_ADDRESS);
-
-    this.socket.on('change', (data) => {
-      this.text = data.text;
-      this.clientsConnected = data.clients;
-    });
+    // this.socket = io.connect(SERVER_ADDRESS);
+    //
+    // this.socket.on('change', (data) => {
+    //   this.text = data.text;
+    //   this.clientsConnected = data.clients;
+    // });
   }
   ngOnDestroy() {
-    if (this.socket) {
-      this.socket.close();
-    }
+    // if (this.socket) {
+    //   this.socket.close();
+    // }
   }
 
   send() {
-    this.socket.emit('send', {text: this.text});
+    //this.socket.emit('send', {text: this.text});
   }
 }
