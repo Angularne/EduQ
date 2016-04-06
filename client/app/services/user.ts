@@ -106,7 +106,7 @@ export class UserService {
     }
 
     return this.http.request(request).map((res) => {
-    
+
       if (res.status == 200 || res.status == 201) {
         // User saved
         return res.json();
@@ -119,37 +119,3 @@ export class UserService {
   }
 
 }
-
-
-/*
-var USER: User = {
-    "firstname" : "Håvard",
-    "lastname" : "Tollefsen",
-    "email" : "ht",
-    "password" : "test",
-    "subjects" : [
-      {
-        "subject" : {
-          "code" : "1",
-          "name" : "Math",
-          "broadcasts" : null,
-          "queue" : null,
-          "tasks" : null
-        },
-        "role" : null,
-        "tasks" : null
-      },
-      {
-        "subject" : {
-          "code" : "2",
-          "name" : "Nynorsk",
-          "broadcasts" : null,
-          "queue" : null,
-          "tasks" : null
-        },
-        "role" : null,
-        "tasks" : null
-      }
-    ]
-}
-*/

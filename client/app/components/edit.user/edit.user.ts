@@ -17,7 +17,11 @@ export class EditUserComponent implements OnInit {
   }
 
   @Input() set user(user: User) {
-    this._user = JSON.parse(JSON.stringify(user)); // Copy object
+    if (user) {
+      this._user = JSON.parse(JSON.stringify(user)); // Copy object
+    } else {
+      this._user = user;
+    }
   }
 
   @Input() new: boolean = false;
