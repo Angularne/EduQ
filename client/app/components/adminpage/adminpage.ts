@@ -15,6 +15,7 @@ import {EditsubjectComponent} from "./editsubject/editsubject";
 export class AdminpageComponent{
 users:User[];
 subjects:Subject[];
+selectedSubject: Subject;
 
 
   constructor(public userService:UserService, public subjectService:SubjectService){
@@ -28,6 +29,10 @@ subjects:Subject[];
     this.subjectService.getAllSubjects().then((subjects) =>{
       this.subjects = subjects;
     })
+  }
+
+  setSelectedSubject(i:number){
+    this.selectedSubject = this.subjects[i];
   }
 
   closeEditPane(subject: Subject) {

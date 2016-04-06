@@ -1,4 +1,4 @@
 module.exports = {
   port: 3000,
-  mongodbUrl: 'mongodb://158.38.188.119:27017/queue'
+  mongodbUrl: 'mongodb://158.38.191.202:27017/queue'
 }

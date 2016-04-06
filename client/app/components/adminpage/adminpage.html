@@ -1,6 +1,10 @@
 <ul>
-  <li *ngFor="#subject of subjects">
-    <editsubject [subject]="subject" (onEnd)="closeEditPane($event)"> </editsubject>
+  <li *ngFor="#subject of subjects; #i = index">
+    <button (click)="setSelectedSubject(i)">{{subject.code}} {{subject.name}}</button>
   </li>
 </ul>
-<editsubject (onEnd)="closeEditPane($event)"></editsubject>
+
+<!--
+Change EditSubject to ViewSubject send view new component with EditSubject + View/EditTeacher
+-->
+<editsubject *ngIf="selectedSubject" [subject]="selectedSubject" (onEnd) ="closeEditPane($event)"></editsubject>
