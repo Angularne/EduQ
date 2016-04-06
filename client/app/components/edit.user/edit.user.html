@@ -38,7 +38,7 @@
 
 
   <!-- Rights -->
-  <div class="form-group row">
+  <div class="form-group row" *ngIf="canEdit['rights']">
     <label class="form-control-label" [bscol]="2" for="classOf">Rights</label>
     <div [bscol]="6">
       <select class="selectpicker form-control" name="rights" [(ngModel)]="user.rights">
@@ -92,7 +92,7 @@
   <!-- Cancel Save buttons -->
   <div class="row">
     <div class="text-right" [bscol]="8">
-      <button class="btn btn-default" type="button">Cancel</button>
+      <button class="btn btn-default" type="button" (click)="cancel.emit()">Cancel</button>
       <button class="btn btn-success" type="submit" (click)="onSubmit()">Save</button>
     </div>
   </div>

@@ -11,17 +11,14 @@ export class SubjectTaskDetailComponent{
   tasks: boolean[];
   completed: boolean;
 
-  constructor(){
-    //DOGHOUSE
-  }
+  constructor(){}
 
   get subject(){
     return this._subject;
   }
 
   set subject(subject:any){
-    this._subject=subject;
-    console.log(subject);
+    this._subject = subject;
     this.checkTasks();
   }
 

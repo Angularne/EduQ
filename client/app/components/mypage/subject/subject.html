@@ -1,7 +1,20 @@
-<span *ngIf="completed">Du har godkjent øvingsopplegget</span>
-<span *ngIf="!completed">Du har enda ikke godkjent øvingsopplegget</span>
-<ul>
+<h4 >
+  {{subject.subject.name}}
+<span class="label label-success" *ngIf="completed"  >Completed</span>
+<span class="label label-danger" *ngIf="!completed" >Not completed</span>
+</h4>
+<ul class="list-inline">
   <li *ngFor="#task of tasks; #i = index">
-    {{i + 1}}: {{task}}
+    {{i + 1}}
+    <span *ngIf="task" class="glyphicon glyphicon-ok" ></span>
+    <span *ngIf="!task" class="glyphicon glyphicon-remove" ></span>
+    |
   </li>
 </ul>
+<h5>Requirements</h5>
+<ul>
+  <li *ngFor="#req of subject.subject.tasks.requirements">
+    {{req.required}} of {{req.start}}-{{req.end}}
+  </li>
+</ul>
+<hr>

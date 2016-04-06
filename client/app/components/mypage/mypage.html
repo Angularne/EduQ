@@ -1,12 +1,16 @@
 
-<edit-user [user]="user" >edit user</edit-user>
-<hr>
-<edit-user [new]="true"  >edit user</edit-user>
 
-<hr>
-<ul>
-  <li *ngFor="#subject of user?.subjects">
-    {{subject.subject.name}}
-    <subject-tasks [subject]="subject">Subject tasks loading...</subject-tasks>
-  </li>
-</ul>
+
+<div [ngSwitch]="editing">
+  <template [ngSwitchWhen]="true">
+    <edit-user [user]="user" (saved)="savedUser($event)" (cancel)="editing = false" ></edit-user>
+  </template>
+  <template ngSwitchDefault>
+    <a class="pull-right btn" (click)="editing = true">Edit user</a>
+    <ul class="list-unstyled">
+      <li *ngFor="#subject of user?.subjects">
+        <subject-tasks [subject]="subject">Subject tasks loading...</subject-tasks>
+      </li>
+    </ul>
+  </template>
+</div>

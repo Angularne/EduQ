@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from 'angular2/core';
+import {Component, OnInit, Input, Output, EventEmitter} from 'angular2/core';
 import {UserService} from '../../services/user';
 import {User} from '../../interfaces/user';
 import {AuthService} from '../../services/auth.service';
@@ -27,6 +27,8 @@ export class EditUserComponent implements OnInit {
 
   @Input() new: boolean = false;
 
+  @Output() saved: EventEmitter<User> = new EventEmitter<User>();
+  @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
 
   private canEdit: any = {};
 
@@ -60,10 +62,13 @@ export class EditUserComponent implements OnInit {
         this.canEdit['name'] = true;
         this.canEdit['email'] = true;
         this.canEdit['classOf'] = true;
+        this.canEdit['rights'] = true;
       }
       if (user._id == this.user._id) {
         // This is me
         this.canEdit['password'] = true;
+        delete this.canEdit['rights'];
+
       }
     });
   }
@@ -89,7 +94,12 @@ export class EditUserComponent implements OnInit {
       }
       this.userService.saveUser(user).subscribe((user) => {
         console.log('User saved');
+        this.saved.emit(user);
       });
     }
+  }
+
+  close() {
+    this.cancel.emit('null');
   }
 }

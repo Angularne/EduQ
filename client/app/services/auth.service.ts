@@ -105,8 +105,10 @@ export class AuthService {
     });
   }
 
-  getToken() {
-    return this.token;
+  refreshUser() {
+    this.user = null;
+    this.getUser();
   }
+
 
 }
