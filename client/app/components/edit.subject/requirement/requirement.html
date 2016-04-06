@@ -1,15 +1,13 @@
-<div class="col-xs-offset-2 col-sm-offset-2 col-md-offset-2" [bscol]="10">
-  <div class="row">
-    <div [bscol]="11">
-      <span class="label label-default">Fra</span>
+<div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1" [bscol]="5">
+      <span class="label label-primary">Fra</span>
 
-      <select [ngModel]=" requirement.start" (ngModelChange)="setStart($event)">
+      <select class="selectpicker" [ngModel]=" requirement.start" (ngModelChange)="setStart($event)">
         <option *ngFor="#i of (requirement.end | range)" [value]="i">
           {{i}}
         </option>
       </select>
 
-      <span class="label label-default">til</span>
+      <span class="label label-primary">til</span>
 
       <select [ngModel]=" requirement.end" (ngModelChange)="setEnd($event)">
         <option *ngFor="#i of ([requirement.start, count] | range)" [value]="i">
@@ -17,7 +15,7 @@
         </option>
       </select>
 
-      <span class="label label-default">må</span>
+      <span class="label label-primary">må</span>
 
       <select [ngModel]="requirement.required" (ngModelChange)="setRequired($event)">
         <option *ngFor="#i of ([1, requirement.end - requirement.start + 1] | range)" [value]="i">
@@ -25,7 +23,7 @@
         </option>
       </select>
 
-      <span class="label label-default">
+      <span class="label label-primary">
         <span  [ngSwitch]="requirement.required">
           <template [ngSwitchWhen]="1">
             øving være godkjent
@@ -35,10 +33,8 @@
           </template>
         </span>
       </span>
-    </div>
-    <div [bscol]="1">
-      <span class="label label-danger btn" (click)="remove.emit('')">-</span>
-    </div>
-  </div>
-  <hr>
+</div>
+<div class="text-right" [bscol]="1">
+  <button class="btn btn-danger btn-xs" type="button" (click)="remove.emit('')">-</button>
+
 </div>

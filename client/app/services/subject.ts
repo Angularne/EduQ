@@ -1,5 +1,5 @@
 import {Injectable, Inject} from 'angular2/core';
-import {Http, Headers} from "angular2/http";
+import {Http, Headers, Request, RequestMethod} from "angular2/http";
 import {User} from '../interfaces/user';
 import {Subject} from '../interfaces/subject';
 import {Queue} from '../interfaces/queue';
@@ -153,6 +153,35 @@ export class SubjectService {
           reject(res);
         }
       });
+    });
+  }
+
+
+  saveSubject(subject: Subject) {
+    var request: Request = new Request({
+      url: '/api/subject/',
+      headers: authHeaders(),
+      body: JSON.stringify(subject)
+    });
+
+    if (subject._id) {
+      // _id exists - update user
+      request.method = RequestMethod.Put;
+      request.url += subject.code;
+    } else {
+      // create new subject
+      request.method = RequestMethod.Post;
+    }
+
+    return this.http.request(request).map((res) => {
+      if (res.status == 200 || res.status == 201) {
+        // Subject saved
+        return res.json();
+      } else {
+        // Error
+        console.error(res);
+        return false;
+      }
     });
   }
 }

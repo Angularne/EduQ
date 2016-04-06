@@ -30,21 +30,22 @@
     <div [bscol]="2">
       <label class="form-control-label">Requirements</label>
     </div>
-    <div class="col-sm-offset-9 btn-group" [bscol]="1">
-      <span class="label label-success btn" (click)="addRequirement()">+</span>
+    <div class="col-xs-offset-3 col-sm-offset-3 col-md-offset-3 col-lg-offset-3 text-right" [bscol]="2">
+      <button class="btn btn-success btn-xs" type="button" (click)="addRequirement()">+</button>
     </div>
   </div>
 
-  <edit-requirement class="row" *ngFor="#req of subject.tasks.requirements; #i = index" [count]="subject.tasks.count" [requirement]="req" (remove)="removeRequirement(i)"></edit-requirement>
+  <edit-requirement *ngFor="#req of subject.tasks.requirements; #i = index"
+    class="row" [count]="subject.tasks.count" [requirement]="req"
+  (remove)="removeRequirement(i)"></edit-requirement>
+
   <hr>
 
   <!-- Cancel Save buttons -->
   <div class="row">
-    <div class="col-xs-offset-8 col-sm-offset-8 col-md-offset-8 col-lg-offset-8" [bscol]="2">
-      <button class="btn btn-default" type="button">Cancel</button>
-    </div>
-    <div [bscol]="2">
-      <button class="btn btn-success" type="button">Save</button>
+    <div class="col-xs-offset-5 col-sm-offset-5 col-md-offset-5 col-lg-offset-5 text-right" [bscol]="2">
+      <button class="btn btn-default" type="button" (click)="cancelEdit()">Cancel</button>
+      <button class="btn btn-success" type="button" (click)="save()">Save</button>
     </div>
   </div>
 </form>

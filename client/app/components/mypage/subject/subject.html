@@ -3,11 +3,13 @@
 <span class="label label-success" *ngIf="completed"  >Completed</span>
 <span class="label label-danger" *ngIf="!completed" >Not completed</span>
 </h4>
+
+
 <ul class="list-inline">
-  <li *ngFor="#task of tasks; #i = index">
+  <li *ngFor="#task of tasks; #i = index" >
     {{i + 1}}
-    <span *ngIf="task" class="glyphicon glyphicon-ok" ></span>
-    <span *ngIf="!task" class="glyphicon glyphicon-remove" ></span>
+    <span *ngIf="task" class="glyphicon glyphicon-ok" [style.color]="'green'" ></span>
+    <span *ngIf="!task" class="glyphicon glyphicon-remove" [style.color]="'red'"></span>
     |
   </li>
 </ul>

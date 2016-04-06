@@ -69,6 +69,9 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
 router.put('/:code', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
 
+  console.log('PUT: /subject/'+ code);
+  console.log(checkAccess(req.authenticatedUser, code, /teacher/i, 'code'));
+
   // Check user privileges
   if (!checkAccess(req.authenticatedUser, code, /teacher/i, 'code')) {
     denyAccess(res);
