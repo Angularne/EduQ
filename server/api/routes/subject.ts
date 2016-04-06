@@ -14,9 +14,13 @@ var router = express.Router();
 
  /** GET: List all subjects */
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
-  /** TODO */
-  console.log('Not implemented');
-  res.send('Not implemented');
+  Subject.find({}).lean().exec((err, user) => {
+    if (!err) {
+      res.json(user);
+    } else {
+      res.json(err);
+    }
+  });
 });
 
 /** GET: Get subject */
@@ -42,6 +46,7 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
   /** TODO Kun superbruker kan lage nye emner? */
   // Check body
+  console.log(req.body);
   if (!req.body.code || !req.body.name) {
     res.status(409); // Conflict
     res.json('Code or name not set');
