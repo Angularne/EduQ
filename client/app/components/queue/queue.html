@@ -13,9 +13,9 @@
       <li *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</li>
     </ul>
   </div>
-  <button (click)="addElement()">Queue</button>
+  <button (click)="addQueueElement()">Queue</button>
   <ul *ngFor="#element of queue?.list">
-    <li> <queue-element [element]="element" (removeElement)="removeElement(element)">Loading queue-element...</queue-element></li>
+    <li> <queue-element [element]="element" (removeElement)="removeQueueElement(element)">Loading queue-element...</queue-element></li>
   </ul>
 </div>
 <div *ngIf="!queue?.active">

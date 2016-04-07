@@ -15,7 +15,7 @@ let SERVER_ADDRESS = 'http://158.38.188.119:3001';
 export class SubjectService {
 
   private socket: SocketIOClient.Socket;
-/*
+
   private setupSocket() {
     console.log('setupSocket');
     if (!this.socket) {
@@ -39,24 +39,49 @@ export class SubjectService {
     this.queue.value = data.queue;
     this.broadcasts.value = data.broadcasts;
   }
-*/
+
   addQueueElement(users: User[]) {
-    console.error('Error: SubjectService.addQueueElement not implemented!');
-    //this.socket.emit('addQueueElement', users);
+    this.http.post(`api/subject/${this.subject.code}/queue`, JSON.stringify(users), {
+       headers: new Headers({
+         'x-access-token': this.authService.getToken()
+       })
+     });
+  }
+
+  deleteFromQueue() {
+    this.http.delete(`api/subject/${this.subject.code}/queue`, {
+       headers: new Headers({
+         'x-access-token': this.authService.getToken()
+       })
+     });
   }
 
   removeQueueElement(element: any) {
-    console.error('Error: SubjectService.removeQueueElement not implemented!');
-    //this.socket.emit('removeQueueElement', element);
+    this.http.delete(`api/subject/${this.subject.code}/queue/${element._id}`, {
+       headers: new Headers({
+         'x-access-token': this.authService.getToken()
+       })
+     });
   }
 
-  helpQueueElement() {
-    console.error('Error: SubjectService.helpQueueElement not implemented!');
-    //this.socket.emit('helpQueueElement');
+  helpQueueElement(element: any) {
+    this.http.put(`api/subject/${this.subject.code}/queue/${element._id}`, "", {
+       headers: new Headers({
+         'x-access-token': this.authService.getToken()
+       })
+     });
   }
 
-  acceptTask() {
-    console.error('Error: SubjectService.acceptTask not implemented!');
+  acceptTask(element: any) {
+    var json = {
+      "users": element.users,
+      "tasks": element.tasks
+    }
+    this.http.post(`api/subject/${this.subject.code}/task`, JSON.stringify(json), {
+       headers: new Headers({
+         'x-access-token': this.authService.getToken()
+       })
+     });
   }
 
   delayQueueElement(places: number) {
@@ -64,9 +89,15 @@ export class SubjectService {
     //this.socket.emit('delayQueueElement', places);
   }
 
-  toggleQueueActive() {
-    console.error('Error: SubjectService.toggleQueueActive not implemented!');
-    //this.socket.emit('toggleQueueActive');
+  toggleQueueActive(active: boolean) {
+    var json = {
+      "activate": !active
+    }
+    this.http.put(`api/subject/${this.subject.code}/queue`, JSON.stringify(json), {
+       headers: new Headers({
+         'x-access-token': this.authService.getToken()
+       })
+     });
   }
 
 
