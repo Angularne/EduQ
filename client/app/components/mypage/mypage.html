@@ -6,11 +6,16 @@
     <edit-user [user]="user" (saved)="savedUser($event)" (cancel)="editing = false" ></edit-user>
   </template>
   <template ngSwitchDefault>
-    <a class="pull-right btn" (click)="editing = true">Edit user</a>
-    <ul class="list-unstyled">
-      <li *ngFor="#subject of user?.subjects">
-        <subject-tasks [subject]="subject">Subject tasks loading...</subject-tasks>
-      </li>
-    </ul>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-8">
+          <h3>Subjects</h3>
+        </div>
+        <div class="col-xs-4 text-right">
+          <a class="btn btn-default" (click)="editing = true">Edit user</a>
+        </div>
+      </div>
+      <subject-tasks class="row" *ngFor="#subject of user?.subjects" [subject]="subject">Subject tasks loading...</subject-tasks>
+    </div>
   </template>
 </div>

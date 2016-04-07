@@ -1,6 +1,5 @@
 import {Component, OnInit, OnChanges} from 'angular2/core';
 import {Router, ROUTER_DIRECTIVES} from 'angular2/router';
-import {isLoggedin} from '../main/is-loggedin';
 import {AuthService} from '../../services/auth.service';
 import {Subject} from '../../interfaces/subject';
 import {SubjectsComponent} from '../subjects/subjects';
@@ -20,9 +19,7 @@ export class SiteHeaderComponent implements OnInit {
 
   constructor(public router: Router, public auth: AuthService) {
   }
-  checkLogin() {
-    return isLoggedin();
-  }
+
 
   ngOnInit() {
     this.auth.authenticated$.subscribe((val) => {

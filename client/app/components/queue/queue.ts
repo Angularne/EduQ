@@ -1,6 +1,5 @@
 import {Injector, Component, Output, EventEmitter, OnInit} from 'angular2/core';
 import {CanActivate} from 'angular2/router';
-import {isLoggedin}  from '../main/is-loggedin';
 import {AuthService} from '../../services/auth.service';
 import {Queue} from '../../interfaces/queue';
 import {User} from '../../interfaces/user';
