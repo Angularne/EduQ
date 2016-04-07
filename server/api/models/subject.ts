@@ -60,7 +60,7 @@ let subjectSchema = new mongoose.Schema({
         users: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
         helper: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
         timeEntered: Date,
-        room: {type: mongoose.Schema.Types.ObjectId, res: 'Location.rooms'}
+      //  room: {type: mongoose.Schema.Types.ObjectId, res: 'Location.rooms'}
       }
     ]
   },

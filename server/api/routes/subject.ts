@@ -331,9 +331,10 @@ router.put('/:code/queue/', (req: Request, res: Response, next: NextFunction) =>
   }
 
   let activate: boolean = req.body.activate || false;
-  Subject.findOneAndUpdate({code: code},{'queue.active': activate}).exec((err) => {
+  Subject.findOneAndUpdate({code: code},{'queue.active': activate}).exec((err, subj) => {
     if (!err) {
       res.end();
+      QueueSocket.queue(code);
     } else {
       res.json(err);
     }
@@ -343,7 +344,9 @@ router.put('/:code/queue/', (req: Request, res: Response, next: NextFunction) =>
 /** POST: Add users to queue */
 router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
-  var users_id = req.body.users;
+  var users_id = req.body.users || [];
+
+  users_id.push(req.authenticatedUser._id);
 
   // Check user privileges
   if (!checkAccess(req.authenticatedUser, code, /teacher|assistent|student/i, 'code')) {
@@ -352,7 +355,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
   }
 
   // Check parameters
-  if (!users_id || users_id.length == 0) {
+  if (!users_id) {
     res.json('Users not set');
     return;
   }
@@ -367,7 +370,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
         }
         // Find users and check access
         var users: IUser[];
-        User.find({_id: {$in:users_id}}).lean().select('firstname lastname subjects').exec((err, usersRes) => {
+        User.find({_id: {$in:users_id}}).lean().select('_firstname lastname subjects').exec((err, usersRes) => {
           if (!err && usersRes) {
             users = usersRes;
             for (var user of users) {
@@ -395,13 +398,14 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
              let room = '';
 
              // Add group to queue and save
-             subj.queue.list.push({users: users_id, timeEntered: new Date(), room: room});
+             subj.queue.list.push({users: users as any, timeEntered: new Date(), room: room});
              subj.save((serr) => {
                if (!serr) {
                  // Success
                  res.status(201); // Created
                  res.end();
-                 /** TODO Trigger socket event */
+
+                 QueueSocket.queue(code);
                } else {
                  // Save Error
                  res.status(409); // Conflict
@@ -419,6 +423,21 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
   });
 });
 
+/** PUT: Update queue item
+router.put('/:code/queue/:id', (req: Request, res: Response, next: NextFunction) => {
+  var code: string = req.params.code;
+  var id: string = req.params.id;
+
+  var updates = req.body;
+
+  // Check user privileges
+  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent|student/i, 'code')) {
+    denyAccess(res);
+    return;
+  }
+});
+*/
+
 /** PUT: Add helper to queue */
 router.put('/:code/queue/:qid', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
@@ -430,12 +449,14 @@ router.put('/:code/queue/:qid', (req: Request, res: Response, next: NextFunction
     return;
   }
 
+
+
   Subject.findOneAndUpdate(
     {code:code, 'queue.list._id': qid},
     {'queue.list.$.helper': req.authenticatedUser._id}
   ).exec((err, subj) => {
     if (!err) {
-      QueueSocket.updateQueue(code, subj.queue);
+      QueueSocket.queue(code);
       res.end();
     } else {
       res.json(err);
@@ -470,13 +491,12 @@ router.delete('/:code/queue/:id', (req: Request, res: Response, next: NextFuncti
   }
 
   // Execute
-  Subject.findOneAndUpdate(cond,
-    {$pull: {'queue.list': {_id:id}}},
-    (err, sub) => {
+  Subject.findOneAndUpdate(cond, {$pull: {'queue.list': {_id:id}}}).exec((err, sub) => {
       if (!err && sub) {
-        console.log(sub);
-        res.json(sub);
+        QueueSocket.queue(code);
+        res.end();
       } else {
+        res.status(409);
         res.json(err || {});
       }
   });
@@ -500,18 +520,23 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
     if (!err) {
       // Check number of users left in group
       // Remove if no users left
+      console.log(affected);
       if (affected.nModified > 0) {
         Subject.update(
-          {code:code, 'queue.list.users.0': {$exists: false}},
-          {$pull:{'queue.list':{$elemMatch:{'users.0': {$exists: false}}}}}
+          {code:code, 'queue.list.users': []},
+          {$pull:{'queue.list':{'users': []}}}
         ).exec((err) => {
           if (!err) {
+            QueueSocket.queue(code);
             res.end();
+
           } else {
             res.json(err);
           }
         });
-      } else { res.end(); }
+      } else {
+        QueueSocket.queue(code);
+        res.end(); }
     } else { res.json(err); }
   });
 });
