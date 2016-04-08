@@ -2,13 +2,12 @@ import {Component, OnInit, Input, EventEmitter, Output} from 'angular2/core';
 import {SubjectService} from '../../services/subject';
 import {Subject} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';
-import {BSColDirective} from '../../directives/bs.col.directive';
-
+import {EditTaskComponent} from './task/task';
 
 @Component({
   selector: 'edit-subject',
   templateUrl: 'app/components/edit.subject/edit.subject.html',
-  directives: [EditRequirementComponent, BSColDirective]
+  directives: [EditRequirementComponent, EditTaskComponent]
 })
 export class EditSubjectComponent implements OnInit {
   @Input() subject: Subject;
@@ -16,33 +15,37 @@ export class EditSubjectComponent implements OnInit {
 
 
   @Output() saved: EventEmitter<Subject> = new EventEmitter<Subject>();
-  @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
+  @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
 
 
   constructor(private subjectService: SubjectService) { }
 
   ngOnInit() {
-    if (!this.subject) {
+    if(!this.subject){
+      this.new = true;
       this.subject = {
         code: '',
         name: '',
+        tasks: [],
+        requirements: [],
         broadcasts: [],
-        queue: null,
-        tasks: {
-          requirements: [],
-          count: 0
+        queue: {
+          list: [],
+          active: false
         },
-        students: null
+        students: [],
+        assistents: [],
+        teachers: []
       }
     }
   }
 
   addRequirement() {
-    this.subject.tasks.requirements.push({start:1, end: this.subject.tasks.count, required:1});
+    this.subject.requirements.push({from:1, to: this.subject.tasks.length, required:1});
   }
 
   removeRequirement(index: number) {
-    this.subject.tasks.requirements.splice(index, 1);
+    this.subject.requirements.splice(index, 1);
   }
 
   save() {
@@ -53,8 +56,8 @@ export class EditSubjectComponent implements OnInit {
     });
   }
 
-  cancelEdit() {
-    this.cancel.emit(null);
+  cancel() {
+    this.canceled.emit(null);
   }
 
   validateRequirement(req: any) {

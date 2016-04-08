@@ -1,18 +1,14 @@
 import {Component, Input, OnInit, OnChanges, Output, EventEmitter} from 'angular2/core';
 import {RangePipe} from '../../../common/range';
-import {BSColDirective} from '../../../directives/bs.col.directive';
-
+import {Requirement} from '../../../interfaces/subject';
 @Component({
   selector: 'edit-requirement',
   templateUrl: 'app/components/edit.subject/requirement/requirement.html',
-  directives: [BSColDirective],
   pipes: [RangePipe]
 })
 export class EditRequirementComponent implements OnInit, OnChanges {
-  @Input()  requirement: Requirement;
+  @Input()  requirements: Requirement[];
   @Input() count: number;
-
-  @Output() remove: EventEmitter<any> = new EventEmitter();
 
 
   constructor() { }
@@ -21,6 +17,7 @@ export class EditRequirementComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     // Validate requirement
+    /*
     if (this.requirement.end <= 0) {
       this.requirement.end = 1;
     }
@@ -36,22 +33,14 @@ export class EditRequirementComponent implements OnInit, OnChanges {
     if (this.requirement.required > (this.requirement.end - this.requirement.start + 1)) {
       console.log(this.requirement.required);
       this.requirement.required = this.requirement.end - this.requirement.start + 1;
-    }
+    }*/
   }
 
-  private setStart(start) {
-    this.requirement.start = +start;
+  add() {
+    this.requirements.push({from: 1, to:this.count, required: 1});
   }
-  private setEnd(end) {
-    this.requirement.end = +end;
-  }
-  private setRequired(required) {
-    this.requirement.required = +required;
-  }
-}
 
-interface Requirement {
-  start: number;
-  end: number;
-  required: number;
+  remove(i: number) {
+    this.requirements.splice(i, 1);
+  }
 }

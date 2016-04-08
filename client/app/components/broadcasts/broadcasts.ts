@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Output} from 'angular2/core';
-import {Broadcast} from '../../interfaces/broadcast';
+import {Broadcast} from '../../interfaces/subject';
 import {BroadcastDetailComponent} from '../broadcast/broadcast';
 import {SubjectService} from '../../services/subject';
 

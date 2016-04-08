@@ -1,16 +1,16 @@
-import {Component, OnInit, EventEmitter, Output} from "angular2/core";
+import {Component, OnInit, EventEmitter, Input, Output} from "angular2/core";
 import {SubjectService} from "../../../services/subject";
 import {Subject} from "../../../interfaces/subject";
 
 @Component({
   selector: 'editsubject',
   templateUrl: 'app/components/adminpage/editsubject/editsubject.html',
-  inputs: ["subject"]
 })
 
 export class EditsubjectComponent implements OnInit {
-  subject:Subject;
-  new:boolean;
+  @Input() subject:Subject;
+  @Input() new:boolean;
+
   @Output() onEnd: EventEmitter<Subject> = new EventEmitter<Subject>();
 
 
@@ -24,16 +24,16 @@ export class EditsubjectComponent implements OnInit {
       this.subject = {
         code: '',
         name: '',
-        students: [],
-        tasks: {
-          requirements: [],
-          count: 0
-        },
+        tasks: [],
+        requirements: [],
         broadcasts: [],
         queue: {
           list: [],
           active: false
-        }
+        },
+        students: [],
+        assistents: [],
+        teachers: []
       }
     }
   }

@@ -1,6 +1,6 @@
 import express = require('express');
-import {Subject, ISubject} from '../models/subject';
-import {User, IUser} from '../models/user';
+import {Subject, SubjectDocument, Broadcast, Task, Queue, QueueGroup, Requirements, Location} from '../models/subject';
+import {User, UserDocument} from '../models/user';
 import {Request, Response, NextFunction} from "express";
 import {QueueSocket} from '../socket';
 
@@ -369,7 +369,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
           return;
         }
         // Find users and check access
-        var users: IUser[];
+        var users: UserDocument[];
         User.find({_id: {$in:users_id}}).lean().select('firstname lastname subjects').exec((err, usersRes) => {
           if (!err && usersRes) {
             users = usersRes;
@@ -395,10 +395,20 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                }
              }
              // TODO: get room from user
-             let room = '';
-
+            
              // Add group to queue and save
-             subj.queue.list.push({users: users_id, timeEntered: new Date(), room: room});
+             let q: QueueGroup = {
+               users: users_id,
+               helper: null,
+               timeEntered: new Date(),
+               comment: 'string',
+               position: 1, // in queue
+               location: null
+             }
+
+
+
+             subj.queue.list.push(q);
              subj.save((serr) => {
                if (!serr) {
                  // Success
@@ -646,7 +656,7 @@ router.delete('/:code/task', (req: Request, res: Response, next: NextFunction) =
 /**
  * Check if user has access to subject. Use path = 'code' to compare code, defaults to '_id'
  */
-function checkAccess(user: IUser, subject, role: RegExp, path: string = '_id') {
+function checkAccess(user: UserDocument, subject, role: RegExp, path: string = '_id') {
   if (user.rights == 'Admin') {
     return true;
   }

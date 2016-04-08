@@ -19,13 +19,22 @@ export class EditUserComponent implements OnInit {
   @Input() set user(user: User) {
     if (user) {
       this._user = JSON.parse(JSON.stringify(user)); // Copy object
+      this.new = false;
     } else {
-      this._user = user;
+      this.user = {
+        firstname: '',
+        lastname: '',
+        email: '',
+        rights: 'Student',
+        classOf: '',
+        subjects: []
+      };
+      this.new = true;
     }
     this.setEdits();
   }
 
-  @Input() new: boolean = false;
+  new: boolean = true;
 
   @Output() saved: EventEmitter<User> = new EventEmitter<User>();
   @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
@@ -41,23 +50,15 @@ export class EditUserComponent implements OnInit {
   constructor(private userService: UserService, private auth: AuthService) { }
 
   ngOnInit() {
-    if (!this.user) {
-      this.user = {
-        firstname: '',
-        lastname: '',
-        email: '',
-        rights: 'Student',
-        classOf: '',
-        subjects: []
-      };
+   if (!this._user) {
+    this.user = null; // Creates empty user in setter
     }
-
-
   }
 
   setEdits() {
     this.auth.getUser().then((user) => {
       this.canEdit = {};
+      console.log(user.rights);
       if (user.rights == "Admin") {
         this.canEdit['name'] = true;
         this.canEdit['email'] = true;

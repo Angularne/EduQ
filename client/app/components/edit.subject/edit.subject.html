@@ -1,49 +1,37 @@
-<h3>Edit Subject <span class="label label-success" *ngIf="new">New</span></h3>
 <form class="container">
+
+  <legend>Subject <span class="label label-success" *ngIf="new">New</span></legend>
 
   <!-- Code -->
   <div class="form-group row">
-    <label class="form-control-label" [bscol]="1" for="code">Code</label>
-    <div [bscol]="6" >
+    <label class="form-control-label col-sm-2" for="code">Code</label>
+    <div class="col-sm-10" >
       <input class="form-control"  name="code" [(ngModel)]="subject.code" required [disabled]="!new">
     </div>
   </div>
 
   <!-- Name -->
   <div class="form-group row">
-    <label class="form-control-label" [bscol]="1" for="name">Name</label>
-    <div [bscol]="6">
+    <label class="form-control-label col-sm-2"  for="name">Name</label>
+    <div class="col-sm-10">
       <input class="form-control" name="name" [(ngModel)]="subject.name" required>
     </div>
   </div>
   <hr>
   <!-- Tasks -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="1" for="count">Tasks</label>
-    <div [bscol]="6">
-      <input class="form-control " type="number" name="count" [(ngModel)]="subject.tasks.count" min="0" >
-    </div>
-  </div>
-
+  <edit-tasks [tasks]="subject.tasks"></edit-tasks>
+<hr>
   <!-- Requirements -->
-  <div class="form-group row">
-    <div [bscol]="2">
-      <label class="form-control-label">Requirements</label>
-    </div>
-    <div class="col-xs-offset-3 col-sm-offset-3 col-md-offset-3 col-lg-offset-3 text-right" [bscol]="2">
-      <button class="btn btn-success btn-xs" type="button" (click)="addRequirement()">+</button>
-    </div>
-  </div>
 
-  <edit-requirement *ngFor="#req of subject.tasks.requirements; #i = index"
-    class="row" [count]="subject.tasks.count" [requirement]="req"
-  (remove)="removeRequirement(i)"></edit-requirement>
+  <edit-requirement [requirements]="subject.requirements" [count]="subject.tasks.length"></edit-requirement>
+
 
   <hr>
 
+
   <!-- Cancel Save buttons -->
   <div class="row">
-    <div class="col-xs-offset-5 col-sm-offset-5 col-md-offset-5 col-lg-offset-5 text-right" [bscol]="2">
+    <div class="text-right">
       <button class="btn btn-default" type="button" (click)="cancelEdit()">Cancel</button>
       <button class="btn btn-success" type="button" (click)="save()">Save</button>
     </div>

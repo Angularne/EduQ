@@ -1,40 +1,52 @@
-<div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1" [bscol]="5">
-      <span class="label label-primary">Fra</span>
-
-      <select class="selectpicker" [ngModel]=" requirement.start" (ngModelChange)="setStart($event)">
-        <option *ngFor="#i of (requirement.end | range)" [value]="i">
-          {{i}}
-        </option>
-      </select>
-
-      <span class="label label-primary">til</span>
-
-      <select [ngModel]=" requirement.end" (ngModelChange)="setEnd($event)">
-        <option *ngFor="#i of ([requirement.start, count] | range)" [value]="i">
-          {{i}}
-        </option>
-      </select>
-
-      <span class="label label-primary">må</span>
-
-      <select [ngModel]="requirement.required" (ngModelChange)="setRequired($event)">
-        <option *ngFor="#i of ([1, requirement.end - requirement.start + 1] | range)" [value]="i">
-          {{i}}
-        </option>
-      </select>
-
-      <span class="label label-primary">
-        <span  [ngSwitch]="requirement.required">
-          <template [ngSwitchWhen]="1">
-            øving være godkjent
-          </template>
-          <template ngSwitchDefault>
-            øvinger være godkjente
-          </template>
-        </span>
-      </span>
+<!-- Requirements -->
+<div class="form-group row">
+  <div class="col-sm-2">
+    <label class="form-control-label">Requirements</label>
+  </div>
+  <div class="col-sm-10 text-right" >
+    <button class="btn btn-success btn-xs" type="button" (click)="add()">+</button>
+  </div>
 </div>
-<div class="text-right" [bscol]="1">
-  <button class="btn btn-danger btn-xs" type="button" (click)="remove.emit('')">-</button>
 
+
+<div class="row" *ngFor="#req of requirements; #i = index">
+  <div class="col-xs-offset-2 col-xs-9" >
+    <span class="label label-primary">Fra</span>
+
+    <select ([ngModel])="req.from" >
+      <option *ngFor="#i of (req.to | range)" [value]="i">
+        {{i}}
+      </option>
+    </select>
+
+    <span class="label label-primary">til</span>
+
+    <select ([ngModel])="req.to" >
+      <option *ngFor="#i of ([req.from, count] | range)" [value]="i">
+        {{i}}
+      </option>
+    </select>
+
+    <span class="label label-primary">må</span>
+
+    <select ([ngModel])="req.required" >
+      <option *ngFor="#i of ([1, req.to - req.from + 1] | range)" [value]="i">
+        {{i}}
+      </option>
+    </select>
+
+    <span class="label label-primary">
+      <span  [ngSwitch]="req.required">
+        <template [ngSwitchWhen]="1">
+          øving være godkjent
+        </template>
+        <template ngSwitchDefault>
+          øvinger være godkjente
+        </template>
+      </span>
+    </span>
+  </div>
+  <div class="text-right col-xs-1">
+    <button class="btn btn-danger btn-xs" type="button" (click)="remove(i)">-</button>
+  </div>
 </div>

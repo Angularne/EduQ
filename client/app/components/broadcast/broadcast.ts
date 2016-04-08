@@ -1,5 +1,5 @@
 import {Component} from 'angular2/core';
-import {Broadcast} from '../../interfaces/broadcast';
+import {Broadcast} from '../../interfaces/subject';
 
 @Component({
   selector: 'broadcast',

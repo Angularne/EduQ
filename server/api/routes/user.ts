@@ -1,5 +1,5 @@
 import express = require('express');
-import {User, IUser} from '../models/user';
+import {User, UserDocument} from '../models/user';
 import {Request, Response, NextFunction} from "express";
 
 /** Router */
@@ -87,11 +87,11 @@ router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
 
     if (user.password) {
       cond.password = user.oldPassword;
-      
+
       delete user.oldPassword;
     }
 
-    User.findOneAndUpdate(cond, user, (err: any, user: IUser) => {
+    User.findOneAndUpdate(cond, user, (err: any, user: UserDocument) => {
       if (!err) {
         res.json(user);
       } else {

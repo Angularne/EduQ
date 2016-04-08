@@ -1,50 +1,74 @@
 import mongoose = require("mongoose");
+import {UserDocument} from './user';
 
-/* Subject */
-export interface ISubject extends mongoose.Document {
+/** Subject */
+export interface SubjectDocument extends  mongoose.Document {
   code: string;
   name: string;
-  broadcasts: [
-    {
-      _id: string;
-      author: string;
-      title: string;
-      content: string;
-      created: Date;
-    }
-  ]
-  queue: {
-    active: Boolean;
-    list: [
-      {
-        _id?: string;
-        users: string[];
-        helper?: string;
-        timeEntered: Date;
-        room: string;
-      }
-    ]
-  }
-  tasks: {
-    requirements: [
-      {
-        _id: string;
-        start: number;
-        end: number;
-        required: number;
-      }
-    ];
-    count: number;
-
-  }
-  students: string[];
-  assistents: string[];
-  teachers: string[];
+  broadcasts: Broadcast[];
+  queue: Queue;
+  tasks: Task[];
+  requirements: Requirements[];
+  students: UserDocument[];
+  assistents: UserDocument[];
+  teachers: UserDocument[];
 }
 
+/** Tasks */
+export interface Task {
+  _id?: string;
+  number: number;
+  title: string;
+}
+
+/** Requirements */
+export interface Requirements {
+  _id?: string;
+  from: number;
+  to: number;
+  required: number;
+}
+
+/** Broadcast */
+export interface Broadcast {
+  _id?: string;
+  author: UserDocument;
+  title: string;
+  content: string;
+  created: Date;
+}
+
+/** Queue */
+export interface Queue {
+  _id?: string;
+  active: boolean;
+  list: QueueGroup[];
+}
+
+/** QueueGroup */
+export interface QueueGroup {
+  _id?: string;
+  users: UserDocument[];
+  helper?: UserDocument;
+  timeEntered: Date;
+  comment: string;
+  position: number; // in queue
+  location: Location;
+}
+
+/** Location */
+export interface Location {
+  _id?: string;
+  room: string;
+  table: string;
+}
+
+
+/** Schema */
 let subjectSchema = new mongoose.Schema({
   code: {type:String, unique: true},
   name: String,
+
   broadcasts: [
     {
       author: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
@@ -60,23 +84,26 @@ let subjectSchema = new mongoose.Schema({
         users: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
         helper: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
         timeEntered: Date,
-        room: {type: mongoose.Schema.Types.ObjectId, res: 'Location.rooms'}
+        comment: String,
+        position: Number,
+        location: String // not implemented
       }
     ]
   },
-  tasks: {
-    requirements: [
-      {
-        start: Number,
-        end: Number,
-        required: Number
-      }
-    ],
-    count: Number
-  },
+  tasks: [{
+    number: Number,
+    title: String
+  }],
+  requirements: [{
+    from: Number,
+    to: Number,
+    required: Number
+  }],
+
   students: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
   assistents: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
   teachers: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}]
 });
 
-export const Subject = mongoose.model<ISubject>('Subject', subjectSchema);
+/** Model */
+export const Subject = mongoose.model<SubjectDocument>('Subject', subjectSchema);
