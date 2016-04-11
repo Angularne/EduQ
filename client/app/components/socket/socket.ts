@@ -2,7 +2,6 @@ import {Component, OnInit, OnDestroy} from 'angular2/core';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
 import {Title} from 'angular2/platform/browser';
 import {CanActivate} from 'angular2/router';
-import {isLoggedin}  from '../main/is-loggedin';
 import {ProtectedDirective} from "../../directives/protected.directive";
 
 //let SERVER_ADDRESS = 'http://109.189.16.142:3000';
