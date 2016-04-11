@@ -10,16 +10,22 @@ import {LoggedInRouterOutlet} from './common/LoggedInOutlet';
 import {UserService} from './services/user';
 import {SiteHeaderComponent} from './components/siteheader/siteheader';
 
+import {EditSubjectComponent} from './components/edit.subject/edit.subject';
+import {EditUserComponent} from './components/edit.user/edit.user';
+
+import {SubjectService} from './services/subject';
+
 @Component({
   selector: 'my-app',
   template: `
   <siteheader ></siteheader>
-  <br>
-  <br>
-  <br>
-  <auth-router-outlet></auth-router-outlet>`,
+  <br><br><br><br>
+  <div class="container">
+  <auth-router-outlet></auth-router-outlet>
+  </div>
+  `,
   directives: [LoggedInRouterOutlet, SiteHeaderComponent],
-  providers:[UserService]
+  providers:[UserService, SubjectService]
 })
 
 @RouteConfig([
@@ -29,7 +35,17 @@ import {SiteHeaderComponent} from './components/siteheader/siteheader';
   {path: '/subjects/:code/edit', component: SubjectsComponent, as: 'SubjectEditPath'},
   {path: '/me', component: MypageComponent, as: 'MypagePath'},
   {path: '/adminpage', component: AdminpageComponent, as: 'AdminpagePath'},
+
+
+
+
+  {path: '/subject/new', component: EditSubjectComponent, as: 'NewSubjectPath'},
+  {path: '/user/:user_id', component: EditUserComponent, as: 'EditUserPath'},
+
+
+
   {path: '/**', redirectTo:['MainPath']}
+
 ])
 
 

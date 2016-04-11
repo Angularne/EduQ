@@ -1,12 +1,11 @@
 import {Injector, Component, Output, EventEmitter, OnInit} from 'angular2/core';
 import {CanActivate} from 'angular2/router';
 import {AuthService} from '../../services/auth.service';
-import {Queue} from '../../interfaces/queue';
+import {Queue} from '../../interfaces/subject';
 import {User} from '../../interfaces/user';
 import {QueueElementComponent} from '../queue-element/queue-element';
 import {SubjectService} from '../../services/subject';
 import {UserService} from '../../services/user';
-
 
 @Component({
   selector: 'queue',
@@ -22,7 +21,7 @@ export class QueueComponent{
   user: User;
   myUserInQueue: boolean = false;
   userRole: string = 'Student';
-  constructor(public subjectService: SubjectService, public userService: UserService) {
+  constructor(public subjectService: SubjectService, public userService: UserService, public auth: AuthService) {
 
     this.subjectService.queue.subscribe((value) => {
       this.queue = value;
@@ -30,7 +29,7 @@ export class QueueComponent{
     this.subjectService.students.subscribe((value) => {
       this.students = value;
     })
-    this.userService.getUser().then((user) => {
+    this.auth.getUser().then((user) => {
       this.user = user;
     })
   }

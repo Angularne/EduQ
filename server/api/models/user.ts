@@ -1,7 +1,7 @@
 import mongoose = require('mongoose');
 
 /* User */
-export interface IUser extends mongoose.Document {
+export interface UserDocument extends mongoose.Document {
   firstname: string;
   lastname: string;
   email: string;
@@ -33,8 +33,8 @@ let UserSchema: mongoose.Schema = new mongoose.Schema({
   ]
 });
 
-export const User = mongoose.model<IUser>('User', UserSchema);
+export const User = mongoose.model<UserDocument>('User', UserSchema);
 
-export function authenticateUser(username: string, password: string, cb: (err, user: IUser) => void) {
+export function authenticateUser(username: string, password: string, cb: (err, user: UserDocument) => void) {
   User.findOne({email:username, password:password}).populate('subjects.subject', 'code name').lean().exec(cb);
 }

@@ -1,50 +1,52 @@
-<h3>Edit Subject <span class="label label-success" *ngIf="new">New</span></h3>
-<form class="container">
+<form class="">
+  <fieldset>
+    <legend>Subject <span class="label label-success" *ngIf="new">New</span></legend>
 
-  <!-- Code -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="1" for="code">Code</label>
-    <div [bscol]="6" >
-      <input class="form-control"  name="code" [(ngModel)]="subject.code" required [disabled]="!new">
+    <!-- Code -->
+    <div class="form-group row">
+      <label class="form-control-label col-sm-2" for="code">Code</label>
+      <div class="col-sm-10" >
+        <input class="form-control"  id="code" [(ngModel)]="subject.code" placeholder="DADA" required [disabled]="!new">
+      </div>
     </div>
-  </div>
 
-  <!-- Name -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="1" for="name">Name</label>
-    <div [bscol]="6">
-      <input class="form-control" name="name" [(ngModel)]="subject.name" required>
+    <!-- Name -->
+    <div class="form-group row">
+      <label class="form-control-label col-sm-2"  for="name">Name</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="name" [(ngModel)]="subject.name" placeholder="Defence Against the Dark Arts" required>
+      </div>
     </div>
-  </div>
-  <hr>
-  <!-- Tasks -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="1" for="count">Tasks</label>
-    <div [bscol]="6">
-      <input class="form-control " type="number" name="count" [(ngModel)]="subject.tasks.count" min="0" >
-    </div>
-  </div>
+  </fieldset>
 
-  <!-- Requirements -->
-  <div class="form-group row">
-    <div [bscol]="2">
-      <label class="form-control-label">Requirements</label>
-    </div>
-    <div class="col-sm-offset-9 btn-group" [bscol]="1">
-      <span class="label label-success btn" (click)="addRequirement()">+</span>
-    </div>
-  </div>
+  <fieldset>
+    <legend>Users</legend>
+    <!-- Teachers -->
+    <edit-users [users]="subject.teachers" [type]="'Teacher'" [label]="'Teachers'"></edit-users>
 
-  <edit-requirement class="row" *ngFor="#req of subject.tasks.requirements; #i = index" [count]="subject.tasks.count" [requirement]="req" (remove)="removeRequirement(i)"></edit-requirement>
-  <hr>
+    <!-- Assistents -->
+    <edit-users [users]="subject.assistents" [type]="'Student'" [label]="'Assistents'"></edit-users>
+  </fieldset>
 
-  <!-- Cancel Save buttons -->
-  <div class="row">
-    <div class="col-xs-offset-8 col-sm-offset-8 col-md-offset-8 col-lg-offset-8" [bscol]="2">
-      <button class="btn btn-default" type="button">Cancel</button>
+  <fieldset>
+    <legend>Tasks</legend>
+    <!-- Tasks -->
+    <edit-tasks [tasks]="subject.tasks"></edit-tasks>
+
+
+    <!-- Requirements -->
+    <edit-requirement [requirements]="subject.requirements" [count]="subject.tasks.length"></edit-requirement>
+
+    <hr>
+
+  </fieldset>
+
+    <!-- Cancel Save buttons -->
+    <div class="row">
+      <div class="text-right">
+        <button class="btn btn-outline btn-default" type="button" (click)="cancelEdit()">Cancel</button>
+        <button class="btn btn-outline btn-success" type="button" (click)="save()">Save</button>
+      </div>
     </div>
-    <div [bscol]="2">
-      <button class="btn btn-success" type="button">Save</button>
-    </div>
-  </div>
+
 </form>

@@ -1,44 +1,77 @@
-<div class="col-xs-offset-2 col-sm-offset-2 col-md-offset-2" [bscol]="10">
-  <div class="row">
-    <div [bscol]="11">
-      <span class="label label-default">Fra</span>
-
-      <select [ngModel]=" requirement.start" (ngModelChange)="setStart($event)">
-        <option *ngFor="#i of (requirement.end | range)" [value]="i">
-          {{i}}
-        </option>
-      </select>
-
-      <span class="label label-default">til</span>
-
-      <select [ngModel]=" requirement.end" (ngModelChange)="setEnd($event)">
-        <option *ngFor="#i of ([requirement.start, count] | range)" [value]="i">
-          {{i}}
-        </option>
-      </select>
-
-      <span class="label label-default">må</span>
-
-      <select [ngModel]="requirement.required" (ngModelChange)="setRequired($event)">
-        <option *ngFor="#i of ([1, requirement.end - requirement.start + 1] | range)" [value]="i">
-          {{i}}
-        </option>
-      </select>
-
-      <span class="label label-default">
-        <span  [ngSwitch]="requirement.required">
-          <template [ngSwitchWhen]="1">
-            øving være godkjent
-          </template>
-          <template ngSwitchDefault>
-            øvinger være godkjente
-          </template>
-        </span>
-      </span>
-    </div>
-    <div [bscol]="1">
-      <span class="label label-danger btn" (click)="remove.emit('')">-</span>
-    </div>
+<!-- Requirements -->
+<div class="form-group row">
+  <div class="col-sm-2">
+    <label class="form-control-label">Requirements</label>
   </div>
-  <hr>
+  <div class="col-sm-10 text-right" >
+    <a class="close" (click)="add()"><span class="glyphicon glyphicon-plus" ></span></a>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-xs-offset-2 col-xs-10" >
+    <table class="table">
+      <tbody>
+        <tr *ngFor="#req of requirements; #i = index">
+          <td >
+
+            <div class="form-inline">
+              <div class="form-group">
+
+
+
+
+
+
+            <span class="">Fra</span>
+
+            <select class="form-control" style="display: inline !important;height: 1.5em;width: 3em !important"  [ngModel]="req.from" (ngModelChange)="changeFrom(req, $event)" >
+              <option *ngFor="#i of (req.to | range)" [value]="i">
+                {{i}}
+              </option>
+            </select>
+
+            <span class="">til</span>
+
+            <select class="form-control" style="display: inline !important;height: 1.5em;width: 3em !important" [ngModel]="req.to" (ngModelChange)="changeTo(req, $event)" >
+              <option *ngFor="#i of ([req.from, count] | range)" [value]="i">
+                {{i}}
+              </option>
+            </select>
+
+            <span class="">må</span>
+
+            <select class="form-control" style="display: inline !important;height: 1.5em;width: 3em !important" [ngModel]="req.required" (ngModelChange)="changeReq(req, $event)" >
+              <option *ngFor="#i of ([1, req.to - req.from + 1] | range)" [value]="i">
+                {{i}}
+              </option>
+            </select>
+
+            <span class="">
+              <span  [ngSwitch]="req.required">
+                <template [ngSwitchWhen]="1">
+                  øving være godkjent
+                </template>
+                <template ngSwitchDefault>
+                  øvinger være godkjente
+                </template>
+              </span>
+            </span>
+          </div>
+        </div>
+
+          </td>
+          <td>
+            <a class="close" (click)="remove(i)">
+              <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+  </div>
 </div>

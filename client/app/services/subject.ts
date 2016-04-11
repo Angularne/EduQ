@@ -1,9 +1,8 @@
 import {Injectable, Inject} from 'angular2/core';
-import {Http, Headers} from "angular2/http";
+import {Http, Headers, Request, RequestMethod} from "angular2/http";
 import {User} from '../interfaces/user';
 import {Subject} from '../interfaces/subject';
-import {Queue} from '../interfaces/queue';
-import {Broadcast} from '../interfaces/broadcast';
+import {Queue, Broadcast} from '../interfaces/subject';
 import {AuthService} from './auth.service';
 import {UserService} from './user';
 import {Binding} from './binding';
@@ -24,6 +23,8 @@ export class SubjectService {
       this.socket.on('init', (data) => {this.init(data);});
       this.socket.on('update', (data) => {this.update(data);});
 
+      this.socket.on('queue', (data) => {console.log(data);;});
+
     } else if (this.socket.disconnected) {
       this.socket.open();
     }
@@ -42,33 +43,25 @@ export class SubjectService {
 
   addQueueElement(users: User[]) {
     this.http.post(`api/subject/${this.subject.code}/queue`, JSON.stringify(users), {
-       headers: new Headers({
-         'x-access-token': this.authService.getToken()
-       })
+       headers: authHeaders()
      });
   }
 
   deleteFromQueue() {
     this.http.delete(`api/subject/${this.subject.code}/queue`, {
-       headers: new Headers({
-         'x-access-token': this.authService.getToken()
-       })
+       headers: authHeaders()
      });
   }
 
   removeQueueElement(element: any) {
     this.http.delete(`api/subject/${this.subject.code}/queue/${element._id}`, {
-       headers: new Headers({
-         'x-access-token': this.authService.getToken()
-       })
+       headers: authHeaders()
      });
   }
 
   helpQueueElement(element: any) {
     this.http.put(`api/subject/${this.subject.code}/queue/${element._id}`, "", {
-       headers: new Headers({
-         'x-access-token': this.authService.getToken()
-       })
+       headers: authHeaders()
      });
   }
 
@@ -78,10 +71,8 @@ export class SubjectService {
       "tasks": element.tasks
     }
     this.http.post(`api/subject/${this.subject.code}/task`, JSON.stringify(json), {
-       headers: new Headers({
-         'x-access-token': this.authService.getToken()
-       })
-     });
+       headers: authHeaders()
+     }).subscribe();
   }
 
   delayQueueElement(places: number) {
@@ -94,10 +85,8 @@ export class SubjectService {
       "activate": !active
     }
     this.http.put(`api/subject/${this.subject.code}/queue`, JSON.stringify(json), {
-       headers: new Headers({
-         'x-access-token': this.authService.getToken()
-       })
-     });
+       headers: authHeaders()
+     }).subscribe();
   }
 
 
@@ -124,32 +113,33 @@ export class SubjectService {
      });
   }
 
-  getSubject(code: string){
-    return new Promise<Subject>((resolve, reject) => {
-      if (this.subject && this.subject.code === code) {
-        resolve(this.subject);
+  getSubject(code: string, select: string = null, populate: string = null){
+    let url = '/api/subject/' + code + '?'
+    + (select ? 'select=' + select + '&': '')
+    + (populate ? 'populate=' + populate : '');
+
+    return this.http.get(url, {headers: authHeaders()}).map(res=>{
+      if (res.status == 200) {
+        return res.json();
       } else {
-        this.fetchSubject(code).subscribe((sub)=>{resolve(sub)});
+        return false;
       }
     });
   }
 
-  getAllSubjects() {
-    return new Promise<Subject[]>((resolve, reject) => {
-      this.http.get('/api/subject/', {headers: authHeaders()}).map(res=>{
-        if (res.status == 200) {
-          return res.json();
-        } else {
-          return false;
-        }
+  getAllSubjects(q: any = null, select: string = null, populate: string = null) {
+    //return new Promise<Subject[]>((resolve, reject) => {
+    let url = '/api/subject?'
+    + (q ? 'q=' + JSON.stringify(q) + '&': '')
+    + (select ? 'select=' + select + '&': '')
+    + (populate ? 'populate=' + populate : '');
 
-      }).subscribe((res)=>{
-        if (res) {
-          resolve(res);
-        } else {
-          reject(false);
-        }
-      });
+    return this.http.get(url, {headers: authHeaders()}).map(res=>{
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
     });
   }
 
@@ -163,27 +153,31 @@ export class SubjectService {
     });
   }
 
-  addNewSubject(subject:Subject){
-    return new Promise<Subject>((resolve, reject) => {
-      this.http.post("api/subject/",JSON.stringify(subject), {headers: authHeaders()}).subscribe((res)=>{
-        if(res.status==201){
-          resolve(res.json());
-        }else{
-          reject(res);
-        }
-      });
+  saveSubject(subject: Subject) {
+    var request: Request = new Request({
+      url: '/api/subject/',
+      headers: authHeaders(),
+      body: JSON.stringify(subject)
     });
-  }
 
-  updateSubject(subject: Subject) {
-    return new Promise<Subject>((resolve, reject) => {
-      this.http.put("api/subject/" + subject.code,JSON.stringify(subject), {headers: authHeaders()}).subscribe((res)=>{
-        if(res.status==201){
-          resolve(res.json());
-        }else{
-          reject(res);
-        }
-      });
+    if (subject._id) {
+      // _id exists - update user
+      request.method = RequestMethod.Put;
+      request.url += subject.code;
+    } else {
+      // create new subject
+      request.method = RequestMethod.Post;
+    }
+
+    return this.http.request(request).map((res) => {
+      if (res.status == 200 || res.status == 201) {
+        // Subject saved
+        return res.json();
+      } else {
+        // Error
+        console.error(res);
+        return false;
+      }
     });
   }
 }

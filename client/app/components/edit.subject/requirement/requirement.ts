@@ -1,19 +1,25 @@
 import {Component, Input, OnInit, OnChanges, Output, EventEmitter} from 'angular2/core';
 import {RangePipe} from '../../../common/range';
-import {BSColDirective} from '../../../directives/bs.col.directive';
-
+import {Requirement} from '../../../interfaces/subject';
 @Component({
   selector: 'edit-requirement',
   templateUrl: 'app/components/edit.subject/requirement/requirement.html',
-  directives: [BSColDirective],
   pipes: [RangePipe]
 })
 export class EditRequirementComponent implements OnInit, OnChanges {
-  @Input()  requirement: Requirement;
+  @Input() requirements: Requirement[];
   @Input() count: number;
 
-  @Output() remove: EventEmitter<any> = new EventEmitter();
 
+  changeFrom(req: Requirement, x: number) {
+    req.from = +x;
+  }
+  changeTo(req: Requirement, x: number) {
+    req.to = +x;
+  }
+  changeReq(req: Requirement, x: number) {
+    req.required = +x;
+  }
 
   constructor() { }
 
@@ -21,37 +27,34 @@ export class EditRequirementComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     // Validate requirement
-    if (this.requirement.end <= 0) {
-      this.requirement.end = 1;
+
+
+    for (var req of this.requirements) {
+      if (req.to <= 0) {
+        req.to = 1;
+      }
+      if (req.to> this.count) {
+        req.to = this.count;
+      }
+      if (req.from < 1) {
+        req.from = 1;
+      }
+      if (req.from > req.to) {
+        req.from = req.to;
+      }
+      if (req.required > (req.to - req.from + 1)) {
+        console.log(req.required);
+        req.required = req.to - req.from + 1;
+      }
     }
-    if (this.requirement.end> this.count) {
-      this.requirement.end = this.count;
-    }
-    if (this.requirement.start < 1) {
-      this.requirement.start = 1;
-    }
-    if (this.requirement.start > this.requirement.end) {
-      this.requirement.start = this.requirement.end;
-    }
-    if (this.requirement.required > (this.requirement.end - this.requirement.start + 1)) {
-      console.log(this.requirement.required);
-      this.requirement.required = this.requirement.end - this.requirement.start + 1;
-    }
+
   }
 
-  private setStart(start) {
-    this.requirement.start = +start;
+  add() {
+    this.requirements.push({from: 1, to:this.count, required: 1});
   }
-  private setEnd(end) {
-    this.requirement.end = +end;
-  }
-  private setRequired(required) {
-    this.requirement.required = +required;
-  }
-}
 
-interface Requirement {
-  start: number;
-  end: number;
-  required: number;
+  remove(i: number) {
+    this.requirements.splice(i, 1);
+  }
 }

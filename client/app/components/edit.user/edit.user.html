@@ -1,98 +1,109 @@
-<h3><span *ngIf="new">Add</span><span *ngIf="!new">Edit</span> User  </h3>
+
+
+
 
 <form class="container">
+  <fieldset>
+    <legend> User <span *ngIf="new" class="label label-success"></span></legend>
 
-  <!-- Firstname -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="2" for="firstname">Firstname</label>
-    <div [bscol]="6" >
-      <input class="form-control"  name="firstname" [(ngModel)]="user.firstname" required [disabled]="!canEdit['name']">
-    </div>
-  </div>
-
-  <!-- Lastname -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="2" for="lastname">Lastname</label>
-    <div [bscol]="6">
-      <input class="form-control" name="lastname" [(ngModel)]="user.lastname" required [disabled]="!canEdit['name']">
-    </div>
-  </div>
-  <hr>
-
-  <!-- Email -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="2" for="email">Email</label>
-    <div [bscol]="6">
-      <input class="form-control" type="email" name="email" [(ngModel)]="user.email" [disabled]="!canEdit['email']" >
-    </div>
-  </div>
-
-
-  <!-- Class of -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="2" for="classOf">Class of</label>
-    <div [bscol]="6">
-      <input class="form-control" type="text" name="classOf" [(ngModel)]="user.classOf" [disabled]="!canEdit['classOf']" >
-    </div>
-  </div>
-
-
-  <!-- Rights -->
-  <div class="form-group row">
-    <label class="form-control-label" [bscol]="2" for="classOf">Rights</label>
-    <div [bscol]="6">
-      <select class="selectpicker form-control" name="rights" [(ngModel)]="user.rights">
-        <option *ngFor="#right of ['Student', 'Teacher', 'Admin'];" [value]="right">
-          {{right}}
-        </option>
-      </select>
-    </div>
-  </div>
-  <hr>
-
-  <div class="" *ngIf="!new">
-    <!-- Old Password -->
+    <!-- Firstname -->
     <div class="form-group row">
-      <label class="form-control-label" [bscol]="2" for="oldpw" >Change Password</label>
-      <div [bscol]="6">
-        <input class="form-control" type="password" name="oldpw" [(ngModel)]="oldpw" placeholder="Old Password" [disabled]="!canEdit['password']">
+      <label class="form-control-label col-sm-2" for="firstname">Firstname</label>
+      <div class="col-sm-10" >
+        <input class="form-control"  name="firstname" [(ngModel)]="user.firstname" placeholder="Harry" required [disabled]="!editable['name']">
       </div>
     </div>
 
-    <!-- New Password -->
+    <!-- Lastname -->
     <div class="form-group row">
-      <label class="form-control-label" [bscol]="2" for="oldpw" ></label>
-      <div [bscol]="6">
-        <input class="form-control" type="password" name="newpw" [(ngModel)]="newpw" min="0" placeholder="New Password" [disabled]="!canEdit['password']">
+      <label class="form-control-label col-sm-2" for="lastname">Lastname</label>
+      <div class="col-sm-10">
+        <input class="form-control" name="lastname" [(ngModel)]="user.lastname" placeholder="Potter" required [disabled]="!editable['name']">
+      </div>
+    </div>
+    <hr>
+  </fieldset>
+
+  <fieldset>
+    <!-- Email -->
+    <div class="form-group row">
+      <label class="form-control-label col-sm-2" for="email">Email</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="email" name="email" [(ngModel)]="user.email" placeholder="@" [disabled]="!editable['email']" >
       </div>
     </div>
 
-    <!-- Confirm Password -->
+
+    <!-- Class of -->
     <div class="form-group row">
-      <label class="form-control-label" [bscol]="2" for="confpw" ></label>
-      <div [bscol]="6">
-        <input class="form-control" type="password" name="confpw" [(ngModel)]="confpw" placeholder="Confirm" [disabled]="!canEdit['password']">
+      <label class="form-control-label col-sm-2" for="classOf">Class of</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="text" placeholder="1991" name="classOf" [(ngModel)]="user.classOf" [disabled]="!editable['classOf']" >
       </div>
     </div>
-  </div>
 
 
-  <!-- New user needs password -->
-  <div class="" *ngIf="new">
+    <!-- Rights -->
     <div class="form-group row">
-      <label class="form-control-label" [bscol]="2" for="pw" >Password</label>
-      <div [bscol]="6">
-        <input class="form-control" type="password" name="pw" [(ngModel)]="user.password" placeholder="Password">
+      <label class="form-control-label" class="col-sm-2" for="classOf">Rights</label>
+      <div class="col-sm-10">
+        <select class="selectpicker form-control" name="rights" [(ngModel)]="user.rights" [disabled]="!editable['rights']">
+          <option *ngFor="#right of ['Student', 'Teacher', 'Admin'];" [value]="right">
+            {{right}}
+          </option>
+        </select>
       </div>
     </div>
-  </div>
+    <hr>
+  </fieldset>
+
+  <fieldset [disabled]="!editable['password']">
+    <div class="" *ngIf="!new">
+      <!-- Old Password -->
+      <div class="form-group row">
+        <label class="form-control-label col-sm-2" for="oldpw" >Change Password</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="password" name="oldpw" [(ngModel)]="oldpw" placeholder="Old Password" >
+        </div>
+      </div>
+
+      <!-- New Password -->
+      <div class="form-group row">
+        <label class="form-control-label col-sm-2" for="oldpw" ></label>
+        <div class="col-sm-10">
+          <input class="form-control" type="password" name="newpw" [(ngModel)]="newpw" min="0" placeholder="New Password">
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group row">
+        <label class="form-control-label col-sm-2" for="confpw" ></label>
+        <div class="col-sm-10">
+          <input class="form-control" type="password" name="confpw" [(ngModel)]="confpw" placeholder="Confirm">
+        </div>
+      </div>
+    </div>
+
+
+    <!-- New user needs password -->
+    <div class="" *ngIf="new">
+      <div class="form-group row">
+        <label class="form-control-label" class="col-sm-2" for="pw" >Password</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="password" name="pw" [(ngModel)]="user.password" placeholder="Password">
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+
 
 
 
   <!-- Cancel Save buttons -->
   <div class="row">
-    <div class="text-right" [bscol]="8">
-      <button class="btn btn-default" type="button">Cancel</button>
+    <div class="text-right col-sm-12" >
+      <button class="btn btn-default" type="button" (click)="cancel.emit()">Cancel</button>
       <button class="btn btn-success" type="submit" (click)="onSubmit()">Save</button>
     </div>
   </div>

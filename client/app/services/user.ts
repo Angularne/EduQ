@@ -4,6 +4,7 @@ import {Subject} from '../interfaces/subject';
 import {User} from "../interfaces/user";
 import {AuthService} from './auth.service';
 import {authHeaders} from '../common/headers';
+
 @Injectable()
 export class UserService {
   user: User;
@@ -33,26 +34,22 @@ export class UserService {
      });
   }
 
-  getUser() {
-    return new Promise<User>((resolve, reject) => {
-      if (!this.user) {
-        //this.fetchUser().subscribe((user) => resolve(user));
-        this.authService.getUser().then((user) => {
-          this.user = user;
-          resolve(user);
-        }).catch((err)=>{
-          reject(err);
-        })
-      } else {
-        resolve(this.user);
+
+  getUser(id: string, select: string = null, populate: string = null) {
+    let url = '/api/user/' + id + '?'
+    + (select ? 'select=' + select + '&': '')
+    + (populate ? 'populate=' + populate : '');
+
+    return this.http.get(url + id, {headers: authHeaders()}).map((res)=>{
+      if (res.status == 200) {
+        return res.json();
+      }
+      else {
+        return null;
       }
     });
   }
 
-  removeLocalUser() {
-    this.user = undefined;
-    localStorage.removeItem('user');
-  }
   getUserRole(code: string) {
     return new Promise<string>((resolve, reject) => {
       if (!this.user) {
@@ -69,23 +66,18 @@ export class UserService {
     });
   }
 
-  getAllUsers() {
+  getAllUsers(q: any = null, select: string = null, populate: string = null) {
+    let url = '/api/user?'
+    + (q ? 'q=' + JSON.stringify(q) + '&': '')
+    + (select ? 'select=' + select + '&': '')
+    + (populate ? 'populate=' + populate : '');
 
-    return new Promise<User[]>((resolve, reject) => {
-      this.http.get('/api/user/all', {headers: authHeaders()}).map(res=>{
-        if (res.status == 200) {
-          return res.json();
-        } else {
-          return false;
-        }
-
-      }).subscribe((res)=>{
-        if (res) {
-          resolve(res);
-        } else {
-          reject(false);
-        }
-      });
+    return this.http.get(url, {headers: authHeaders()}).map(res=>{
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
     });
   }
 
@@ -106,7 +98,6 @@ export class UserService {
     }
 
     return this.http.request(request).map((res) => {
-
       if (res.status == 200 || res.status == 201) {
         // User saved
         return res.json();
@@ -117,5 +108,4 @@ export class UserService {
       }
     });
   }
-
 }

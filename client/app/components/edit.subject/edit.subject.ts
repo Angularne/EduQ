@@ -1,44 +1,66 @@
-import {Component, OnInit, Input} from 'angular2/core';
+import {Component, OnInit, Input, EventEmitter, Output} from 'angular2/core';
 import {SubjectService} from '../../services/subject';
 import {Subject} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';
-import {BSColDirective} from '../../directives/bs.col.directive';
+import {EditTaskComponent} from './task/task';
+import {EditUsersComponent} from './users/users';
 
 
 @Component({
   selector: 'edit-subject',
   templateUrl: 'app/components/edit.subject/edit.subject.html',
-  directives: [EditRequirementComponent, BSColDirective]
+  directives: [EditRequirementComponent, EditTaskComponent, EditUsersComponent]
 })
 export class EditSubjectComponent implements OnInit {
   @Input() subject: Subject;
-  @Input() new: boolean = false;
+
+  get new() {
+    return this.subject._id == null;
+  }
+
+  @Output() saved: EventEmitter<Subject> = new EventEmitter<Subject>();
+  @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
+
 
   constructor(private subjectService: SubjectService) { }
 
-
   ngOnInit() {
-    if (!this.subject) {
+    if(!this.subject){
       this.subject = {
         code: '',
         name: '',
+        tasks: [],
+        requirements: [],
         broadcasts: [],
-        queue: null,
-        tasks: {
-          requirements: [],
-          count: 0
+        queue: {
+          list: [],
+          active: false
         },
-        students: null
+        students: [],
+        assistents: [],
+        teachers: []
       }
     }
   }
 
   addRequirement() {
-    this.subject.tasks.requirements.push({start:1, end: this.subject.tasks.count, required:1});
+    this.subject.requirements.push({from:1, to: this.subject.tasks.length, required:1});
   }
 
   removeRequirement(index: number) {
-    this.subject.tasks.requirements.splice(index, 1);
+    this.subject.requirements.splice(index, 1);
+  }
+
+  save() {
+    this.subjectService.saveSubject(this.subject).subscribe((subject) => {
+      this.saved.emit(subject);
+    }, (err) => {
+      console.error(err);
+    });
+  }
+
+  cancel() {
+    this.canceled.emit(null);
   }
 
   validateRequirement(req: any) {

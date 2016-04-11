@@ -18,7 +18,7 @@ export class AuthService {
   constructor(private http: Http) {
     this.token = sessionStorage.getItem("authToken")
     if (this.token) {
-      this.http.get('/api/user/', {headers: new Headers({
+      this.http.get('/api/user/me', {headers: new Headers({
         'Content-Type': 'application/json',
         'Authorization': `Basic ${this.token}`
       })})
@@ -48,8 +48,8 @@ export class AuthService {
               return true;
             }
             return false;
-          }//,
-          //(err) => {reject(err);}
+          }
+          //,(err) => {reject(err);}
         ).subscribe((res) => {
           if (res) {
             sessionStorage.setItem('authToken', authToken);
@@ -75,15 +75,13 @@ export class AuthService {
   }
 
   getUser() {
-
-
     return new Promise<User>((resolve, reject) => {
       if (this.user) {
         return resolve(this.user);
       }
 
       if (this.authenticated) {
-        this.http.get('/api/user', {
+        this.http.get('/api/user/me', {
            headers: authHeaders()
          })
          .map((res) => {
@@ -104,9 +102,4 @@ export class AuthService {
        }
     });
   }
-
-  getToken() {
-    return this.token;
-  }
-
 }
