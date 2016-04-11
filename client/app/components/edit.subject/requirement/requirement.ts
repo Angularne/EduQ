@@ -7,9 +7,19 @@ import {Requirement} from '../../../interfaces/subject';
   pipes: [RangePipe]
 })
 export class EditRequirementComponent implements OnInit, OnChanges {
-  @Input()  requirements: Requirement[];
+  @Input() requirements: Requirement[];
   @Input() count: number;
 
+
+  changeFrom(req: Requirement, x: number) {
+    req.from = +x;
+  }
+  changeTo(req: Requirement, x: number) {
+    req.to = +x;
+  }
+  changeReq(req: Requirement, x: number) {
+    req.required = +x;
+  }
 
   constructor() { }
 
@@ -17,23 +27,27 @@ export class EditRequirementComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     // Validate requirement
-    /*
-    if (this.requirement.end <= 0) {
-      this.requirement.end = 1;
+
+
+    for (var req of this.requirements) {
+      if (req.to <= 0) {
+        req.to = 1;
+      }
+      if (req.to> this.count) {
+        req.to = this.count;
+      }
+      if (req.from < 1) {
+        req.from = 1;
+      }
+      if (req.from > req.to) {
+        req.from = req.to;
+      }
+      if (req.required > (req.to - req.from + 1)) {
+        console.log(req.required);
+        req.required = req.to - req.from + 1;
+      }
     }
-    if (this.requirement.end> this.count) {
-      this.requirement.end = this.count;
-    }
-    if (this.requirement.start < 1) {
-      this.requirement.start = 1;
-    }
-    if (this.requirement.start > this.requirement.end) {
-      this.requirement.start = this.requirement.end;
-    }
-    if (this.requirement.required > (this.requirement.end - this.requirement.start + 1)) {
-      console.log(this.requirement.required);
-      this.requirement.required = this.requirement.end - this.requirement.start + 1;
-    }*/
+
   }
 
   add() {

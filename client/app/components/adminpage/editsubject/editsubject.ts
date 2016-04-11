@@ -39,20 +39,10 @@ export class EditsubjectComponent implements OnInit {
   }
 
   saveSubject(){
-    if(this.new){
-      this.subjectService.addNewSubject(this.subject).then((subject: Subject)=>{
-        if(subject){
-          //Event for bekreftet lagring av nytt fag
-          this.onEnd.emit(subject);
-        }else{
-          //Event for feil under lagring av nytt fag
-        }
-      });
-    } else {
-      this.subjectService.updateSubject(this.subject).then((subject: Subject) => {
-        console.log("updated");
-      });
-    }
+
+    this.subjectService.saveSubject(this.subject).subscribe((s)=>{
+      console.log('saved');
+    });
   }
 
 }

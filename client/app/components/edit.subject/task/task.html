@@ -4,35 +4,47 @@
     <label class="form-control-label">Tasks</label>
   </div>
   <div class="col-sm-10 text-right" >
-    <button class="btn btn-success btn-xs" type="button" (click)="add()">+</button>
+    <a class="close" (click)="add()"><span class="glyphicon glyphicon-plus"></span></a>
   </div>
 </div>
 
 
-<div class="row" *ngFor="#task of tasks; #i = index">
-  <div class="col-xs-offset-2 col-xs-1" >
-    <label class="form-control-label">{{task.number}}</label>
-  </div>
-  <div class="col-xs-6">
-    <input type="text" class="form-control" [(ngModel)]="task.title">
+<div class="row">
+  <div class="col-sm-offset-2 col-sm-10" >
 
-  </div>
-  <div class="col-xs-3 text-right">
-    <div class="btn-group btn-group-sm">
-        <a class="btn btn-default" type="button" name="button" (click)="moveTaskUp(i)">
-          <span class="glyphicon glyphicon-triangle-top"></span>
-        </a>
-        <a class="btn btn-default" type="button" name="button" (click)="moveTaskDown(i)">
-          <span class="glyphicon glyphicon-triangle-bottom"></span>
-        </a>
-        <a class="btn btn-danger" type="button" name="button" (click)="remove(i)">
-          <span class="glyphicon glyphicon-remove"></span>
-        </a>
-    </div>
-
-
-
-
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width: 3em">
+            #
+          </th>
+          <th>
+            Title
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="#task of tasks; #i = index; #last = last"  >
+          <td>
+            {{task.number}}
+          </td>
+          <td>
+            <input type="text" class="form-control no-border" [(ngModel)]="task.title" placeholder="Title">
+          </td>
+          <td style="width: 7em">
+            <a class="close list-item-addon" (click)="remove(i)">
+              <span class="glyphicon glyphicon-remove"></span>
+            </a>
+            <a class="close list-item-addon" (click)="moveTaskDown(i)" *ngIf="!last">
+              <span class="glyphicon glyphicon-triangle-bottom"></span>
+            </a>
+            <a class="close list-item-addon" (click)="moveTaskUp(i)" *ngIf="i != 0">
+              <span class="glyphicon glyphicon-triangle-top"></span>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
   </div>
 </div>

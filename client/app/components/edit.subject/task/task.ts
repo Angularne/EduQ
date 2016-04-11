@@ -9,14 +9,14 @@ import {Task} from '../../../interfaces/subject';
 })
 export class EditTaskComponent implements OnInit, OnChanges {
 
-  @Input()  tasks: Task[];
+  @Input()  tasks: Task[] = [];
 
   constructor() { }
 
   ngOnInit() {}
 
   ngOnChanges() {
-    console.log('sort');
+
     this.tasks.sort((a,b)=>{return a.number - b.number});
   }
 
@@ -27,8 +27,13 @@ export class EditTaskComponent implements OnInit, OnChanges {
   remove(i: number) {
     this.tasks.splice(i, 1);
 
+    console.log('---------');
+    console.log(i);
+    console.log(this.tasks.length);
+    console.log(this.tasks);
     for (var t = i; t < this.tasks.length; t++) {
       this.tasks[t].number--;
+      console.log('task.number--');
     }
   }
 

@@ -14,7 +14,21 @@ var router = express.Router();
 
  /** GET: List all subjects */
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
-  Subject.find({}).lean().exec((err, user) => {
+
+  // Check user privileges
+  if (!/Admin|Teacher/i.test(req.authenticatedUser.rights)) {
+    denyAccess(res);
+    return;
+  }
+
+  let cond = JSON.parse(req.query.q || '{}');
+  let select: string = (req.query.select || '').split(',').join(' ');;
+  var populate = (req.query.populate || '').split(',').join(' ').split(';');
+  let pop = populate[0];
+  let popselect = populate[1];
+
+
+  Subject.find(cond).select(select).populate(pop, popselect).lean().exec((err, user) => {
     if (!err) {
       res.json(user);
     } else {
@@ -33,7 +47,12 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  Subject.findOne({code: code}).populate('broadcasts.author queue.list.users students assistents teachers', 'firstname lastname').lean().exec((err, subj) => {
+  let select: string = (req.query.select || '').split(',').join(' ');;
+  var populate = (req.query.populate || '').split(',').join(' ').split(';');
+  let pop = populate[0];
+  let popselect = populate[1];
+
+  Subject.findOne({code: code}).select(select).populate(pop, popselect).lean().exec((err, subj) => {
     if (!err) {
       res.json(subj);
     } else {
@@ -45,8 +64,8 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
 /** POST: Create new subject */
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
   /** TODO Kun superbruker kan lage nye emner? */
+
   // Check body
-  console.log(req.body);
   if (!req.body.code || !req.body.name) {
     res.status(409); // Conflict
     res.json('Code or name not set');
@@ -54,10 +73,35 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
   }
 
   var subject = new Subject(req.body);
-  subject.save((err, sub) => {
+  subject.save((err) => {
     if (!err) {
       res.status(201); // Created
-      res.json(sub);
+      res.json(subject);
+
+      var students = subject.students || [];
+      var assistents = subject.assistents || [];
+      var teachers = subject.teachers || [];
+
+      if (students.length) {
+        User.update({_id:{$in: students}, 'subjects.subject': {$ne: subject._id}},
+                    {
+                      $push:{subjects: {subject: subject._id, role: 'Student'}},
+                      $pull:{}
+
+                    }, {multi: true}, (err, model) => {
+        });
+      }
+      if (assistents.length) {
+        User.update({_id:{$in: assistents}, 'subjects.subject': {$ne: subject._id}},
+                    {$push:{subjects: {subject: subject._id, role: 'Assistent'}}}, {multi: true}, (err, model) => {
+        });
+      }
+      if (teachers.length) {
+        User.update({_id:{$in: teachers}, 'subjects.subject': {$ne: subject._id}},
+                    {$push:{subjects: {subject: subject._id, role: 'Teacher'}}}, {multi: true}, (err, model) => {
+        });
+      }
+
     } else {
       res.json(err);
     }
@@ -68,9 +112,6 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
 /** PUT: Update Subject */
 router.put('/:code', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
-
-  console.log('PUT: /subject/'+ code);
-  console.log(checkAccess(req.authenticatedUser, code, /teacher/i, 'code'));
 
   // Check user privileges
   if (!checkAccess(req.authenticatedUser, code, /teacher/i, 'code')) {
@@ -198,7 +239,7 @@ router.delete('/:code/users', (req: Request, res: Response, next: NextFunction) 
   });
 });
 
-/** GET: List users in subject */
+/** GET: List users in subject */ // Unødvendig
 router.get('/:code/users', (req: Request, res: Response, next: NextFunction) => {
   var code: string = req.params.code;
 
@@ -395,7 +436,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                }
              }
              // TODO: get room from user
-            
+
              // Add group to queue and save
              let q: QueueGroup = {
                users: users_id,
@@ -534,7 +575,7 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
  * Tasks
  */
 
-/** POST: Add Requirement */
+/** POST: Add Requirement */ // ikke i bruk
 router.post('/:code/requirement', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
 
@@ -559,7 +600,7 @@ router.post('/:code/requirement', (req: Request, res: Response, next: NextFuncti
   }
 });
 
-/** DELETE: Remove Requirement */
+/** DELETE: Remove Requirement */ // ikke i bruk
 router.delete('/:code/requirement/:id', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
 

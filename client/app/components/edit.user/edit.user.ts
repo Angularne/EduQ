@@ -1,13 +1,12 @@
 import {Component, OnInit, Input, Output, EventEmitter} from 'angular2/core';
+import {RouteParams} from 'angular2/router';
 import {UserService} from '../../services/user';
 import {User} from '../../interfaces/user';
 import {AuthService} from '../../services/auth.service';
-import {BSColDirective} from '../../directives/bs.col.directive';
 
 @Component({
   selector: 'edit-user',
   templateUrl: 'app/components/edit.user/edit.user.html',
-  directives: [BSColDirective]
 })
 export class EditUserComponent implements OnInit {
   private _user: User;
@@ -19,7 +18,6 @@ export class EditUserComponent implements OnInit {
   @Input() set user(user: User) {
     if (user) {
       this._user = JSON.parse(JSON.stringify(user)); // Copy object
-      this.new = false;
     } else {
       this.user = {
         firstname: '',
@@ -29,17 +27,18 @@ export class EditUserComponent implements OnInit {
         classOf: '',
         subjects: []
       };
-      this.new = true;
     }
     this.setEdits();
   }
 
-  new: boolean = true;
+  get new() {
+    return this._user._id == null;
+  }
 
   @Output() saved: EventEmitter<User> = new EventEmitter<User>();
   @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
 
-  private canEdit: any = {};
+  private editable: any = {};
 
 
   private oldpw: string;
@@ -47,28 +46,35 @@ export class EditUserComponent implements OnInit {
   private confpw: string;
 
 
-  constructor(private userService: UserService, private auth: AuthService) { }
+  constructor(private userService: UserService, private auth: AuthService, private _params: RouteParams) { }
 
   ngOnInit() {
    if (!this._user) {
     this.user = null; // Creates empty user in setter
     }
+    let id = this._params.get('user_id');
+    if (id) {
+      this.userService.getUser(id).subscribe((user) => {
+        this.user = user;
+      });
+    }
   }
 
   setEdits() {
     this.auth.getUser().then((user) => {
-      this.canEdit = {};
+      this.editable = {};
       console.log(user.rights);
       if (user.rights == "Admin") {
-        this.canEdit['name'] = true;
-        this.canEdit['email'] = true;
-        this.canEdit['classOf'] = true;
-        this.canEdit['rights'] = true;
+        this.editable['name'] = true;
+        this.editable['email'] = true;
+        this.editable['classOf'] = true;
+        this.editable['rights'] = true;
+        this.editable['password'] = this.new;
       }
       if (user._id == this.user._id) {
         // This is me
-        this.canEdit['password'] = true;
-        delete this.canEdit['rights'];
+        this.editable['password'] = true;
+        delete this.editable['rights'];
 
       }
     });

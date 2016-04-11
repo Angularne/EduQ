@@ -92,32 +92,33 @@ export class SubjectService {
      });
   }
 
-  getSubject(code: string){
-    return new Promise<Subject>((resolve, reject) => {
-      if (this.subject && this.subject.code === code) {
-        resolve(this.subject);
+  getSubject(code: string, select: string = null, populate: string = null){
+    let url = '/api/subject?'
+    + (select ? 'select=' + select + '&': '')
+    + (populate ? 'populate=' + populate : '');
+
+    return this.http.get(url, {headers: authHeaders()}).map(res=>{
+      if (res.status == 200) {
+        return res.json();
       } else {
-        this.fetchSubject(code).subscribe((sub)=>{resolve(sub)});
+        return false;
       }
     });
   }
 
-  getAllSubjects() {
-    return new Promise<Subject[]>((resolve, reject) => {
-      this.http.get('/api/subject/', {headers: authHeaders()}).map(res=>{
-        if (res.status == 200) {
-          return res.json();
-        } else {
-          return false;
-        }
+  getAllSubjects(q: any = null, select: string = null, populate: string = null) {
+    //return new Promise<Subject[]>((resolve, reject) => {
+    let url = '/api/subject?'
+    + (q ? 'q=' + JSON.stringify(q) + '&': '')
+    + (select ? 'select=' + select + '&': '')
+    + (populate ? 'populate=' + populate : '');
 
-      }).subscribe((res)=>{
-        if (res) {
-          resolve(res);
-        } else {
-          reject(false);
-        }
-      });
+    return this.http.get(url, {headers: authHeaders()}).map(res=>{
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
     });
   }
 
@@ -130,31 +131,6 @@ export class SubjectService {
       }
     });
   }
-
-  addNewSubject(subject:Subject){
-    return new Promise<Subject>((resolve, reject) => {
-      this.http.post("api/subject/",JSON.stringify(subject), {headers: authHeaders()}).subscribe((res)=>{
-        if(res.status==201){
-          resolve(res.json());
-        }else{
-          reject(res);
-        }
-      });
-    });
-  }
-
-  updateSubject(subject: Subject) {
-    return new Promise<Subject>((resolve, reject) => {
-      this.http.put("api/subject/" + subject.code,JSON.stringify(subject), {headers: authHeaders()}).subscribe((res)=>{
-        if(res.status==201){
-          resolve(res.json());
-        }else{
-          reject(res);
-        }
-      });
-    });
-  }
-
 
   saveSubject(subject: Subject) {
     var request: Request = new Request({

@@ -3,16 +3,20 @@ import {SubjectService} from '../../services/subject';
 import {Subject} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';
 import {EditTaskComponent} from './task/task';
+import {EditUsersComponent} from './users/users';
+
 
 @Component({
   selector: 'edit-subject',
   templateUrl: 'app/components/edit.subject/edit.subject.html',
-  directives: [EditRequirementComponent, EditTaskComponent]
+  directives: [EditRequirementComponent, EditTaskComponent, EditUsersComponent]
 })
 export class EditSubjectComponent implements OnInit {
   @Input() subject: Subject;
-  @Input() new: boolean = false;
 
+  get new() {
+    return this.subject._id == null;
+  }
 
   @Output() saved: EventEmitter<Subject> = new EventEmitter<Subject>();
   @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
@@ -22,7 +26,6 @@ export class EditSubjectComponent implements OnInit {
 
   ngOnInit() {
     if(!this.subject){
-      this.new = true;
       this.subject = {
         code: '',
         name: '',

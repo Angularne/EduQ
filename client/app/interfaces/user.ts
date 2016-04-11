@@ -12,8 +12,8 @@ export interface User {
   subjects: UserSubjects[]
 }
 
-interface UserSubjects {
+export interface UserSubjects {
   subject: Subject;
   role:string;
-  tasks: [number];
+  tasks: number[];
 }

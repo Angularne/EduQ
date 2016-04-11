@@ -15,7 +15,7 @@ import {BSColDirective} from '../../directives/bs.col.directive';
 
 export class AdminpageComponent{
 users:User[];
-subjects:Subject[];
+subjects:Subject[] = [];
 selectedSubject: Subject;
 
 
@@ -23,13 +23,14 @@ selectedSubject: Subject;
   }
 
   ngOnInit(){
-    this.userService.getAllUsers().then((users) =>{
+    this.userService.getAllUsers(null, 'firstname,lastname').subscribe((users) =>{
       this.users = users;
     });
 
-    this.subjectService.getAllSubjects().then((subjects) =>{
+    this.subjectService.getAllSubjects({},'','teachers,assistents,students.user;firstname,lastname').subscribe((subjects) =>{
+      console.log(subjects);
       this.subjects = subjects;
-    })
+    });
   }
 
   setSelectedSubject(i:number){

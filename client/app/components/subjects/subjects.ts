@@ -23,7 +23,7 @@ export class SubjectsComponent {
   constructor(private _params: RouteParams, public subjectService: SubjectService) {
     this.code = _params.get('code');
 
-    this.subjectService.getSubject(this.code).then((sub) => {
+    this.subjectService.getSubject(this.code,'','broadcasts.author,queue.list.helper,queue.list.users,students,assistents,teachers;firstname,lastname').subscribe((sub) => {
       this.subject = sub;
       this.subjectString = JSON.stringify(sub);
     });

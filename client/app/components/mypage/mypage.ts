@@ -3,6 +3,7 @@ import {UserService} from "../../services/user";
 import {User} from "../../interfaces/user";
 import {SubjectTaskDetailComponent} from "./subject/subject";
 import {EditUserComponent} from '../edit.user/edit.user';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'mypage',
@@ -10,15 +11,15 @@ import {EditUserComponent} from '../edit.user/edit.user';
   directives: [SubjectTaskDetailComponent, EditUserComponent]
 })
 
-export class MypageComponent implements OnInit{
+export class MypageComponent implements OnInit {
   user:User;
   editing: boolean;
 
-  constructor(public userService:UserService){
+  constructor(public userService:UserService, private auth: AuthService){
   }
 
   ngOnInit(){
-    this.userService.getUser().then((user) =>{
+    this.auth.getUser().then((user) =>{
       this.user = user;
     });
   }

@@ -19,10 +19,11 @@ import {SubjectService} from './services/subject';
   selector: 'my-app',
   template: `
   <siteheader ></siteheader>
-  <br>
-  <br>
-  <br>
-  <auth-router-outlet></auth-router-outlet>`,
+  <br><br><br><br>
+  <div class="container">
+  <auth-router-outlet></auth-router-outlet>
+  </div>
+  `,
   directives: [LoggedInRouterOutlet, SiteHeaderComponent],
   providers:[UserService, SubjectService]
 })
@@ -39,7 +40,7 @@ import {SubjectService} from './services/subject';
 
 
   {path: '/subject/new', component: EditSubjectComponent, as: 'NewSubjectPath'},
-  {path: '/user/new', component: EditUserComponent, as: 'NewUserPath'},
+  {path: '/user/:user_id', component: EditUserComponent, as: 'EditUserPath'},
 
 
 

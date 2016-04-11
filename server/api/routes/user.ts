@@ -6,9 +6,9 @@ import {Request, Response, NextFunction} from "express";
 var router = express.Router();
 
 /** GET: Get authenticated user */
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
-  User.findById(req.authenticatedUser._id).populate('subjects.subject', 'code name tasks').lean().exec((err, user) => {
-    if (!err) {
+router.get('/me', (req: Request, res: Response, next: NextFunction) => {
+  User.findById(req.authenticatedUser._id).populate('subjects.subject', 'code name tasks requirements').lean().exec((err, user) => {
+    if (!err && user) {
       res.json(user);
     } else {
       res.json(err);
@@ -16,12 +16,23 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-
 /** GET: Get all user */
-router.get('/all', (req: Request, res: Response, next: NextFunction) => {
-  /** TODO Hvem kan hente brukerinfo */
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
 
-  User.find({}).populate('subjects.subject', 'code name tasks').lean().exec((err, user) => {
+  // Check user privileges
+  if (!/Admin|Teacher/i.test(req.authenticatedUser.rights)) {
+    denyAccess(res);
+    return;
+  }
+
+  let cond: any = JSON.parse(req.query.q || '{}');
+  let select: string = (req.query.select || '').split(',').join(' ');;
+  var populate: string = (req.query.populate || '').split(',').join(' ').split(';');
+  let pop: string = populate[0];
+  let popselect: string = populate[1];
+
+
+  User.find(cond).select(select).populate(pop, popselect).lean().exec((err, user) => {
     if (!err) {
       res.json(user);
     } else {
@@ -32,9 +43,22 @@ router.get('/all', (req: Request, res: Response, next: NextFunction) => {
 
 /** GET: Get user */
 router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
-  /** TODO Hvem kan hente brukerinfo */
   let id: string = req.params.id;
-  User.findById(id).populate('subjects.subject', 'code name tasks').lean().exec((err, user) => {
+
+  // Check user privileges
+  if (!/Admin|Teacher/i.test(req.authenticatedUser.rights) && String(req.authenticatedUser._id) != id) {
+    denyAccess(res);
+    return;
+  }
+
+  let cond: any = JSON.parse(req.query.q || '{}');
+  let select: string = (req.query.select || '').split(',').join(' ');;
+  var populate: string = (req.query.populate || '').split(',').join(' ').split(';');
+  let pop: string = populate[0];
+  let popselect: string = populate[1];
+
+
+  User.findById(id).populate(pop, popselect).lean().exec((err, user) => {
     if (!err) {
       res.json(user);
     } else {
@@ -43,19 +67,18 @@ router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-
 /** POST: Create new user */
 router.post('/',(req: Request, res: Response, next: NextFunction) => {
-  /** TODO Kun superbruker kan lage brukerkontoer? */
   /** TODO Valider data */
 
-  var user = new User({
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    password: req.body.password,
-    subjects: []
-  });
+  // Check user privileges
+  if (!/Admin/i.test(req.authenticatedUser.rights)) {
+    denyAccess(res);
+    return;
+  }
+
+  req.body.subjects = [];
+  var user = new User(req.body);
 
   user.save((err) => {
     if (!err) {
@@ -67,45 +90,51 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
   })
 });
 
-
-
 /** PUT: Update user */
 router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
-  /** TODO Superbruker kan endre brukere */
   /** TODO Valider data */
+  /** Bør gjøres noe med */
   var id = req.params.id;
-  if (String(req.authenticatedUser._id) === id) {
 
-    // Remove subjects from update
-    var user = req.body;
-    delete user.subjects;
-    delete user.__v;
-
-    var cond: any = {
-      _id: id
-    };
-
-    if (user.password) {
-      cond.password = user.oldPassword;
-
-      delete user.oldPassword;
-    }
-
-    User.findOneAndUpdate(cond, user, (err: any, user: UserDocument) => {
-      if (!err) {
-        res.json(user);
-      } else {
-        res.json(err);
-      }
-    });
-  } else {
+  // Check user privileges
+  if (!/Admin|Teacher/i.test(req.authenticatedUser.rights)) {
     denyAccess(res);
+    return;
   }
+
+  // Remove subjects from update
+  var user = req.body;
+  delete user.subjects;
+  delete user.__v;
+
+  var cond: any = {
+    _id: id
+  };
+
+  if (user.password) {
+    cond.password = user.oldPassword;
+
+    delete user.oldPassword;
+  }
+
+  User.findOneAndUpdate(cond, user, (err: any, user: UserDocument) => {
+    if (!err) {
+      res.json(user);
+    } else {
+      res.json(err);
+    }
+  });
+
 });
 
 /** DELETE: Delete user */
 router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
-  /** TODO Kun Superbruker kan slette brukere? */
+  // Check user privileges
+  if (!/Admin/i.test(req.authenticatedUser.rights)) {
+    denyAccess(res);
+    return;
+  }
+
   User.remove({_id:req.params.id}, (err) => {
     if (!err) {
       res.end();
