@@ -1,8 +1,4 @@
 module.exports = {
   port: 3000,
-<<<<<<< HEAD
-  mongodbUrl: 'mongodb://158.38.191.202:27017/queue'
-=======
-  mongodbUrl: 'mongodb://localhost:27017/queue'
->>>>>>> queuebranch
+  mongodbUrl: 'mongodb://localhost/queue'
 }

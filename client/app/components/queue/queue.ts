@@ -1,11 +1,11 @@
 import {Injector, Component, Output, EventEmitter, OnInit} from 'angular2/core';
 import {CanActivate} from 'angular2/router';
-import {isLoggedin}  from '../main/is-loggedin';
 import {AuthService} from '../../services/auth.service';
 import {Queue} from '../../interfaces/queue';
 import {User} from '../../interfaces/user';
 import {QueueElementComponent} from '../queue-element/queue-element';
 import {SubjectService} from '../../services/subject';
+import {UserService} from '../../services/user';
 
 
 @Component({
@@ -18,13 +18,27 @@ export class QueueComponent{
   queue: Queue;
   students: User[] = [];
   usersSelected: User[] = [];
-  constructor(public subjectService: SubjectService) {
+  mine: boolean = false;
+  user: User;
+  myUserInQueue: boolean = false;
+  userRole: string = 'Student';
+  constructor(public subjectService: SubjectService, public userService: UserService) {
+
     this.subjectService.queue.subscribe((value) => {
       this.queue = value;
     });
     this.subjectService.students.subscribe((value) => {
       this.students = value;
     })
+    this.userService.getUser().then((user) => {
+      this.user = user;
+    })
+  }
+
+  checkMyUserInQueue() {
+    for (var i = 0; i < this.queue.list.length; i++) {
+      if (this.queue.list[i].users.indexOf(this.user) != -1) this.myUserInQueue = true;
+    }
   }
 
   selectUser(user: User) {
@@ -39,6 +53,26 @@ export class QueueComponent{
     }
   }
 
+
+  checkIfMyUser(element: any) {
+    var index = this.queue.list.indexOf(element);
+    for (var i = 0; i < element.users.length; i++) {
+      if (this.user.firstname === element.users[i].firstname && this.user.lastname === element.users[i].lastname) {
+        return this.mine = true;
+      }
+    }
+    return false;
+  }
+
+  checkIfAuth() {
+    this.userService.getUserRole(this.subjectService.subject.code).then((role) => {
+      if (role == 'Teacher' || role == 'Assistant') {
+        return true;
+      }
+      return false;
+    });
+  }
+
   toggleQueueButton() {
     this.subjectService.toggleQueueActive(this.queue.active);
   }
@@ -51,8 +85,8 @@ export class QueueComponent{
   removeQueueElement(element: any) {
     this.subjectService.removeQueueElement(element);
   }
-  helpQueueElement() {
-    console.error('Error: QueueComponent.helpQueueElement not implemented!');
+  helpQueueElement(element: any) {
+    this.subjectService.helpQueueElement(element);
   }
   delayQueueElement() {
     console.error('Error: QueueComponent.delayQueueElement not implemented!');

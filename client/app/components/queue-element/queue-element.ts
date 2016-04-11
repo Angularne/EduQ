@@ -5,7 +5,7 @@ import {User} from "../../interfaces/user";
 @Component({
   selector: 'queue-element',
   template: `
-  {{element.timeEntered}} <span *ngFor="#user of element?.users"> - {{user.firstname}} </span> <button *ngIf="mine" (click)="removeElementButton()">X</button>
+  <td class="success">{{element.timeEntered}}</td> <td *ngFor="#user of element?.users"> - {{user.firstname}} </td> <td><button *ngIf="mine" (click)="removeElementButton()">X</button><td>
   `,
   inputs: ['element']
 })

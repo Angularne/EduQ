@@ -1,22 +1,78 @@
 <h2>Queue</h2>
 <button (click)="toggleQueueButton()">Activate/Deactivate Queue</button>
 <div *ngIf="queue?.active">
-  <div>
-    Users in subject: <br>
-    <select multiple >
-      <option *ngFor="#user of students" (click)="selectUser(user)">{{user.firstname}} {{user.lastname}}</option>
-    </select>
-  </div>
-  <div>
-    User to add: <br>
-    <ul>
-      <li *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</li>
-    </ul>
-  </div>
-  <button (click)="addQueueElement()">Queue</button>
-  <ul *ngFor="#element of queue?.list">
-    <li> <queue-element [element]="element" (removeElement)="removeQueueElement(element)">Loading queue-element...</queue-element></li>
-  </ul>
+  <table class="table" *ngIf="!myUserInQueue" (change)="checkMyUserInQueue()">
+    <tr>
+      <td>
+        <b>Users in subject</b>
+      </td>
+      <td>
+        <b>Add friends</b>
+      </td>
+      <td>
+
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div>
+          <select multiple class="form-controll">
+            <option *ngFor="#user of students" (click)="selectUser(user)">{{user.firstname}} {{user.lastname}}</option>
+          </select>
+        </div>
+      </td>
+      <td>
+        <div>
+          <table>
+            <tr *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</tr>
+          </table>
+        </div>
+      </td>
+      <td>
+        <button class="btn btn-primary btn-lg" (click)="addQueueElement()">Queue</button>
+      </td>
+    </tr>
+
+  </table>
+
+  <table class="table table-hover">
+    <tr>
+      <td>
+        <b>#</b>
+      </td>
+      <td>
+        <b>Time</b>
+      </td>
+      <td>
+        <b>Name</b>
+      </td>
+      <td>
+        <b>Something</b>
+      </td>
+      <!-- TODO Authcheck for userRole -->
+      <div>
+        <td>
+
+        </td>
+        <td>
+
+        </td>
+      </div>
+    </tr>
+    <tr *ngFor="#element of queue?.list; #i = index">
+      <td>
+        {{i+1}}
+      </td>
+      <td>{{element.timeEntered}}</td>
+      <td><span *ngFor="#user of element?.users"> - {{user.firstname}} </span> </td>
+      <td>
+        Location probs
+      </td>
+      <!-- TODO Check for auth or own user -->
+      <td><button *ngIf="true" (click)="helpQueueElement(element)">Help</button></td>
+      <td><button *ngIf="true" (click)="removeQueueElement(element)">X</button></td>
+    </tr>
+  </table>
 </div>
 <div *ngIf="!queue?.active">
   <h2>The queue is not active</h2>
