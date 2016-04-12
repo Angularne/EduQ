@@ -22,7 +22,7 @@
 
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Subjects <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li  *ngFor="#subject of user?.subjects"><a [routerLink]="['SubjectsPath', {code:subject.subject.code}]">{{subject.subject.name}}</a></li>
+            <li  *ngFor="#subject of user?.subjects"><a [routerLink]="['SubjectsPath', {code:subject.code}]">{{subject.name}}</a></li>
           </ul>
         </li>
         <li *ngIf="user"><a (click)="onLogout()">Sign out</a></li>

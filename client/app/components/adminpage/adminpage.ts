@@ -1,16 +1,15 @@
 import {Component, OnInit} from "angular2/core";
-import {UserService} from "../../services/user";
-import {SubjectService} from "../../services/subject";
+import {UserService} from "../../services/user.service";
+import {SubjectService} from "../../services/subject.service";
 import {User} from "../../interfaces/user";
 import {Subject} from "../../interfaces/subject";
 import {EditSubjectComponent} from '../edit.subject/edit.subject';
-import {BSColDirective} from '../../directives/bs.col.directive';
 
 @Component({
   selector: 'adminpage',
   templateUrl: 'app/components/adminpage/adminpage.html',
   providers: [SubjectService],
-  directives: [EditSubjectComponent, BSColDirective]
+  directives: [EditSubjectComponent]
 })
 
 export class AdminpageComponent{
@@ -34,7 +33,10 @@ selectedSubject: Subject;
   }
 
   setSelectedSubject(i:number){
-    this.selectedSubject = this.subjects[i];
+    this.subjectService.getSubject(this.subjects[i].code).subscribe((sub) => {
+      this.subjects[i] = sub;
+      this.selectedSubject = sub;
+    });
   }
 
   closeEditPane(subject: Subject) {

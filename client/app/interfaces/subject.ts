@@ -9,10 +9,19 @@ export interface Subject  {
   queue: Queue;
   tasks: Task[];
   requirements: Requirement[];
-  students: User[];
-  assistents: User[];
-  teachers: User[];
+
+  users?: SubjectUser[];
 }
+
+
+export interface SubjectUser {
+  _id?: string;
+  firstname: string;
+  lastname: string;
+  role: string;
+  tasks?: any[];
+}
+
 
 /** Tasks */
 export interface Task {

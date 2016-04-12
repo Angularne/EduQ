@@ -8,10 +8,20 @@ export interface SubjectDocument extends  mongoose.Document {
   broadcasts: Broadcast[];
   queue: Queue;
   tasks: Task[];
-  requirements: Requirements[];
-  students: UserDocument[];
-  assistents: UserDocument[];
-  teachers: UserDocument[];
+  requirements: Requirement[];
+
+  // Not stored
+  users?: {
+    firstname: string;
+    lastname: string;
+    role: string;
+    tasks?: any[];
+
+    _id?: string;
+    __v?: number;
+    user?: any;
+    subject?: any;
+  }[];
 }
 
 /** Tasks */
@@ -22,7 +32,7 @@ export interface Task {
 }
 
 /** Requirements */
-export interface Requirements {
+export interface Requirement {
   _id?: string;
   from: number;
   to: number;
@@ -98,11 +108,7 @@ let subjectSchema = new mongoose.Schema({
     from: Number,
     to: Number,
     required: Number
-  }],
-
-  students: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
-  assistents: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
-  teachers: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}]
+  }]
 });
 
 /** Model */

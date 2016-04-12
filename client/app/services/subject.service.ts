@@ -1,69 +1,22 @@
 import {Injectable, Inject} from 'angular2/core';
 import {Http, Headers, Request, RequestMethod} from "angular2/http";
 import {User} from '../interfaces/user';
-import {Subject} from '../interfaces/subject';
+import {Subject, SubjectUser} from '../interfaces/subject';
 import {Queue, Broadcast} from '../interfaces/subject';
 import {AuthService} from './auth.service';
-import {UserService} from './user';
-import {Binding} from './binding';
+import {UserService} from './user.service';
+import {Binding} from '../common/binding';
 import {authHeaders} from '../common/headers';
 
-let SERVER_ADDRESS = 'http://158.38.188.119:3001';
+
+let SERVER_ADDRESS = 'http://localhost:3000';
 
 @Injectable()
 export class SubjectService {
 
   private socket: SocketIOClient.Socket;
 
-  private setupSocket() {
-    console.log('setupSocket');
-    if (!this.socket) {
-      this.socket = io.connect(SERVER_ADDRESS);
 
-      this.socket.on('init', (data) => {this.init(data);});
-      this.socket.on('update', (data) => {this.update(data);});
-
-      this.socket.on('queue', (data) => {console.log(data);;});
-
-    } else if (this.socket.disconnected) {
-      this.socket.open();
-    }
-  }
-
-  private init(data) {
-    this.subject = data;
-    this.queue.value = this.subject.queue;
-    this.broadcasts.value = this.subject.broadcasts;
-  }
-
-  private update(data) {
-    this.queue.value = data.queue;
-    this.broadcasts.value = data.broadcasts;
-  }
-
-  addQueueElement(users: User[]) {
-    this.http.post(`api/subject/${this.subject.code}/queue`, JSON.stringify(users), {
-       headers: authHeaders()
-     });
-  }
-
-  deleteFromQueue() {
-    this.http.delete(`api/subject/${this.subject.code}/queue`, {
-       headers: authHeaders()
-     });
-  }
-
-  removeQueueElement(element: any) {
-    this.http.delete(`api/subject/${this.subject.code}/queue/${element._id}`, {
-       headers: authHeaders()
-     });
-  }
-
-  helpQueueElement(element: any) {
-    this.http.put(`api/subject/${this.subject.code}/queue/${element._id}`, "", {
-       headers: authHeaders()
-     });
-  }
 
   acceptTask(element: any) {
     var json = {
@@ -75,40 +28,31 @@ export class SubjectService {
      }).subscribe();
   }
 
-  delayQueueElement(places: number) {
-    console.error('Error: SubjectService.delayQueueElement not implemented!');
-    //this.socket.emit('delayQueueElement', places);
-  }
 
-  toggleQueueActive(active: boolean) {
-    var json = {
-      "activate": !active
-    }
-    this.http.put(`api/subject/${this.subject.code}/queue`, JSON.stringify(json), {
-       headers: authHeaders()
-     }).subscribe();
-  }
 
 
   subject: Subject;
-  queue: Binding<Queue> = new Binding<Queue>();
-  broadcasts: Binding<Broadcast[]> = new Binding<Broadcast[]>();
-  students: Binding<User[]> = new Binding<User[]>();
+  students: Binding<SubjectUser[]> = new Binding<SubjectUser[]>();
 
   constructor(public http: Http, public authService: AuthService, public userService: UserService) {
-    //this.setupSocket();
+
   }
 
   fetchSubject(code: string) {
-    return this.http.get(`api/subject/${code}`, {
+    return this.http.get(`api/subject/${code}?populate=students;firstname,lastname`, {
        headers: authHeaders()
      })
      .map((res : any) => {
        let data = res.json();
        this.subject = data;
-       this.queue.value = this.subject.queue;
-       this.broadcasts.value = this.subject.broadcasts;
-       this.students.value = this.subject.students;
+       //this.queue.value = this.subject.queue;
+       //this.broadcasts.value = this.subject.broadcasts;
+       this.students.value = this.subject.users.filter((value: SubjectUser, index: number, array: SubjectUser[]) => {
+         return value.role == 'Student';
+       });
+
+       //this.setupSocket();
+
        return this.subject;
      });
   }

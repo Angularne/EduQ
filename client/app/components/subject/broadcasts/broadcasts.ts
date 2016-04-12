@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Output} from 'angular2/core';
-import {Broadcast} from '../../interfaces/subject';
-import {BroadcastDetailComponent} from '../broadcast/broadcast';
-import {SubjectService} from '../../services/subject';
+import {Component, EventEmitter, Output, Input} from 'angular2/core';
+import {Broadcast} from '../../../interfaces/subject';
+import {BroadcastDetailComponent} from './broadcast/broadcast';
+import {BroadcastService} from '../../../services/broadcast.service';
 
 @Component({
   selector: 'broadcasts',
@@ -16,13 +16,14 @@ import {SubjectService} from '../../services/subject';
 })
 
 export class BroadcastComponent {
-  broadcasts: Broadcast[];
-  constructor(public subjectService: SubjectService) {
-    this.subjectService.broadcasts.subscribe((value) => {
-      this.broadcasts = value;
-    })
-  }
+
+  @Input() broadcasts: Broadcast[];
+
   @Output() updateBroadcast = new EventEmitter();
+
+  constructor(private broadcastService: BroadcastService) {}
+
+
   broadcast() {
     this.updateBroadcast.emit('event');
   }

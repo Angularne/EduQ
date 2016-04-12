@@ -22,10 +22,14 @@
   <fieldset>
     <legend>Users</legend>
     <!-- Teachers -->
-    <edit-users [users]="subject.teachers" [type]="'Teacher'" [label]="'Teachers'"></edit-users>
+    <edit-users  [role]="'Teacher'" [type]="'Teacher'" [label]="'Teachers'" [users]="teachers"></edit-users>
 
     <!-- Assistents -->
-    <edit-users [users]="subject.assistents" [type]="'Student'" [label]="'Assistents'"></edit-users>
+    <edit-users  [role]="'Assistent'" [type]="'Student'" [label]="'Assistents'" [users]="assistents"></edit-users>
+
+    <!-- Students -->
+    <edit-users  [role]="'Student'" [type]="'Student'" [label]="'Students'" [users]="students"></edit-users>
+
   </fieldset>
 
   <fieldset>

@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Rx';
 import {Http, Headers, Response} from "angular2/http";
 import {authHeaders} from '../common/headers';
 import {User} from '../interfaces/user';
-import {Binding} from './binding';
+import {Binding} from '../common/binding';
 
 @Injectable()
 export class AuthService {
@@ -88,7 +88,7 @@ export class AuthService {
            if (res.status == 200) {
              return res.json();
            }
-           return false;
+           return null;
          }).subscribe((user) => {
            if (user) {
              resolve(user)

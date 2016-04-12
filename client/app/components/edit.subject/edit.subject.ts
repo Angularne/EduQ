@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, EventEmitter, Output} from 'angular2/core';
-import {SubjectService} from '../../services/subject';
-import {Subject} from '../../interfaces/subject';
+import {SubjectService} from '../../services/subject.service';
+import {Subject, SubjectUser} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';
 import {EditTaskComponent} from './task/task';
 import {EditUsersComponent} from './users/users';
@@ -12,7 +12,13 @@ import {EditUsersComponent} from './users/users';
   directives: [EditRequirementComponent, EditTaskComponent, EditUsersComponent]
 })
 export class EditSubjectComponent implements OnInit {
-  @Input() subject: Subject;
+  _subject: Subject;
+  @Input() set subject(sub: Subject) {
+    this._subject = sub;
+    this.splitUsers();
+  }
+  get subject() {return this._subject;}
+
 
   get new() {
     return this.subject._id == null;
@@ -21,6 +27,10 @@ export class EditSubjectComponent implements OnInit {
   @Output() saved: EventEmitter<Subject> = new EventEmitter<Subject>();
   @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
 
+
+  private teachers: SubjectUser[] = [];
+  private assistents: SubjectUser[] = [];
+  private students: SubjectUser[] = [];
 
   constructor(private subjectService: SubjectService) { }
 
@@ -36,9 +46,25 @@ export class EditSubjectComponent implements OnInit {
           list: [],
           active: false
         },
-        students: [],
-        assistents: [],
-        teachers: []
+        users: []
+      }
+    }
+  }
+
+
+  splitUsers(){
+    for (var user of this._subject.users) {
+      switch (user.role) {
+        case 'Student':
+          this.students.push(user);
+          break
+
+        case 'Assistent':
+          this.assistents.push(user);
+          break;
+
+        case 'Teacher':
+          this.teachers.push(user);
       }
     }
   }
@@ -52,6 +78,14 @@ export class EditSubjectComponent implements OnInit {
   }
 
   save() {
+
+    // Join users
+    this._subject.users = [];
+    this._subject.users = this.students.concat(this.teachers, this.assistents);
+
+
+    console.log(this._subject.users);
+    // Save
     this.subjectService.saveSubject(this.subject).subscribe((subject) => {
       this.saved.emit(subject);
     }, (err) => {

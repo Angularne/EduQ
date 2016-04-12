@@ -3,7 +3,7 @@
   <div class="col-sm-10">
     <ul class="list-group">
       <li *ngFor="#user of users; #i = index" class="list-group-item">{{user.firstname}} {{user.lastname}}
-        <a class="close" (click)="removeUser(i)"><span class="glyphicon glyphicon-remove"></span></a>
+        <a class="close" (click)="removeUser(user)"><span class="glyphicon glyphicon-remove"></span></a>
       </li>
 
       <li class="list-group-item" style="padding: 0;">

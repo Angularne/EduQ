@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter} from 'angular2/core';
 import {RouteParams} from 'angular2/router';
-import {UserService} from '../../services/user';
+import {UserService} from '../../services/user.service';
 import {User} from '../../interfaces/user';
 import {AuthService} from '../../services/auth.service';
 

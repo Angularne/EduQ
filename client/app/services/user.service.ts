@@ -57,7 +57,7 @@ export class UserService {
       } else {
         var index = -1;
         for (var i = 0; i < this.user.subjects.length; i++) {
-          if (this.user.subjects[i].subject.code === code) index = i;
+          if (this.user.subjects[i].code === code) index = i;
         }
         if (index != -1) {
           resolve(this.user.subjects[index].role);

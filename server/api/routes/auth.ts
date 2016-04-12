@@ -1,4 +1,5 @@
 import {User, authenticateUser} from "../models/user";
+import {Subject} from '../models/subject';
 import {Request, Response, NextFunction} from 'express';
 import express = require('express');
 import jwt = require('jsonwebtoken');
@@ -12,19 +13,8 @@ let authType = 'Basic Auth';
 
 router.post('/auth/login', (req: Request, res: Response, next: NextFunction) => {
 
-  switch (authType) {
-    case 'JWT':
-    console.log('authenticateJWT');
-    authenticateJWT(req, res, next);
-    break;
+  authenticateBasicAuth(req, res, next);
 
-    case 'Basic Auth':
-    authenticateBasicAuth(req, res, next);
-    break;
-
-    default:
-    res.end();
-  }
 });
 
 router.post('/auth/validate', (req: Request, res: Response, next: NextFunction) => {
@@ -75,8 +65,10 @@ function authenticateBasicAuth(req: Request, res: Response, next: NextFunction) 
   if (data && data.name && data.pass) {
     authenticateUser(data.name, data.pass, (err, user) => {
       if (!err && user) {
+
         req.authenticatedUser = user;
         res.sendStatus(200);
+
       } else {
         unauthorized(res);
       }

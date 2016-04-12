@@ -2,18 +2,16 @@ import {Component, Inject} from 'angular2/core';
 import {RouteConfig} from 'angular2/router';
 import {LoginComponent} from "./components/login/login";
 import {MainComponent} from "./components/main/main";
-import {SubjectsComponent} from './components/subjects/subjects';
+import {SubjectsComponent} from './components/subject/subject';
 import {AuthService} from './services/auth.service';
-import {MypageComponent} from './components/mypage/mypage';
+import {MypageComponent} from './components/me/me';
 import {AdminpageComponent} from "./components/adminpage/adminpage";
 import {LoggedInRouterOutlet} from './common/LoggedInOutlet';
-import {UserService} from './services/user';
+import {UserService} from './services/user.service';
 import {SiteHeaderComponent} from './components/siteheader/siteheader';
-
 import {EditSubjectComponent} from './components/edit.subject/edit.subject';
 import {EditUserComponent} from './components/edit.user/edit.user';
-
-import {SubjectService} from './services/subject';
+import {SubjectService} from './services/subject.service';
 
 @Component({
   selector: 'my-app',

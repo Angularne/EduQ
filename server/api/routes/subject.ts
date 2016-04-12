@@ -1,8 +1,11 @@
 import express = require('express');
-import {Subject, SubjectDocument, Broadcast, Task, Queue, QueueGroup, Requirements, Location} from '../models/subject';
+import {Subject, SubjectDocument, Broadcast, Task, Queue, QueueGroup, Requirement, Location} from '../models/subject';
 import {User, UserDocument} from '../models/user';
 import {Request, Response, NextFunction} from "express";
 import {QueueSocket} from '../socket';
+import {UserSubject} from '../models/user.subject';
+
+
 
 
 /** Router */
@@ -28,7 +31,7 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
   let popselect = populate[1];
 
 
-  Subject.find(cond).select(select).populate(pop, popselect).lean().exec((err, user) => {
+  Subject.find(cond).select('code name').lean().exec((err, user) => {
     if (!err) {
       res.json(user);
     } else {
@@ -42,23 +45,55 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|student|assistent/i, 'code')) {
+  if (!accessUser(req.authenticatedUser, code, 'teacher assistent student')) {
     denyAccess(res);
     return;
   }
 
-  let select: string = (req.query.select || '').split(',').join(' ');;
-  var populate = (req.query.populate || '').split(',').join(' ').split(';');
-  let pop = populate[0];
-  let popselect = populate[1];
+  // Show tasks if admin, teacher or assistent
+  let showTasks = true;
 
-  Subject.findOne({code: code}).select(select).populate(pop, popselect).lean().exec((err, subj) => {
-    if (!err) {
-      res.json(subj);
-    } else {
-      res.json(err);
+  Subject.aggregate().match({
+    code: code
+  }).append({
+    $lookup: {
+      from: 'usersubjects',        //<collection to join>,
+      localField: '_id',          //<field from the input documents>,
+      foreignField: 'subject',   //<field from the documents of the "from" collection>,
+      as: 'users'               //<output array field>
     }
+  }).exec().then((subj) => {
+    if (subj.length) {
+      User.populate(subj[0], {
+        path: 'users.user broadcasts.author queue.list.helper queue.list.users',
+        select: 'firstname lastname'
+      }).then((subject) => {
+        // users populated
+        for (var user of subject.users) {
+          // Remap fields
+          user.firstname = user.user.firstname;
+          user.lastname = user.user.lastname;
+          user._id = user.user._id;
+
+          // remove unnecessary fields
+          if (user.role != 'Student' || !showTasks) {
+            delete user.tasks;
+          }
+          delete user.__v;
+          delete user.user;
+          delete user.subject;
+        }
+        // Send subject
+        res.json(subject);
+      }, (err) => {
+        res.json(err);
+      });
+    }
+  },(err) => {
+    // ERROR
+    res.json(err);
   });
+
 });
 
 /** POST: Create new subject */
@@ -78,30 +113,18 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       res.status(201); // Created
       res.json(subject);
 
-      var students = subject.students || [];
-      var assistents = subject.assistents || [];
-      var teachers = subject.teachers || [];
 
-      if (students.length) {
-        User.update({_id:{$in: students}, 'subjects.subject': {$ne: subject._id}},
-                    {
-                      $push:{subjects: {subject: subject._id, role: 'Student'}},
-                      $pull:{}
+      var users: {
+        user: string,
+        subject: string,
+        role: string
+      }[] = req.body.users;
 
-                    }, {multi: true}, (err, model) => {
-        });
-      }
-      if (assistents.length) {
-        User.update({_id:{$in: assistents}, 'subjects.subject': {$ne: subject._id}},
-                    {$push:{subjects: {subject: subject._id, role: 'Assistent'}}}, {multi: true}, (err, model) => {
-        });
-      }
-      if (teachers.length) {
-        User.update({_id:{$in: teachers}, 'subjects.subject': {$ne: subject._id}},
-                    {$push:{subjects: {subject: subject._id, role: 'Teacher'}}}, {multi: true}, (err, model) => {
-        });
+      for (var u of users) {
+        u.subject = subject._id;
       }
 
+      UserSubject.create(users).then((res)=> {});
     } else {
       res.json(err);
     }
@@ -114,14 +137,44 @@ router.put('/:code', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher/i, 'code')) {
+  if (!accessUser(req.authenticatedUser, code, 'teacher')) {
     denyAccess(res);
     return;
   }
 
-  Subject.findOneAndUpdate({code:code}, req.body, (err, subj) => {
-    if (!err) {
-      res.json(subj);
+  Subject.findOneAndUpdate({code:code}, req.body, {new:true}, (err, subject) => {
+    if (!err || subject) {
+
+       var user_id: string[] = [];
+
+       for (var user of req.body.users || []) {
+         user.user = user._id;
+         user.subject = subject._id;
+
+         user_id.push(user._id);
+
+         UserSubject.findOneAndUpdate({
+           user: user.user,
+           subject: user.subject
+         }, {
+           role: user.role
+         }, {
+           upsert: true
+         }).exec().then((u) => {
+         }, (err) => {
+           console.log(err);
+         });
+       }
+
+
+       UserSubject.remove({
+         subject: subject._id,
+         user: {$nin: user_id}
+       }).exec().then((usr) => {
+       }, (err) => {
+         console.log(err);
+       });
+      res.json(subject);
     } else {
       res.status(409); // Conflict
       res.json(err);
@@ -134,7 +187,7 @@ router.post('/:code/users', (req: Request, res: Response, next: NextFunction) =>
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher')) {
       denyAccess(res);
       return;
   }
@@ -189,7 +242,7 @@ router.delete('/:code/users', (req: Request, res: Response, next: NextFunction) 
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher')) {
       denyAccess(res);
       return;
   }
@@ -239,40 +292,6 @@ router.delete('/:code/users', (req: Request, res: Response, next: NextFunction) 
   });
 });
 
-/** GET: List users in subject */ // Unødvendig
-router.get('/:code/users', (req: Request, res: Response, next: NextFunction) => {
-  var code: string = req.params.code;
-
-  // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code')) {
-    denyAccess(res);
-    return;
-  }
-
-  Subject.findOne({code:code}).exec((err, subject) => {
-    if (!err && subject) {
-      User.find({'subjects.subject': subject._id}).lean().populate('subjects.subject', 'name code').exec((err, users) => {
-        if (!err) {
-
-          for (var user of users) {
-            for (var subj of user.subjects) {
-              if (subj.subject.code === code) {
-                user.subjects = [subj];
-                break;
-              }
-            }
-          }
-
-          res.json(users);
-        } else {
-          res.json(err);
-        }
-      });
-    } else {
-      res.json(err || 'Subject not found');
-    }
-  });
-});
 
 
 
@@ -285,7 +304,7 @@ router.post('/:code/broadcast', (req: Request, res: Response, next: NextFunction
   var code = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code')) {
+  if (!accessUser(req.authenticatedUser, code, 'teacher assistent')) {
     denyAccess(res);
     return;
   }
@@ -306,11 +325,10 @@ router.post('/:code/broadcast', (req: Request, res: Response, next: NextFunction
 
   Subject.findOneAndUpdate({code:code},{$push: {broadcasts: broadcast}},{new: true}).populate('broadcasts.author', 'firstname lastname').exec((err, subj) => {
     if (!err) {
-      /** TODO? Trigger Socket update? */
 
       QueueSocket.broadcast(code, subj.broadcasts[subj.broadcasts.length - 1]);
       res.status(201);
-      res.json(broadcast);
+      res.end();
     } else {
       res.json(err);
     }
@@ -322,7 +340,7 @@ router.post('/:code/broadcast/:bc_id', (req: Request, res: Response, next: NextF
   var code = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code')) {
+  if (!accessUser(req.authenticatedUser, code, 'teacher assistent')) {
     denyAccess(res);
     return;
   }
@@ -345,7 +363,7 @@ router.delete('/:code/broadcast/:bc_id', (req: Request, res: Response, next: Nex
   let bc_id = req.params.bc_id;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code')) {
+  if (!accessUser(req.authenticatedUser, code, 'teacher assistent')) {
     denyAccess(res);
     return;
   }
@@ -369,15 +387,17 @@ router.put('/:code/queue/', (req: Request, res: Response, next: NextFunction) =>
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code')) {
+  if (!accessUser(req.authenticatedUser, code, 'teacher assistent')) {
     denyAccess(res);
     return;
   }
 
   let activate: boolean = req.body.activate || false;
-  Subject.findOneAndUpdate({code: code},{'queue.active': activate}).exec((err) => {
+  Subject.findOneAndUpdate({code: code},{'queue.active': activate}).exec((err, subj) => {
     if (!err) {
       res.end();
+      QueueSocket.openQueue(code);
+      QueueSocket.queue(code);
     } else {
       res.json(err);
     }
@@ -387,16 +407,18 @@ router.put('/:code/queue/', (req: Request, res: Response, next: NextFunction) =>
 /** POST: Add users to queue */
 router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
-  var users_id = req.body.users;
+  var users_id = req.body.users || [];
+
+  users_id.push(req.authenticatedUser._id);
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent|student/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher assistent student')) {
     denyAccess(res);
     return;
   }
 
   // Check parameters
-  if (!users_id || users_id.length == 0) {
+  if (!users_id) {
     res.json('Users not set');
     return;
   }
@@ -410,12 +432,13 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
           return;
         }
         // Find users and check access
+
         var users: UserDocument[];
         User.find({_id: {$in:users_id}}).lean().select('firstname lastname subjects').exec((err, usersRes) => {
           if (!err && usersRes) {
             users = usersRes;
             for (var user of users) {
-              if (!checkAccess(user, subj._id, /student/i)) {
+              if (!(req.authenticatedUser, code, 'student')) {
                 // Some users do not have access to subject
                 res.status(409); // Conflict
                 res.json('Some users do not have access to subject');
@@ -438,6 +461,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
              // TODO: get room from user
 
              // Add group to queue and save
+
              let q: QueueGroup = {
                users: users_id,
                helper: null,
@@ -450,12 +474,14 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
 
 
              subj.queue.list.push(q);
+
              subj.save((serr) => {
                if (!serr) {
                  // Success
                  res.status(201); // Created
                  res.end();
-                 /** TODO Trigger socket event */
+
+                 QueueSocket.queue(code);
                } else {
                  // Save Error
                  res.status(409); // Conflict
@@ -473,23 +499,40 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
   });
 });
 
+/** PUT: Update queue item
+router.put('/:code/queue/:id', (req: Request, res: Response, next: NextFunction) => {
+  var code: string = req.params.code;
+  var id: string = req.params.id;
+
+  var updates = req.body;
+
+  // Check user privileges
+  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent|student/i)) {
+    denyAccess(res);
+    return;
+  }
+});
+*/
+
 /** PUT: Add helper to queue */
 router.put('/:code/queue/:qid', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
   var qid = req.params.qid;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher assistent')) {
     denyAccess(res);
     return;
   }
+
+
 
   Subject.findOneAndUpdate(
     {code:code, 'queue.list._id': qid},
     {'queue.list.$.helper': req.authenticatedUser._id}
   ).exec((err, subj) => {
     if (!err) {
-      QueueSocket.updateQueue(code, subj.queue);
+      QueueSocket.queue(code);
       res.end();
     } else {
       res.json(err);
@@ -503,13 +546,13 @@ router.delete('/:code/queue/:id', (req: Request, res: Response, next: NextFuncti
   var id : string = req.params.id;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent|student/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher assistent student')) {
     denyAccess(res);
     return;
   }
 
   // Validate if user can remove grup
-  var force = checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code');
+  var force = (req.authenticatedUser, code, 'teacher assistent');
   var cond: any = {
     code: code,
     'queue.list': {
@@ -524,13 +567,12 @@ router.delete('/:code/queue/:id', (req: Request, res: Response, next: NextFuncti
   }
 
   // Execute
-  Subject.findOneAndUpdate(cond,
-    {$pull: {'queue.list': {_id:id}}},
-    (err, sub) => {
+  Subject.findOneAndUpdate(cond, {$pull: {'queue.list': {_id:id}}}).exec((err, sub) => {
       if (!err && sub) {
-        console.log(sub);
-        res.json(sub);
+        QueueSocket.queue(code);
+        res.end();
       } else {
+        res.status(409);
         res.json(err || {});
       }
   });
@@ -541,7 +583,7 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
   var code = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent|student/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher assistent student')) {
     denyAccess(res);
     return;
   }
@@ -554,18 +596,23 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
     if (!err) {
       // Check number of users left in group
       // Remove if no users left
+      console.log(affected);
       if (affected.nModified > 0) {
         Subject.update(
-          {code:code, 'queue.list.users.0': {$exists: false}},
-          {$pull:{'queue.list':{$elemMatch:{'users.0': {$exists: false}}}}}
+          {code:code, 'queue.list.users': []},
+          {$pull:{'queue.list':{'users': []}}}
         ).exec((err) => {
           if (!err) {
+            QueueSocket.queue(code);
             res.end();
+
           } else {
             res.json(err);
           }
         });
-      } else { res.end(); }
+      } else {
+        QueueSocket.queue(code);
+        res.end(); }
     } else { res.json(err); }
   });
 });
@@ -580,7 +627,7 @@ router.post('/:code/requirement', (req: Request, res: Response, next: NextFuncti
   var code = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher')) {
     denyAccess(res);
     return;
   }
@@ -605,7 +652,7 @@ router.delete('/:code/requirement/:id', (req: Request, res: Response, next: Next
   var code = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher')) {
     denyAccess(res);
     return;
   }
@@ -624,7 +671,7 @@ router.post('/:code/task', (req: Request, res: Response, next: NextFunction) => 
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher assistent')) {
     denyAccess(res);
     return;
   }
@@ -660,7 +707,7 @@ router.delete('/:code/task', (req: Request, res: Response, next: NextFunction) =
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent/i, 'code')) {
+  if (!(req.authenticatedUser, code, 'teacher assistent')) {
     denyAccess(res);
     return;
   }
@@ -694,31 +741,81 @@ router.delete('/:code/task', (req: Request, res: Response, next: NextFunction) =
 
 
 
-/**
- * Check if user has access to subject. Use path = 'code' to compare code, defaults to '_id'
- */
-function checkAccess(user: UserDocument, subject, role: RegExp, path: string = '_id') {
+
+/*
+function accessSubject(subject: SubjectDocument, userid: string, role: string) {
+  for (let r of role.split(' ')) {
+    switch (r) {
+      case 'student':
+      for (let us of subject.students) {
+        if (String(us.user) == String(userid)) {
+          return true;
+        }
+      }
+      break;
+
+      case 'assistent': {
+        for (let us of subject.assistents) {
+          if (String(us) == String(userid)) {
+            return true;
+          }
+        }
+        break;
+      }
+
+      case 'teacher': {
+        for (let us of subject.teachers) {
+          if (String(us) == String(userid)) {
+            return true;
+          }
+        }
+        break;
+      }
+    }
+  }
+  return false;
+}
+*/
+
+function accessUser(user: UserDocument, code: string, role: string) {
+  return true;
+  /*
   if (user.rights == 'Admin') {
     return true;
   }
-  switch (path) {
-    case 'code':
-    for (var sub of user.subjects) {
-      if (sub.subject.code === subject && role.test(sub.role)) {
-        return true;
+  for (let r of role.split(' ')) {
+    switch (r) {
+      case 'student':
+      for (let sub of user.student) {
+        if (code == sub.code) {
+          return true;
+        }
       }
-    }
-    return false;
+      break;
 
-    default:
-    for (var sub of user.subjects) {
-      if (String(sub.subject) === String(subject) && role.test(sub.role)) {
-        return true;
+      case 'assistent': {
+        for (let sub of user.assistent) {
+          if (code == sub.code) {
+            return true;
+          }
+        }
+        break;
+      }
+
+      case 'teacher': {
+        for (let sub of user.teacher) {
+          if (code == sub.code) {
+            return true;
+          }
+        }
+        break;
       }
     }
-    return false;
   }
+  return false;*/
 }
+
+
 
 /**
  * Denies access

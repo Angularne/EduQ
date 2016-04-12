@@ -1,33 +1,32 @@
-import {Injector, Component, Output, EventEmitter, OnInit} from 'angular2/core';
-import {CanActivate} from 'angular2/router';
-import {AuthService} from '../../services/auth.service';
-import {Queue} from '../../interfaces/subject';
-import {User} from '../../interfaces/user';
-import {QueueElementComponent} from '../queue-element/queue-element';
-import {SubjectService} from '../../services/subject';
-import {UserService} from '../../services/user';
+import {Injector, Component, OnInit, Input} from 'angular2/core';
+import {AuthService} from '../../../services/auth.service';
+import {Queue} from '../../../interfaces/subject';
+import {User} from '../../../interfaces/user';
+import {SubjectUser} from '../../../interfaces/subject';
+import {SubjectService} from '../../../services/subject.service';
+import {UserService} from '../../../services/user.service';
+import {QueueService} from '../../../services/queue.service';
 
 @Component({
   selector: 'queue',
-  templateUrl: 'app/components/queue/queue.html',
-  directives: [QueueElementComponent]
+  templateUrl: 'app/components/subject/queue/queue.html'
 })
 
 export class QueueComponent{
-  queue: Queue;
+  @Input() queue: Queue;
   students: User[] = [];
   usersSelected: User[] = [];
   mine: boolean = false;
   user: User;
   myUserInQueue: boolean = false;
   userRole: string = 'Student';
-  constructor(public subjectService: SubjectService, public userService: UserService, public auth: AuthService) {
 
-    this.subjectService.queue.subscribe((value) => {
-      this.queue = value;
-    });
+  constructor(public subjectService: SubjectService, public userService: UserService, public auth: AuthService, private queueService: QueueService) {
+
+
+
     this.subjectService.students.subscribe((value) => {
-      this.students = value;
+      this.students = value as any;
     })
     this.auth.getUser().then((user) => {
       this.user = user;
@@ -52,7 +51,6 @@ export class QueueComponent{
     }
   }
 
-
   checkIfMyUser(element: any) {
     var index = this.queue.list.indexOf(element);
     for (var i = 0; i < element.users.length; i++) {
@@ -73,19 +71,19 @@ export class QueueComponent{
   }
 
   toggleQueueButton() {
-    this.subjectService.toggleQueueActive(this.queue.active);
+    this.queueService.toggleQueueActive(this.queue.active);
   }
   addQueueElement() {
-    this.subjectService.addQueueElement(this.usersSelected);
+    this.queueService.addQueueElement(this.usersSelected);
   }
   deleteFromQueue() {
-    this.subjectService.deleteFromQueue();
+    this.queueService.deleteFromQueue();
   }
   removeQueueElement(element: any) {
-    this.subjectService.removeQueueElement(element);
+    this.queueService.removeQueueElement(element);
   }
   helpQueueElement(element: any) {
-    this.subjectService.helpQueueElement(element);
+    this.queueService.helpQueueElement(element);
   }
   delayQueueElement() {
     console.error('Error: QueueComponent.delayQueueElement not implemented!');

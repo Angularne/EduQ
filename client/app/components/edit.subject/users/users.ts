@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from 'angular2/core';
 import {Subject} from '../../../interfaces/subject';
 import {User} from '../../../interfaces/user';
-import {UserService} from '../../../services/user';
+import {UserService} from '../../../services/user.service';
 
 @Component({
   selector: 'edit-users',
@@ -9,20 +9,33 @@ import {UserService} from '../../../services/user';
 })
 export class EditUsersComponent implements OnInit {
 
-  _users: User[] = [];
+  private _users: User[] = [];
   @Input() set users(users: User[]){
     this._users = users;
-    this.fetchAllUsers();
+    if (this._users && this._type) {
+      this.fetchAllUsers();
+    }
     this.query = '';
     this.suggestions = [];
   }
   get users() {return this._users;}
 
+  private all: User[];
 
-  all: User[] = [];
+
   @Input() label: string;
+  @Input() role: string;  // Teacher | Assistent
 
-  @Input() type: string;  // Teacher | Student | Admin
+  private _type: string;
+  @Input() set type(type:string) {  // Teacher | Student | Admin
+    this._type = type;
+
+    if (this._type && this._users) {
+      this.fetchAllUsers();
+
+    }
+  }
+  get type() {return this._type;}
 
   query: string = '';
   suggestions: User[] = [];
@@ -35,15 +48,13 @@ export class EditUsersComponent implements OnInit {
   }
 
   fetchAllUsers() {
-    this.userService.getAllUsers(this.type ? {rights:this.type} : {}, 'firstname,lastname').subscribe((users) => {
+    this.userService.getAllUsers(this.type ? {rights:this.type} : null, 'firstname,lastname').subscribe((users) => {
       this.all = [];
       for (var user of users) {
         if (!this.inUsers(user)) {
           this.all.push(user);
         }
       }
-      console.log('get all');
-      console.log(this.all);
     });
   }
 
@@ -76,19 +87,32 @@ export class EditUsersComponent implements OnInit {
   }
 
   addUser(user) {
+    user.role = this.role;
+
     this.users.push(user);
     this.query = '';
     this.suggestions = [];
 
-    let i = this.all.indexOf(user);
-    if (i >= 0 && i < this.all.length) {
-      this.all.splice(i, 1);
+    var i = 0;
+    for (var u of this.all) {
+      if (user._id == u._id) {
+        this.all.splice(i, 1);
+        break;
+      }
+      i++;
     }
+
   }
 
-  removeUser(i){
-    this.all.unshift(this.users[i]);
-    this.users.splice(i, 1);
+  removeUser(user){
+    this.all.unshift(user);
+    user.role = null;
+    for (var i in this.users) {
+      if (this.users[i]._id == user._id) {
+        this.users.splice(+i, 1);
+        break;
+      }
+    }
   }
 
 }

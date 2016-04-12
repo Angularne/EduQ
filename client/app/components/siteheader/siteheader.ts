@@ -2,15 +2,14 @@ import {Component, OnInit, OnChanges} from 'angular2/core';
 import {Router, ROUTER_DIRECTIVES} from 'angular2/router';
 import {AuthService} from '../../services/auth.service';
 import {Subject} from '../../interfaces/subject';
-import {SubjectsComponent} from '../subjects/subjects';
+import {SubjectsComponent} from '../subject/subject';
 import {LoggedInRouterOutlet} from '../../common/LoggedInOutlet';
 import {User} from '../../interfaces/user';
 
 @Component({
   selector: 'siteheader',
   templateUrl: 'app/components/siteheader/siteheader.html',
-  directives: [SubjectsComponent, ROUTER_DIRECTIVES],
-  inputs: ['subjects']
+  directives: [SubjectsComponent, ROUTER_DIRECTIVES]
 })
 
 export class SiteHeaderComponent implements OnInit {

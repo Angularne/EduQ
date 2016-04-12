@@ -1,9 +1,9 @@
 import {Component} from 'angular2/core';
-import {Broadcast} from '../../interfaces/subject';
+import {Broadcast} from '../../../../interfaces/subject';
 
 @Component({
   selector: 'broadcast',
-  templateUrl: 'app/components/broadcast/broadcast.html',
+  templateUrl: 'app/components/subject/broadcasts/broadcast/broadcast.html',
   inputs: ['broadcast']
 })
 

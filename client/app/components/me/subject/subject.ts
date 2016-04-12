@@ -1,15 +1,15 @@
 import {Component, Input} from "angular2/core";
 import {Subject} from '../../../interfaces/subject';
-import {UserSubjects} from '../../../interfaces/user';
+import {UserSubject} from '../../../interfaces/user';
 
 @Component({
   selector: 'subject-tasks',
-  templateUrl: 'app/components/mypage/subject/subject.html',
+  templateUrl: 'app/components/me/subject/subject.html',
   inputs: ['subject']
 })
 
 export class SubjectTaskDetailComponent{
-  _subject: UserSubjects;
+  _subject: UserSubject;
   tasks: boolean[];
   completed: boolean;
 
@@ -28,7 +28,7 @@ export class SubjectTaskDetailComponent{
 
   checkTasks() {
     this.tasks = [];
-    for (var i = 1; i <= this._subject.subject.tasks.length; i++) {
+    for (var i = 1; i <= this.subject.subjectTasks.length; i++) {
       this.tasks.push(false);
     }
     for (var task of this.subject.tasks) {
@@ -36,7 +36,7 @@ export class SubjectTaskDetailComponent{
     }
 
     this.completed = true;
-    for (var req of this._subject.subject.requirements) {
+    for (var req of this._subject.requirements) {
       var count = 0;
       for (var t = req.from; t <= req.to; t++) {
         if (this.tasks[t-1]) {

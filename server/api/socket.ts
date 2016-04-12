@@ -1,6 +1,6 @@
 import socketio = require('socket.io');
 
-
+import {Subject} from './models/subject';
 
 
 
@@ -20,21 +20,34 @@ export namespace QueueSocket {
       })
     });
   }
+
   export function closeQueue(subject: string) {
     delete io.nsps[subject];
   }
-  export function updateQueue(subject: string, queue) {
-    if (!io) openQueue(subject);
-    io.of(subject).emit('queue-update', queue);
+  export function queue(code: string) {
+    if (io && code) {
+      console.log('emit:' + code + ':' + 'queue');
+
+
+
+      Subject.findOne({code: code}).select('queue').populate('queue.list.users queue.list.helper', 'firstname lastname').lean().exec((err, subj) => {
+        if (!err && subj) {
+          console.log(JSON.stringify(subj.queue));
+          io.of(code).emit('queue', subj.queue);
+        }
+      });
+
+    }
   }
 
 
   export function broadcast(subject: string, broadcast) {
-    if (!io) openQueue(subject);
-    console.log('emit:' + subject + ':' + 'broadcast');
-    console.log(broadcast);
-    io.of(subject).emit('new-broadcast', broadcast);
+    if (io) {
+      console.log('emit:' + subject + ':' + 'broadcast');
+      console.log(broadcast);
 
+      io.of(subject).emit('broadcast', broadcast);
+    }
   }
 
 
