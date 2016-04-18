@@ -1,12 +1,13 @@
-import {Component} from 'angular2/core';
+import {Component, Input, Output, EventEmitter} from 'angular2/core';
 import {Broadcast} from '../../../../interfaces/subject';
 
 @Component({
   selector: 'broadcast',
-  templateUrl: 'app/components/subject/broadcasts/broadcast/broadcast.html',
-  inputs: ['broadcast']
+  templateUrl: 'app/components/subject/broadcasts/broadcast/broadcast.html'
 })
 
 export class BroadcastDetailComponent {
-  broadcast: Broadcast;
+  @Input() broadcast: Broadcast;
+  @Input() role: string;
+  @Output() delete: EventEmitter<Broadcast> = new EventEmitter<Broadcast>();
 }

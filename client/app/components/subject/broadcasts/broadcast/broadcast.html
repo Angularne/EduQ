@@ -1,1 +1,15 @@
-<span id="title">{{broadcast.title}}</span><span id="content">{{broadcast.content}}</span><span id="created">{{broadcast.created}}</span>
+<div class="">
+  <h4 id="title">{{broadcast.title}}
+    <small *ngIf="role == 'Teacher' || role == 'Assistent'">
+    <a (click)="delete.emit(broadcast)">
+      <span class="glyphicon glyphicon-remove"></span>
+    </a>
+    <a>
+      <span class="glyphicon glyphicon-pencil">?</span>
+    </a>
+    </small>
+  </h4>
+  <p id="content">{{broadcast.content}}</p>
+  <footer><small>{{broadcast.created}} of {{broadcast.author.firstname}} {{broadcast.author.lastname}}</small> </footer>
+  <hr>
+</div>

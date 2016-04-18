@@ -20,14 +20,10 @@ router.post('/auth/login', (req: Request, res: Response, next: NextFunction) => 
 router.post('/auth/validate', (req: Request, res: Response, next: NextFunction) => {
   let data = basicAuth(req);
   if (data && data.name && data.pass) {
-    authenticateUser(data.name, data.pass, (err, user) => {
-      if (!err && user) {
-        // Correct username and password
-        res.end();
-      } else {
-        res.status(403);
-        res.end();
-      }
+    authenticateUser(data.name, data.pass).then((user) => {
+      res.end();
+    }, (err) => {
+      res.sendStatus(403);
     });
   } else {
     unauthorized(res);
@@ -63,15 +59,11 @@ router.post('/auth/token', (req: Request, res: Response, next: NextFunction) => 
 function authenticateBasicAuth(req: Request, res: Response, next: NextFunction) {
   let data = basicAuth(req);
   if (data && data.name && data.pass) {
-    authenticateUser(data.name, data.pass, (err, user) => {
-      if (!err && user) {
-
-        req.authenticatedUser = user;
-        res.sendStatus(200);
-
-      } else {
-        unauthorized(res);
-      }
+    authenticateUser(data.name, data.pass).then((user) => {
+      req.authenticatedUser = user;
+      res.sendStatus(200);
+    }, (err) => {
+      unauthorized(res);
     });
 
   } else {
@@ -79,7 +71,7 @@ function authenticateBasicAuth(req: Request, res: Response, next: NextFunction) 
   }
 }
 
-/** JWT Authentication */
+/** JWT Authentication *//*
 function authenticateJWT(req: Request, res: Response, next: NextFunction) {
   let data  = req.body;
   if (data) {
@@ -113,7 +105,7 @@ function authenticateJWT(req: Request, res: Response, next: NextFunction) {
   }
 
 }
-
+*/
 
 
   /** Using jwt to authenticate */
@@ -151,14 +143,12 @@ function authenticateJWT(req: Request, res: Response, next: NextFunction) {
   router.use((req: Request, res: Response, next: NextFunction) => {
     let data = basicAuth(req);
     if (data && data.name && data.pass) {
-      authenticateUser(data.name, data.pass, (err, user) => {
-        if (!err && user) {
-          // Correct username and password
-          req.authenticatedUser = user;
-          next();
-        } else {
-          unauthorized(res);
-        }
+      authenticateUser(data.name, data.pass).then((user) => {
+        // Correct username and password
+        req.authenticatedUser = user;
+        next();
+      }, (err) => {
+        unauthorized(res);
       });
     } else {
       unauthorized(res);

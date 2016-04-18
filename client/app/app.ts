@@ -12,14 +12,18 @@ import {SiteHeaderComponent} from './components/siteheader/siteheader';
 import {EditSubjectComponent} from './components/edit.subject/edit.subject';
 import {EditUserComponent} from './components/edit.user/edit.user';
 import {SubjectService} from './services/subject.service';
+import {UsersComponent} from './components/users/users';
 
 @Component({
   selector: 'my-app',
   template: `
-  <siteheader ></siteheader>
-  <br><br><br><br>
-  <div class="container">
-  <auth-router-outlet></auth-router-outlet>
+  <header id="page-header">
+    <siteheader></siteheader>
+  </header>
+  <div id="page-wrapper">
+    <div class="container">
+      <auth-router-outlet></auth-router-outlet>
+    </div>
   </div>
   `,
   directives: [LoggedInRouterOutlet, SiteHeaderComponent],
@@ -34,14 +38,17 @@ import {SubjectService} from './services/subject.service';
   {path: '/me', component: MypageComponent, as: 'MypagePath'},
   {path: '/adminpage', component: AdminpageComponent, as: 'AdminpagePath'},
 
+  /** Edit  Users */
+  {path: '/users', component: UsersComponent, as: 'UserListPath'},
 
+
+  {path: '/users/:user_id', component: EditUserComponent, as: 'EditUserPath'},
 
 
   {path: '/subject/new', component: EditSubjectComponent, as: 'NewSubjectPath'},
-  {path: '/user/:user_id', component: EditUserComponent, as: 'EditUserPath'},
 
 
-
+  /** Redirect to main */
   {path: '/**', redirectTo:['MainPath']}
 
 ])

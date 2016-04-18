@@ -44,8 +44,9 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
 
+
   // Check user privileges
-  if (!accessUser(req.authenticatedUser, code, 'teacher assistent student')) {
+  if (!hasAccess(req.authenticatedUser, code)) {
     denyAccess(res);
     return;
   }
@@ -125,6 +126,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       }
 
       UserSubject.create(users).then((res)=> {});
+      QueueSocket.createNamespace(subject.code);
     } else {
       res.json(err);
     }
@@ -137,7 +139,7 @@ router.put('/:code', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
 
   // Check user privileges
-  if (!accessUser(req.authenticatedUser, code, 'teacher')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher/i)) {
     denyAccess(res);
     return;
   }
@@ -182,12 +184,12 @@ router.put('/:code', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-/** POST: Add users to subject */
+/** POST: Add users to subject */ // Ikke i bruk
 router.post('/:code/users', (req: Request, res: Response, next: NextFunction) => {
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher/i)) {
       denyAccess(res);
       return;
   }
@@ -237,12 +239,12 @@ router.post('/:code/users', (req: Request, res: Response, next: NextFunction) =>
   });
 });
 
-/** DELETE: Remove users from subject */
+/** DELETE: Remove users from subject */ // Ikke i bruk
 router.delete('/:code/users', (req: Request, res: Response, next: NextFunction) => {
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher/i)) {
       denyAccess(res);
       return;
   }
@@ -304,11 +306,12 @@ router.post('/:code/broadcast', (req: Request, res: Response, next: NextFunction
   var code = req.params.code;
 
   // Check user privileges
-  if (!accessUser(req.authenticatedUser, code, 'teacher assistent')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
     denyAccess(res);
     return;
   }
 
+  console.log(req.body);
   // Check body
   if (!(req.body.title && req.body.content)) {
     res.status(409); // Conflict
@@ -323,10 +326,10 @@ router.post('/:code/broadcast', (req: Request, res: Response, next: NextFunction
     created: new Date()
   };
 
-  Subject.findOneAndUpdate({code:code},{$push: {broadcasts: broadcast}},{new: true}).populate('broadcasts.author', 'firstname lastname').exec((err, subj) => {
+  Subject.findOneAndUpdate({code:code},{$push: {broadcasts: broadcast}}).exec((err, subj) => {
     if (!err) {
 
-      QueueSocket.broadcast(code, subj.broadcasts[subj.broadcasts.length - 1]);
+      QueueSocket.broadcast(code);
       res.status(201);
       res.end();
     } else {
@@ -340,7 +343,7 @@ router.post('/:code/broadcast/:bc_id', (req: Request, res: Response, next: NextF
   var code = req.params.code;
 
   // Check user privileges
-  if (!accessUser(req.authenticatedUser, code, 'teacher assistent')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
     denyAccess(res);
     return;
   }
@@ -349,6 +352,7 @@ router.post('/:code/broadcast/:bc_id', (req: Request, res: Response, next: NextF
 
   Subject.findOneAndUpdate({code:code, 'broadcast._id': req.params.bc_id}, {broadcast:req.body}, (err, subj) => {
     if (!err) {
+      QueueSocket.broadcast(code);
       res.end();
     } else {
       res.status(409); // Conflict
@@ -363,15 +367,17 @@ router.delete('/:code/broadcast/:bc_id', (req: Request, res: Response, next: Nex
   let bc_id = req.params.bc_id;
 
   // Check user privileges
-  if (!accessUser(req.authenticatedUser, code, 'teacher assistent')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
     denyAccess(res);
     return;
   }
 
   Subject.update({code:code}, {$pull: {broadcasts:{_id: bc_id}}}, (err, model) => {
     if (!err) {
-      res.json(model);
+      QueueSocket.broadcast(code);
+      res.end();
     } else {
+      res.status(409);
       res.json(err);
     }
   });
@@ -387,7 +393,7 @@ router.put('/:code/queue/', (req: Request, res: Response, next: NextFunction) =>
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!accessUser(req.authenticatedUser, code, 'teacher assistent')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
     denyAccess(res);
     return;
   }
@@ -396,7 +402,6 @@ router.put('/:code/queue/', (req: Request, res: Response, next: NextFunction) =>
   Subject.findOneAndUpdate({code: code},{'queue.active': activate}).exec((err, subj) => {
     if (!err) {
       res.end();
-      QueueSocket.openQueue(code);
       QueueSocket.queue(code);
     } else {
       res.json(err);
@@ -412,7 +417,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
   users_id.push(req.authenticatedUser._id);
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher assistent student')) {
+  if (!hasAccess(req.authenticatedUser, code)) {
     denyAccess(res);
     return;
   }
@@ -438,7 +443,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
           if (!err && usersRes) {
             users = usersRes;
             for (var user of users) {
-              if (!(req.authenticatedUser, code, 'student')) {
+              if (!hasAccess(req.authenticatedUser, code, /student/i)) {
                 // Some users do not have access to subject
                 res.status(409); // Conflict
                 res.json('Some users do not have access to subject');
@@ -507,7 +512,7 @@ router.put('/:code/queue/:id', (req: Request, res: Response, next: NextFunction)
   var updates = req.body;
 
   // Check user privileges
-  if (!checkAccess(req.authenticatedUser, code, /teacher|assistent|student/i)) {
+  if (!checkAccess(req.authenticatedUser, code)) {
     denyAccess(res);
     return;
   }
@@ -520,7 +525,7 @@ router.put('/:code/queue/:qid', (req: Request, res: Response, next: NextFunction
   var qid = req.params.qid;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher assistent')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
     denyAccess(res);
     return;
   }
@@ -546,13 +551,13 @@ router.delete('/:code/queue/:id', (req: Request, res: Response, next: NextFuncti
   var id : string = req.params.id;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher assistent student')) {
+  if (!hasAccess(req.authenticatedUser, code)) {
     denyAccess(res);
     return;
   }
 
   // Validate if user can remove grup
-  var force = (req.authenticatedUser, code, 'teacher assistent');
+  var force = hasAccess(req.authenticatedUser, code, /teacher|assistent/i);
   var cond: any = {
     code: code,
     'queue.list': {
@@ -583,7 +588,7 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
   var code = req.params.code;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher assistent student')) {
+  if (!hasAccess(req.authenticatedUser, code)) {
     denyAccess(res);
     return;
   }
@@ -627,7 +632,7 @@ router.post('/:code/requirement', (req: Request, res: Response, next: NextFuncti
   var code = req.params.code;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher/)) {
     denyAccess(res);
     return;
   }
@@ -652,7 +657,7 @@ router.delete('/:code/requirement/:id', (req: Request, res: Response, next: Next
   var code = req.params.code;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher/i)) {
     denyAccess(res);
     return;
   }
@@ -671,7 +676,7 @@ router.post('/:code/task', (req: Request, res: Response, next: NextFunction) => 
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher assistent')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
     denyAccess(res);
     return;
   }
@@ -683,7 +688,7 @@ router.post('/:code/task', (req: Request, res: Response, next: NextFunction) => 
     Subject.findOne({code:code}).select('_id').lean().exec((err, subject) => {
       if (!err && subject) {
         User.update(
-          {_id:{$in: usersID}, subjects:{$elemMatch:{subject:subject._id, role:'student'}}},
+          {_id:{$in: usersID}, subjects:{$elemMatch:{subject:subject._id, role:'Student'}}},
           {$addToSet: {'subjects.$.tasks':{$each:tasks}}}
         ).exec((err, users) => {
           if (!err && users) {
@@ -707,7 +712,7 @@ router.delete('/:code/task', (req: Request, res: Response, next: NextFunction) =
   var code: string = req.params.code;
 
   // Check user privileges
-  if (!(req.authenticatedUser, code, 'teacher assistent')) {
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
     denyAccess(res);
     return;
   }
@@ -741,79 +746,17 @@ router.delete('/:code/task', (req: Request, res: Response, next: NextFunction) =
 
 
 
-
-/*
-function accessSubject(subject: SubjectDocument, userid: string, role: string) {
-  for (let r of role.split(' ')) {
-    switch (r) {
-      case 'student':
-      for (let us of subject.students) {
-        if (String(us.user) == String(userid)) {
-          return true;
-        }
-      }
-      break;
-
-      case 'assistent': {
-        for (let us of subject.assistents) {
-          if (String(us) == String(userid)) {
-            return true;
-          }
-        }
-        break;
-      }
-
-      case 'teacher': {
-        for (let us of subject.teachers) {
-          if (String(us) == String(userid)) {
-            return true;
-          }
-        }
-        break;
-      }
-    }
-  }
-  return false;
-}
-*/
-
-function accessUser(user: UserDocument, code: string, role: string) {
-  return true;
-  /*
+function hasAccess(user: UserDocument, code: string, role: RegExp = /.*/) {
   if (user.rights == 'Admin') {
     return true;
   }
-  for (let r of role.split(' ')) {
-    switch (r) {
-      case 'student':
-      for (let sub of user.student) {
-        if (code == sub.code) {
-          return true;
-        }
-      }
-      break;
 
-      case 'assistent': {
-        for (let sub of user.assistent) {
-          if (code == sub.code) {
-            return true;
-          }
-        }
-        break;
-      }
-
-      case 'teacher': {
-        for (let sub of user.teacher) {
-          if (code == sub.code) {
-            return true;
-          }
-        }
-        break;
-      }
-    }
+  for (let sub of user.subjects) {
+    if (sub.code == code) return role.test(sub.role);
   }
-  return false;*/
+  return false;
 }
+
 
 
 

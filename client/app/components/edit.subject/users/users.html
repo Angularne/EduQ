@@ -8,7 +8,7 @@
 
       <li class="list-group-item" style="padding: 0;">
         <div class="input-group">
-          <input type="text" id="input-{{label}}" class="form-control no-border" [(ngModel)]="query" (keydown.enter)="add()" (keyup)="suggest()" placeholder="Severus Snape" autocomplete="off" />
+          <input type="text" id="input-{{label}}" class="form-control no-border" [(ngModel)]="query" (keydown.enter)="add()" (keyup)="suggest()"  autocomplete="off" />
           <div class="input-group-btn">
             <button class="btn btn-success" type="button" (click)="add()">Add</button>
           </div>

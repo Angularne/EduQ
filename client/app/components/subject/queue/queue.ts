@@ -1,4 +1,4 @@
-import {Injector, Component, OnInit, Input} from 'angular2/core';
+import {Injector, Component, OnInit, Input, OnChanges} from 'angular2/core';
 import {AuthService} from '../../../services/auth.service';
 import {Queue} from '../../../interfaces/subject';
 import {User} from '../../../interfaces/user';
@@ -12,32 +12,59 @@ import {QueueService} from '../../../services/queue.service';
   templateUrl: 'app/components/subject/queue/queue.html'
 })
 
-export class QueueComponent{
+export class QueueComponent implements OnInit, OnChanges {
   @Input() queue: Queue;
-  students: User[] = [];
+  @Input() user: User;
+  @Input() role: string;
+
+  _students: SubjectUser[] = [];
+  @Input() set students(users) {
+    if (users) {
+      this._students = users.filter((value: SubjectUser, index: number, array: SubjectUser[]) => {
+        return value.role == 'Student' && value._id != this.user._id;
+      });
+    }
+  }
+  get students() {return this._students;}
+
   usersSelected: User[] = [];
   mine: boolean = false;
-  user: User;
   myUserInQueue: boolean = false;
   userRole: string = 'Student';
 
-  constructor(public subjectService: SubjectService, public userService: UserService, public auth: AuthService, private queueService: QueueService) {
+  constructor(private subjectService: SubjectService,
+              private auth: AuthService,
+              private queueService: QueueService) {
+}
 
 
+  ngOnInit() {
 
-    this.subjectService.students.subscribe((value) => {
-      this.students = value as any;
-    })
-    this.auth.getUser().then((user) => {
-      this.user = user;
-    })
+  }
+
+  ngOnChanges(){
+
+    this.checkMyUserInQueue();
+  }
+
+  get teacherOrAssistent() {
+    return this.role == 'Assistent' || this.role == 'Teacher';
   }
 
   checkMyUserInQueue() {
-    for (var i = 0; i < this.queue.list.length; i++) {
-      if (this.queue.list[i].users.indexOf(this.user) != -1) this.myUserInQueue = true;
+  if (this.queue) {
+    for (let q of this.queue.list) {
+      for (let user of q.users) {
+        if (user._id == this.user._id) {
+          this.myUserInQueue = true;
+          return;
+        }
+      }
     }
   }
+  this.myUserInQueue = false;
+}
+
 
   selectUser(user: User) {
     if (this.usersSelected.indexOf(user) === -1) {
@@ -54,21 +81,13 @@ export class QueueComponent{
   checkIfMyUser(element: any) {
     var index = this.queue.list.indexOf(element);
     for (var i = 0; i < element.users.length; i++) {
-      if (this.user.firstname === element.users[i].firstname && this.user.lastname === element.users[i].lastname) {
+      if (this.user._id === element.users[i]._id) {
         return this.mine = true;
       }
     }
     return false;
   }
 
-  checkIfAuth() {
-    this.userService.getUserRole(this.subjectService.subject.code).then((role) => {
-      if (role == 'Teacher' || role == 'Assistant') {
-        return true;
-      }
-      return false;
-    });
-  }
 
   toggleQueueButton() {
     this.queueService.toggleQueueActive(this.queue.active);

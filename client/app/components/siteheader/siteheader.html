@@ -16,13 +16,13 @@
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li *ngIf="user" [class.active]="activeSite == 'me'"><a [routerLink]="['MypagePath']">{{user.firstname}}</a></li>
+        <li *ngIf="user" [class.active]="activeSite == 'me'"><a [routerLink]="['MypagePath']">{{user.firstname}} </a></li>
         <li *ngIf="user?.rights == 'Admin'" [class.active]="activeSite == 'adminpage'" ><a [routerLink]="['AdminpagePath']">Adminpage</a></li>
         <li *ngIf="user" [class.active]="activeSite == 'subjects'" class="dropdown">
 
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Subjects <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li  *ngFor="#subject of user?.subjects"><a [routerLink]="['SubjectsPath', {code:subject.code}]">{{subject.name}}</a></li>
+            <li  *ngFor="#subject of user?.subjects"><a [routerLink]="['SubjectsPath', {code:subject.code}]">{{subject.name}} <small>{{subject.role}}</small> </a></li>
           </ul>
         </li>
         <li *ngIf="user"><a (click)="onLogout()">Sign out</a></li>

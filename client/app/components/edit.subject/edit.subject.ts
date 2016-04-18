@@ -53,6 +53,9 @@ export class EditSubjectComponent implements OnInit {
 
 
   splitUsers(){
+    this.students = [];
+    this.assistents = [];
+    this.teachers = [];
     for (var user of this._subject.users) {
       switch (user.role) {
         case 'Student':

@@ -24,7 +24,7 @@ let UserSubjectSchema: mongoose.Schema = new mongoose.Schema({
   tasks: [{
     number: Number,
     date: Date,
-    approvedBy: {type:mongoose.Schema.Types.ObjectId, ref: 'UserS'}
+    approvedBy: {type:mongoose.Schema.Types.ObjectId, ref: 'User'}
   }]
 });
 

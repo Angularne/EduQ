@@ -32,7 +32,6 @@ export class SubjectService {
 
 
   subject: Subject;
-  students: Binding<SubjectUser[]> = new Binding<SubjectUser[]>();
 
   constructor(public http: Http, public authService: AuthService, public userService: UserService) {
 
@@ -47,9 +46,9 @@ export class SubjectService {
        this.subject = data;
        //this.queue.value = this.subject.queue;
        //this.broadcasts.value = this.subject.broadcasts;
-       this.students.value = this.subject.users.filter((value: SubjectUser, index: number, array: SubjectUser[]) => {
-         return value.role == 'Student';
-       });
+       //this.students.value = this.subject.users.filter((value: SubjectUser, index: number, array: SubjectUser[]) => {
+        // return value.role == 'Student';
+       //});
 
        //this.setupSocket();
 

@@ -1,0 +1,8 @@
+<ul class="list-group">
+  <li class="list-group-item" *ngFor="#user of users">
+
+    <a (click)="selected.emit(user)">
+      {{user.firstname}} {{user.lastname}}
+    </a>
+  </li>
+</ul>

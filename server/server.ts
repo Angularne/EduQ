@@ -53,4 +53,3 @@ var server = app.listen(config.port || 3000, function () {
 
 
 QueueSocket.startServer(server);
-QueueSocket.openQueue('TDAT3001-A');

@@ -1,7 +1,14 @@
+<hr>
 <h2>Queue</h2>
-<button (click)="toggleQueueButton()">Activate/Deactivate Queue</button>
+<button *ngIf="teacherOrAssistent" class="btn btn-primary btn-md" (click)="toggleQueueButton()">Activate/Deactivate Queue</button>
+
 <div *ngIf="queue?.active">
-  <table class="table" *ngIf="!myUserInQueue" (change)="checkMyUserInQueue()">
+  <div class="btn-group btn-group-sm" *ngIf="!teacherOrAssistent">
+    <button class="btn btn-primary btn-md"  *ngIf="!myUserInQueue" (click)="addQueueElement()">Queue</button>
+    <button class="btn btn-primary btn-md" *ngIf="myUserInQueue" (click)="deleteFromQueue()">Remove me</button>
+  </div>
+  <br><br>
+  <table class="table" *ngIf="!(myUserInQueue || teacherOrAssistent) " (change)="checkMyUserInQueue()">
     <tr>
       <td>
         <b>Users in subject</b>
@@ -9,30 +16,22 @@
       <td>
         <b>Add friends</b>
       </td>
-      <td>
 
-      </td>
     </tr>
     <tr>
       <td>
         <div>
-          <select multiple class="form-control">
-            <option *ngFor="#user of students" (click)="selectUser(user)">{{user.firstname}} {{user.lastname}}</option>
+          <select size="5" class="form-control">
+            <option *ngFor="#user of students" (click)="selectUser(user)"  draggable="true">{{user.firstname}} {{user.lastname}}</option>
           </select>
         </div>
       </td>
       <td>
         <div>
-          <table>
-            <tr *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</tr>
-          </table>
+          <select size="5" class="form-control">
+            <option *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</option>
+          </select>
         </div>
-      </td>
-      <td>
-        <button class="btn btn-primary btn-lg" (click)="addQueueElement()">Queue</button>
-      </td>
-      <td>
-        <button class="btn btn-primary btn-lg" (click)="deleteFromQueue()">Fjern meg</button>
       </td>
     </tr>
 
@@ -70,13 +69,30 @@
       <td><span *ngFor="#user of element?.users"> - {{user.firstname}} </span> </td>
       <td>
         Location probs
+        <span *ngIf="element.helper"> - Helper: {{element.helper.firstname}}</span>
       </td>
       <!-- TODO Check for auth or own user -->
-      <td><button *ngIf="true" (click)="helpQueueElement(element)">Help</button></td>
-      <td><button *ngIf="true" (click)="removeQueueElement(element)">X</button></td>
+      <td class="text-right">
+        <div class="btn-group btn-group-sm" *ngIf="teacherOrAssistent">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Action <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li><a (click)="helpQueueElement(element)">Help</a></li>
+            <li><a href="#">Delay</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a (click)="removeQueueElement(element)">Remove group</a></li>
+          </ul>
+        </div>
+
+
+        <button class="btn btn-danger btn-sm" *ngIf="checkIfMyUser(element)" (click)="removeQueueElement(element)">X</button>
+      </td>
     </tr>
   </table>
 </div>
 <div *ngIf="!queue?.active">
   <h2>The queue is not active</h2>
 </div>
+<hr>

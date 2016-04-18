@@ -1,11 +1,14 @@
 import {Component, Input} from "angular2/core";
 import {Subject} from '../../../interfaces/subject';
 import {UserSubject} from '../../../interfaces/user';
+import {ROUTER_DIRECTIVES} from 'angular2/router';
+
 
 @Component({
   selector: 'subject-tasks',
   templateUrl: 'app/components/me/subject/subject.html',
-  inputs: ['subject']
+  inputs: ['subject'],
+  directives: [ROUTER_DIRECTIVES]
 })
 
 export class SubjectTaskDetailComponent{
@@ -28,24 +31,28 @@ export class SubjectTaskDetailComponent{
 
   checkTasks() {
     this.tasks = [];
-    for (var i = 1; i <= this.subject.subjectTasks.length; i++) {
-      this.tasks.push(false);
-    }
-    for (var task of this.subject.tasks) {
-      this.tasks[task - 1] = true;
-    }
-
-    this.completed = true;
-    for (var req of this._subject.requirements) {
-      var count = 0;
-      for (var t = req.from; t <= req.to; t++) {
-        if (this.tasks[t-1]) {
-          count++;
+    if (this.subject.subjectTasks) {
+      for (var i = 1; i <= this.subject.subjectTasks.length; i++) {
+        this.tasks.push(false);
+      }
+      if (this.subject.tasks) {
+        for (var task of this.subject.tasks) {
+          this.tasks[task.number - 1] = true;
         }
       }
-      if (count < req.required) {
-        this.completed = false;
-        break;
+
+      this.completed = true;
+      for (var req of this._subject.requirements) {
+        var count = 0;
+        for (var t = req.from; t <= req.to; t++) {
+          if (this.tasks[t-1]) {
+            count++;
+          }
+        }
+        if (count < req.required) {
+          this.completed = false;
+          break;
+        }
       }
     }
   }

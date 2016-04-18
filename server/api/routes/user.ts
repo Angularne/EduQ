@@ -9,48 +9,7 @@ var router = express.Router();
 /** GET: Get authenticated user */
 router.get('/me', (req: Request, res: Response, next: NextFunction) => {
 
-  User.aggregate().match({
-    _id: req.authenticatedUser._id
-  }).append({
-    $lookup: {
-      from: 'usersubjects',        //<collection to join>,
-      localField: '_id',          //<field from the input documents>,
-      foreignField: 'user',      //<field from the documents of the "from" collection>,
-      as: 'subjects'            //<output array field>
-    }
-  }).exec().then((users) => {
-    Subject.populate(users[0], {
-      path: 'subjects.subject',
-      select: 'code name tasks requirements'
-    }).then((user) => {
-      // subjects populated
-      for (var subject of user.subjects) {
-        // Remap fields
-        subject._id = subject.subject._id;
-        subject.code = subject.subject.code;
-        subject.name = subject.subject.name;
-
-        if (subject.role == "Student") {
-          subject.subjectTasks = subject.subject.tasks;
-          subject.requirements = subject.subject.requirements;
-        } else {
-          delete subject.tasks;
-        }
-
-        delete subject.__v;
-        delete subject.user;
-        delete subject.subject;
-      }
-      // Send user
-      res.json(user);
-    }, (err) => {
-      res.json(err);
-    });
-  }, (err) => {
-    // ERROR
-    res.json(err);
-  });
-
+  res.json(req.authenticatedUser);
 
 });
 

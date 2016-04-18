@@ -2,12 +2,14 @@ import {Component, OnInit, OnDestroy} from 'angular2/core';
 import {RouteParams} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {Subject} from '../../interfaces/subject';
+import {User} from '../../interfaces/user';
 import {QueueComponent} from './queue/queue';
 import {BroadcastComponent} from './broadcasts/broadcasts';
 import {EditSubjectComponent} from '../edit.subject/edit.subject';
 import {SocketService} from '../../services/socket.service';
 import {QueueService} from '../../services/queue.service';
 import {BroadcastService} from '../../services/broadcast.service';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'subjects',
@@ -19,13 +21,15 @@ import {BroadcastService} from '../../services/broadcast.service';
 export class SubjectsComponent implements OnInit, OnDestroy {
   subject: Subject;
   subjectString: string;
-  userRole: string;
+  role: string;
+  user: User;
 
   constructor(private params: RouteParams,
-              public subjectService: SubjectService,
+              private auth: AuthService,
+              private subjectService: SubjectService,
               private socket: SocketService,
-              private queueService: QueueService) {}
-
+              private queueService: QueueService,
+              private broadcastService: BroadcastService) {}
 
 
   ngOnInit(){
@@ -34,12 +38,21 @@ export class SubjectsComponent implements OnInit, OnDestroy {
       this.subjectService.getSubject(code).subscribe((sub) => {
         this.subject = sub;
         this.queueService.subject = this.subject;
+        this.broadcastService.subject = this.subject;
         this.socket.open(this.subject);
       });
 
-      this.subjectService.getUserSubjectRole(code).then((sub) => {
-        this.userRole = sub;
+      this.auth.getUser().then((user) => {
+        this.user = user;
+
+        for (let sub of this.user.subjects) {
+          if (sub.code == code) {
+            this.role = sub.role;
+          }
+        }
       });
+
+
     }
   }
 

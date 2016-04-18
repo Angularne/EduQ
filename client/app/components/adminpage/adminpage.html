@@ -1,18 +1,18 @@
 <div class="container">
   <div class="row">
-    <div class="col-xs-12 col-md-3">
+    <div class="col-xs-12 col-sm-3 side-bar">
       <aside class="">
         <br>
         <ul class="list-group">
-          <button type="button" *ngFor="#subject of subjects; #i = index"
-                  class="list-group-item" (click)="setSelectedSubject(i)">
+          <a type="button" *ngFor="#subject of subjects; #i = index"
+                  class="list-group-item nav-item" (click)="setSelectedSubject(i)">
             <span class="badge">{{subject.code}}</span> {{subject.name}}
-          </button>
+          </a>
 
         </ul>
       </aside>
     </div>
-    <div class="col-xs-12 col-md-9">
+    <div class="col-xs-12 col-sm-9 main-content">
       <edit-subject  *ngIf="selectedSubject" [subject]="selectedSubject"></edit-subject>
     </div>
   </div>

@@ -1,22 +1,31 @@
 
   <h4 >
-    {{subject.subject.name}}
-  <span class="label label-success" *ngIf="completed"  >Completed</span>
-  <span class="label label-danger" *ngIf="!completed" >Not completed</span>
+    <a [routerLink]="['SubjectsPath', {code: subject.code}]">
+      {{subject.code}} {{subject.name}}
+      <small>{{subject.role}}</small>
+      <span *ngIf="subject.role == 'Student'">
+        <span class="label label-success" *ngIf="completed"  >Completed</span>
+        <span class="label label-danger" *ngIf="!completed" >Not completed</span>
+      </span>
+    </a>
   </h4>
 
+  <div *ngIf="subject.role == 'Student'">
 
-  <ul class="list-inline">
-    <li *ngFor="#task of tasks; #i = index" >
-      {{i + 1}}
-      <span *ngIf="task" class="glyphicon glyphicon-ok" [style.color]="'green'" ></span>
-      <span *ngIf="!task" class="glyphicon glyphicon-remove" [style.color]="'red'"></span>
-      |
-    </li>
-  </ul>
-  <h5>Requirements</h5>
-  <ul>
-    <li *ngFor="#req of subject.subject.tasks.requirements">
-      {{req.required}} of {{req.start}}-{{req.end}}
-    </li>
-  </ul>
+
+  <ul  class="list-inline">
+      <li *ngFor="#task of tasks; #i = index" >
+        {{i + 1}}
+        <span *ngIf="task" class="glyphicon glyphicon-ok" [style.color]="'green'" ></span>
+        <span *ngIf="!task" class="glyphicon glyphicon-remove" [style.color]="'red'"></span>
+        |
+      </li>
+    </ul>
+    <h5>  <span *ngIf="subject.requirements.length == 0"> No </span> Requirements</h5>
+    <ul>
+      <li *ngFor="#req of subject.requirements">
+        {{req.required}} of {{req.from}}-{{req.to}}
+      </li>
+
+    </ul>
+    </div>
