@@ -40,6 +40,7 @@
     "app/components/socket/socket.ts",
     "app/components/subject/broadcasts/broadcast/broadcast.ts",
     "app/components/subject/broadcasts/broadcasts.ts",
+    "app/components/subject/queue/number.ts",
     "app/components/subject/queue/queue.ts",
     "app/components/subject/subject.ts",
     "app/components/users/userlist/userlist.ts",

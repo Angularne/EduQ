@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from 'angular2/core';
 import {RouteParams} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
-import {Subject} from '../../interfaces/subject';
+import {Subject, Task} from '../../interfaces/subject';
 import {User} from '../../interfaces/user';
 import {QueueComponent} from './queue/queue';
 import {BroadcastComponent} from './broadcasts/broadcasts';
@@ -23,6 +23,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   subjectString: string;
   role: string;
   user: User;
+  tasks: Task[];
 
   constructor(private params: RouteParams,
               private auth: AuthService,
@@ -37,6 +38,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
     if (code) {
       this.subjectService.getSubject(code).subscribe((sub) => {
         this.subject = sub;
+        this.tasks = sub.tasks;
         this.queueService.subject = this.subject;
         this.broadcastService.subject = this.subject;
         this.socket.open(this.subject);
@@ -44,13 +46,13 @@ export class SubjectsComponent implements OnInit, OnDestroy {
 
       this.auth.getUser().then((user) => {
         this.user = user;
-
         for (let sub of this.user.subjects) {
           if (sub.code == code) {
             this.role = sub.role;
+            console.log("getUser async find role");
           }
         }
-      });
+      }).catch((err) => {console.log("getUser error");}); // TODO sometimes this runs...
 
 
     }

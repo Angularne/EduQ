@@ -63,9 +63,10 @@ export class SubjectService {
 
     return this.http.get(url, {headers: authHeaders()}).map(res=>{
       if (res.status == 200) {
-        return res.json();
+        this.subject = res.json();
+        return this.subject;
       } else {
-        return false;
+        return null;
       }
     });
   }

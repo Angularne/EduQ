@@ -16,13 +16,15 @@
       <td>
         <b>Add friends</b>
       </td>
-
+      <td>
+        <b>Task</b>
+      </td>
     </tr>
     <tr>
       <td>
         <div>
           <select size="5" class="form-control">
-            <option *ngFor="#user of students" (click)="selectUser(user)"  draggable="true">{{user.firstname}} {{user.lastname}}</option>
+            <option *ngFor="#user of studentsNotInQueue" (click)="selectUser(user)" draggable="true">{{user.firstname}} {{user.lastname}}</option>
           </select>
         </div>
       </td>
@@ -30,6 +32,13 @@
         <div>
           <select size="5" class="form-control">
             <option *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</option>
+          </select>
+        </div>
+      </td>
+      <td>
+        <div>
+          <select size="5" class="form-control">
+            <option *ngFor="#task of tasks" (click)="selectTask(task)">{{task.number}} - {{task.title}}</option>
           </select>
         </div>
       </td>
@@ -49,7 +58,7 @@
         <b>Name</b>
       </td>
       <td>
-        <b>Something</b>
+        <b>Task</b>
       </td>
       <!-- TODO Authcheck for userRole -->
       <div>
@@ -68,7 +77,7 @@
       <td>{{element.timeEntered}}</td>
       <td><span *ngFor="#user of element?.users"> - {{user.firstname}} </span> </td>
       <td>
-        Location probs
+        <span> {{element.task}}</span>
         <span *ngIf="element.helper"> - Helper: {{element.helper.firstname}}</span>
       </td>
       <!-- TODO Check for auth or own user -->

@@ -1,8 +1,8 @@
 import {Injector, Component, OnInit, Input, OnChanges} from 'angular2/core';
 import {AuthService} from '../../../services/auth.service';
 import {Queue} from '../../../interfaces/subject';
-import {User} from '../../../interfaces/user';
-import {SubjectUser} from '../../../interfaces/subject';
+import {User, UserSubject} from '../../../interfaces/user';
+import {SubjectUser, Task, Subject} from '../../../interfaces/subject';
 import {SubjectService} from '../../../services/subject.service';
 import {UserService} from '../../../services/user.service';
 import {QueueService} from '../../../services/queue.service';
@@ -14,19 +14,64 @@ import {QueueService} from '../../../services/queue.service';
 
 export class QueueComponent implements OnInit, OnChanges {
   @Input() queue: Queue;
-  @Input() user: User;
+  @Input() user: User; //async - makes problems if not found before other inputs
   @Input() role: string;
+  _tasksSorted: boolean = false;
+  _tasks: Task[] = [];
+  @Input() set tasks(tasks) {
+    if (this.user && !this._tasksSorted && this.role === 'Student') {
+      if (tasks) {
+        this._tasks = tasks.filter((value: Task, index: number, array: Task[]) => {
+          return !this.haveIDoneThatTask(value);
+        });
+        this._tasksSorted = true;
+      }
+    }
+  }
+  get tasks() {return this._tasks;}
+  _tasksIHaveDone: Task[];
+  haveIDoneThatTask(task: Task) {
+    if (!this._tasksIHaveDone) {
+      console.log(this);
+      for (let sub of this.user.subjects) {
+        if (sub.code === this.subjectService.subject.code) {
+          this._tasksIHaveDone = sub.tasks;
+          break;
+        }
+      }
+    } else if(!this._tasksIHaveDone) {
+      for ( let t of this._tasksIHaveDone) {
+        if (t.number === task.number) {
+          return true;
+        }
+      }
+    }
 
+    return false;
+  }
+  _studentsSorted: boolean = false;
   _students: SubjectUser[] = [];
   @Input() set students(users) {
-    if (users) {
+    if (users && this.user && !this._studentsSorted) {
+      console.log("set students()");
       this._students = users.filter((value: SubjectUser, index: number, array: SubjectUser[]) => {
         return value.role == 'Student' && value._id != this.user._id;
       });
-    }
+      this._studentsSorted = true;
+    } else {this._students = users;}
   }
   get students() {return this._students;}
 
+  _studentsNotInQueue: SubjectUser[] = [];
+  get studentsNotInQueue() {return this._studentsNotInQueue;}
+  set studentsNotInQueue(users) {
+    if (users) {
+      this._studentsNotInQueue = users.filter((value: SubjectUser, index: number, array: SubjectUser[]) => {
+        return this.checkUserInQueue(value);
+      });
+    }
+  }
+  _taskSelected: Task = null;
   usersSelected: User[] = [];
   mine: boolean = false;
   myUserInQueue: boolean = false;
@@ -38,13 +83,18 @@ export class QueueComponent implements OnInit, OnChanges {
 }
 
 
-  ngOnInit() {
 
+  ngOnInit() {
   }
 
   ngOnChanges(){
-
     this.checkMyUserInQueue();
+    this.studentsNotInQueue = this.students;
+    if (this.subjectService.subject) {
+      this.tasks = this.subjectService.subject.tasks;
+    }
+    this.students = this.students;
+    console.log("Student role = " + this.role);
   }
 
   get teacherOrAssistent() {
@@ -52,7 +102,7 @@ export class QueueComponent implements OnInit, OnChanges {
   }
 
   checkMyUserInQueue() {
-  if (this.queue) {
+  if (this.queue && this.user) {
     for (let q of this.queue.list) {
       for (let user of q.users) {
         if (user._id == this.user._id) {
@@ -63,6 +113,19 @@ export class QueueComponent implements OnInit, OnChanges {
     }
   }
   this.myUserInQueue = false;
+}
+
+checkUserInQueue(listUser: SubjectUser) {
+if (this.queue) {
+  for (let q of this.queue.list) {
+    for (let user of q.users) {
+      if (user._id == listUser._id) {
+        return false;
+      }
+    }
+  }
+}
+return true;
 }
 
 
@@ -77,12 +140,17 @@ export class QueueComponent implements OnInit, OnChanges {
       this.usersSelected.splice(index, 1);
     }
   }
+  selectTask(task: Task) {
+    this._taskSelected = task;
+  }
 
   checkIfMyUser(element: any) {
-    var index = this.queue.list.indexOf(element);
-    for (var i = 0; i < element.users.length; i++) {
-      if (this.user._id === element.users[i]._id) {
-        return this.mine = true;
+    if (this.user) {
+      var index = this.queue.list.indexOf(element);
+      for (var i = 0; i < element.users.length; i++) {
+        if (this.user._id === element.users[i]._id) {
+          return this.mine = true;
+        }
       }
     }
     return false;
@@ -93,7 +161,8 @@ export class QueueComponent implements OnInit, OnChanges {
     this.queueService.toggleQueueActive(this.queue.active);
   }
   addQueueElement() {
-    this.queueService.addQueueElement(this.usersSelected);
+    this.queueService.addQueueElement(this.usersSelected); //TODO update with tasknumber
+    this.usersSelected = [];
   }
   deleteFromQueue() {
     this.queueService.deleteFromQueue();
