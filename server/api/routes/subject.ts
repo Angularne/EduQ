@@ -4,7 +4,7 @@ import {User, UserDocument} from '../models/user';
 import {Request, Response, NextFunction} from "express";
 import {QueueSocket} from '../socket';
 import {UserSubject} from '../models/user.subject';
-
+import {ErrorMessage} from '../models/error';
 
 
 
@@ -178,8 +178,7 @@ router.put('/:code', (req: Request, res: Response, next: NextFunction) => {
        });
       res.json(subject);
     } else {
-      res.status(500); // Conflict
-      res.json(err);
+      res.status(400).json(err);
     }
   });
 });
@@ -311,13 +310,22 @@ router.post('/:code/broadcast', (req: Request, res: Response, next: NextFunction
     return;
   }
 
-  console.log(req.body);
   // Check body
-  if (!(req.body.title && req.body.content)) {
-    res.status(400); // Conflict
-    res.json('title or content not set');
-    return;
+  if (!req.body.title) {
+    return validateFailed(res, {
+      field: 'title',
+      message: 'title not set',
+      value: null
+    });
   }
+  if (!req.body.content) {
+    return validateFailed(res, {
+      field: 'content',
+      message: 'content not set',
+      value: null
+    });
+  }
+
 
   let broadcast = {
     author: req.authenticatedUser._id,
@@ -333,7 +341,7 @@ router.post('/:code/broadcast', (req: Request, res: Response, next: NextFunction
       res.status(201);
       res.end();
     } else {
-      res.json(err);
+      res.status(400).json(err);
     }
   });
 });
@@ -355,8 +363,7 @@ router.post('/:code/broadcast/:bc_id', (req: Request, res: Response, next: NextF
       QueueSocket.broadcast(code);
       res.end();
     } else {
-      res.status(500); // Conflict
-      res.json(err);
+      res.status(400).json(err);
     }
   });
 });
@@ -377,8 +384,7 @@ router.delete('/:code/broadcast/:bc_id', (req: Request, res: Response, next: Nex
       QueueSocket.broadcast(code);
       res.end();
     } else {
-      res.status(500);
-      res.json(err);
+      res.status(400).json(err);
     }
   });
 });
@@ -510,18 +516,17 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                  QueueSocket.queue(code);
                } else {
                  // Save Error
-                 res.status(500);
+                 res.status(400);
                  res.json(serr);
                }
              });
           } else {
-            res.status(500);
+            res.status(400);
             res.json(err);
           }
         });
     } else {
-      res.status(500); // Conflict
-      res.json(err || 'Subject not found');
+      res.status(400).json(err);
     }
   });
 });
@@ -602,18 +607,15 @@ router.delete('/:code/queue/:id', (req: Request, res: Response, next: NextFuncti
           QueueSocket.queue(code);
 
         } else {
-          res.status(500);
-          res.json(err);
+          res.status(400).json(err);
         }
       });
     } else if (err) {
       // Error
-      res.status(500);
-      res.json(err);
+      res.status(400).json(err);
     } else {
       // NOT FOUND OR NOT ALLOWED
-      res.status(400);
-      res.end();
+      res.status(400).end();
     }
   });
 });
@@ -740,8 +742,7 @@ router.post('/:code/queue/:qid/delay', (req: Request, res: Response, next: NextF
         QueueSocket.queue(code);
 
       } else {
-        res.status(500);
-        res.json(err);
+        res.status(400).json(err);
       }
     });
 
@@ -754,8 +755,7 @@ router.post('/:code/queue/:qid/delay', (req: Request, res: Response, next: NextF
       QueueSocket.queue(code);
       res.end();
   }, (err) => {
-    res.status(500);
-    res.json(err);
+    res.status(400).json(err);
   });
 
 
@@ -780,8 +780,7 @@ router.post('/:code/queue/:qid/help', (req: Request, res: Response, next: NextFu
     QueueSocket.queue(code);
     res.end();
   }, (err) => {
-    res.status(500);
-    res.json(err);
+    res.status(400).json(err);
   });
 });
 
@@ -801,8 +800,7 @@ router.delete('/:code/queue/:qid/help', (req: Request, res: Response, next: Next
     QueueSocket.queue(code);
     res.end();
   }, (err) => {
-    res.status(500);
-    res.json(err);
+    res.status(400).json(err);
   });
 
 });
@@ -869,26 +867,48 @@ router.post('/:code/task', (req: Request, res: Response, next: NextFunction) => 
   }
 
   let usersID = req.body.users;
-  let task: number = req.body.task;
+  let task: number = +req.body.task;
   let date = new Date();
+
+  if (!(usersID && usersID instanceof Array && usersID.length)) {
+    return validateFailed(res, {
+      field: 'users',
+      message: 'users must be set and not empty',
+      value: req.body.users || null
+    });
+  }
+  if (isNaN(task) || task <= 0) {
+    return validateFailed(res, {
+      field: 'task',
+      message: 'task is NaN or less than 0',
+      value: req.body.task || null
+    });
+  }
 
   Subject.findOne({code:code}, (err, sub) => {
     if (!err && sub) {
-      UserSubject.update(
-        {subject: sub._id, user: {$in: usersID}, 'tasks.number': {$ne: task}},
-        {$push: {tasks: {
-          number: task,
-          date: date,
-          approvedBy: req.authenticatedUser._id
-        }}}).exec().then(()=>{
-          res.end();
-        }, (err) => {
-          res.status(500);
-          res.json(err);
-        });
+      if (task <= sub.tasks.length)  {
+        UserSubject.update(
+          {subject: sub._id, user: {$in: usersID}, 'tasks.number': {$ne: task}},
+          {$push: {tasks: {
+            number: task,
+            date: date,
+            approvedBy: req.authenticatedUser._id
+          }}}).exec().then(()=>{
+            res.end();
+          }, (err) => {
+            res.status(400).json(err);
+          });
+        } else {
+          // invlalid task number
+          return validateFailed(res, {
+            field: 'task',
+            message: 'task cannot be greater than number of tasks in subject',
+            value: task
+          });
+        }
     } else {
-      res.status(500);
-      res.json(err);
+      res.status(400).json(err);
     }
   });
 });
@@ -902,28 +922,109 @@ router.delete('/:code/task', (req: Request, res: Response, next: NextFunction) =
     denyAccess(res);
     return;
   }
-
   var usersID = req.body.users;
   var task: number = req.body.task;
 
+  // Validate
+  if (!(usersID && usersID instanceof Array && usersID.length)) {
+    return validateFailed(res, {
+      field: 'users',
+      message: 'users must be set and not empty',
+      value: req.body.users || null
+    });
+  }
+  if (isNaN(task) || task <= 0) {
+    return validateFailed(res, {
+      field: 'task',
+      message: 'task is NaN or less than 0',
+      value: req.body.task || null
+    });
+  }
+
+
   Subject.findOne({code:code}, (err, sub) => {
     if (!err && sub) {
-      UserSubject.update(
-        {subject: sub._id, user: {$in: usersID}, 'tasks.number':task},
-        {$pull: {tasks: {number: task}}}
-      ).exec().then(()=>{
-          res.end();
-        }, (err) => {
-          res.status(500);
-          res.json(err);
-        });
+      if (task <= sub.tasks.length)  {
+        UserSubject.update(
+          {subject: sub._id, user: {$in: usersID}, 'tasks.number':task},
+          {$pull: {tasks: {number: task}}}
+        ).exec().then(()=>{
+            res.end();
+          }, (err) => {
+            res.status(400).json(err);
+          });
+        } else {
+          // invlalid task number
+          return validateFailed(res, {
+            field: 'task',
+            message: 'task cannot be greater than number of tasks in subject',
+            value: task
+          });
+        }
     } else {
-      res.status(500);
-      res.json(err);
+      res.status(400).json(err);
     }
   });
 });
 
+/** PUT: Update tasks on students in subject */
+router.put('/:code/task', (req: Request, res: Response, next: NextFunction) => {
+  let code: string = req.params.code;
+
+  let users: {
+    _id: string, // _id
+    tasks: number[]
+  }[] = req.body.users;
+
+  let date =  new Date();
+
+  // Check user privileges
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
+    return denyAccess(res);
+  }
+
+  Subject.findOne({code:code}).select('tasks').lean().exec().then((sub) => {
+    for (let user of users) {
+
+      UserSubject.findOne({user: user._id}).exec().then((u) => {
+
+        // Add tasks
+        for (let t1 of user.tasks) {
+          var inTasks: boolean = false;
+          for (let t2 of u.tasks) {
+            if (t1 == t2.number) {
+              inTasks = true;
+              break;
+            }
+          }
+
+          if (!inTasks) {
+            // Add
+            u.tasks.push({
+              number: t1,
+              date: date,
+              approvedBy: req.authenticatedUser._id
+            });
+          }
+        }
+
+        for (var i = 0; i < u.tasks.length; i++) {
+          let t = u.tasks[i];
+          if (user.tasks.indexOf(t.number) == -1) {
+            u.tasks.splice(i,1);
+            i--
+          }
+        }
+
+        u.save();
+
+      });
+    }
+  });
+
+    res.status(204);
+    res.end();
+});
 
 
 
@@ -952,3 +1053,8 @@ function denyAccess(res: Response, message: string = 'Access Denied') {
 
 
 module.exports = router;
+
+
+function validateFailed(res: Response, err: ErrorMessage, status: number = 400) {
+  res.status(status).json(err);
+}
