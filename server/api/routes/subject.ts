@@ -103,7 +103,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
 
   // Check body
   if (!req.body.code || !req.body.name) {
-    res.status(409); // Conflict
+    res.status(403); // Conflict
     res.json('Code or name not set');
     return;
   }
@@ -178,7 +178,7 @@ router.put('/:code', (req: Request, res: Response, next: NextFunction) => {
        });
       res.json(subject);
     } else {
-      res.status(409); // Conflict
+      res.status(500); // Conflict
       res.json(err);
     }
   });
@@ -314,7 +314,7 @@ router.post('/:code/broadcast', (req: Request, res: Response, next: NextFunction
   console.log(req.body);
   // Check body
   if (!(req.body.title && req.body.content)) {
-    res.status(409); // Conflict
+    res.status(400); // Conflict
     res.json('title or content not set');
     return;
   }
@@ -355,7 +355,7 @@ router.post('/:code/broadcast/:bc_id', (req: Request, res: Response, next: NextF
       QueueSocket.broadcast(code);
       res.end();
     } else {
-      res.status(409); // Conflict
+      res.status(500); // Conflict
       res.json(err);
     }
   });
@@ -377,7 +377,7 @@ router.delete('/:code/broadcast/:bc_id', (req: Request, res: Response, next: Nex
       QueueSocket.broadcast(code);
       res.end();
     } else {
-      res.status(409);
+      res.status(500);
       res.json(err);
     }
   });
@@ -387,6 +387,9 @@ router.delete('/:code/broadcast/:bc_id', (req: Request, res: Response, next: Nex
 /**
  * Queue
  */
+
+// Timer to flush queue after it is closed
+var flush: {[id: string]: NodeJS.Timer} = {};
 
 /** PUT: Start and stop queue */
 router.put('/:code/queue/', (req: Request, res: Response, next: NextFunction) => {
@@ -407,12 +410,29 @@ router.put('/:code/queue/', (req: Request, res: Response, next: NextFunction) =>
       res.json(err);
     }
   });
+
+
+  // Set timeout to flush queue
+  if (activate) {
+    clearTimeout(flush[code]);
+    delete flush[code];
+  } else if (!flush[code]){
+    flush[code] = setTimeout(()=>{
+      Subject.findOneAndUpdate({code:code},{'queue.list': []}).exec();
+    }, 5000); // 5 Sec
+  }
+
 });
 
 /** POST: Add users to queue */
 router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) => {
-  var code = req.params.code;
-  var users_id = req.body.users || [];
+  let code = req.params.code;
+  let users_id = req.body.users || [];
+
+  let task = req.body.task || 1;
+  let comment = req.body.comment || 'Comment';
+  let location = req.body.location;
+
 
   users_id.push(req.authenticatedUser._id);
 
@@ -467,16 +487,17 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
 
              // Add group to queue and save
 
+             let pos = subj.queue.list.length + 1;
+
              let q: QueueGroup = {
                users: users_id,
                helper: null,
                timeEntered: new Date(),
-               comment: 'string',
-               position: 1, // in queue
-               location: null
+               comment: comment,
+               position: pos, // in queue
+               location: location,
+               task: task
              }
-
-
 
              subj.queue.list.push(q);
 
@@ -489,16 +510,17 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                  QueueSocket.queue(code);
                } else {
                  // Save Error
-                 res.status(409); // Conflict
+                 res.status(500);
                  res.json(serr);
                }
              });
           } else {
+            res.status(500);
             res.json(err);
           }
         });
     } else {
-      res.status(409); // Conflict
+      res.status(500); // Conflict
       res.json(err || 'Subject not found');
     }
   });
@@ -555,7 +577,6 @@ router.delete('/:code/queue/:id', (req: Request, res: Response, next: NextFuncti
     denyAccess(res);
     return;
   }
-
   // Validate if user can remove grup
   var force = hasAccess(req.authenticatedUser, code, /teacher|assistent/i);
   var cond: any = {
@@ -571,19 +592,35 @@ router.delete('/:code/queue/:id', (req: Request, res: Response, next: NextFuncti
     delete cond['queue.list'].$elemMatch.users;
   }
 
-  // Execute
-  Subject.findOneAndUpdate(cond, {$pull: {'queue.list': {_id:id}}}).exec((err, sub) => {
-      if (!err && sub) {
-        QueueSocket.queue(code);
-        res.end();
-      } else {
-        res.status(409);
-        res.json(err || {});
-      }
+  Subject.findOne(cond).exec((err, sub) => {
+    if (sub) {
+      // Find queue group and update remaining
+      //Save
+      removeGroup(sub, id).save((err, s) => {
+        if (!err) {
+          res.end();
+          QueueSocket.queue(code);
+
+        } else {
+          res.status(500);
+          res.json(err);
+        }
+      });
+    } else if (err) {
+      // Error
+      res.status(500);
+      res.json(err);
+    } else {
+      // NOT FOUND OR NOT ALLOWED
+      res.status(400);
+      res.end();
+    }
   });
 });
 
+
 /** DELETE: Remove self from queue */
+// Må vurdere om denne skal fjernes
 router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) => {
   var code = req.params.code;
 
@@ -622,6 +659,156 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
   });
 });
 
+/** Removes group and updates positions to other groups */
+function removeGroup(subject: SubjectDocument, queue_id: string) {
+  // Find queue group and update remaining
+  let index: number;
+  let pos: number;
+
+  for (let i = 0; i < subject.queue.list.length; i++) {
+      let q = subject.queue.list[i];
+      if (String(q._id) == queue_id) {
+        index = i;
+        pos = q.position;
+        break;
+      }
+  }
+
+  // remove
+  subject.queue.list.splice(index, 1);
+
+  // Update positions
+  for (let q of subject.queue.list) {
+      if (q.position > pos) {
+        q.position--;
+      }
+  }
+
+  return subject;
+}
+
+
+/** POST: Delay queue group */
+router.post('/:code/queue/:qid/delay', (req: Request, res: Response, next: NextFunction) => {
+  let code: string = req.params.code;
+  let qid: string = req.params.qid;
+
+  var delay: number = +req.body.delay;
+
+
+  // Check user privileges
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
+    denyAccess(res);
+    return;
+  }
+
+  if (isNaN(delay) || delay < 1) {
+    res.status(418);
+    return  res.send('delay must be greater than or equal to 1');
+  }
+
+  Subject.findOne({code:code}).exec().then((sub) => {
+    // Find queue group and update remaining
+    let pos: number;
+    let index: number;
+
+    for (let i = 0; i < sub.queue.list.length; i++) {
+        let q = sub.queue.list[i];
+        if (String(q._id) == qid) {
+          pos = q.position;
+          index = i;
+          break;
+        }
+    }
+
+    // Limit delay
+    if ((delay + pos) > sub.queue.list.length) {
+      delay = sub.queue.list.length - pos;
+    }
+    // Update positions
+    for (let q of sub.queue.list) {
+        if (q.position > pos && q.position <= pos + delay) {
+          q.position--;
+        }
+    }
+
+    sub.queue.list[index].position += delay;
+
+    sub.save((err, s) => {
+      if (!err) {
+        res.end();
+        QueueSocket.queue(code);
+
+      } else {
+        res.status(500);
+        res.json(err);
+      }
+    });
+
+  });
+
+  Subject.findOneAndUpdate({code:code},
+  {
+    // Set Delay
+  }).exec().then((sub) => {
+      QueueSocket.queue(code);
+      res.end();
+  }, (err) => {
+    res.status(500);
+    res.json(err);
+  });
+
+
+});
+
+
+
+
+/** POST: Set helper on queue group */
+router.post('/:code/queue/:qid/help', (req: Request, res: Response, next: NextFunction) => {
+  let code: string = req.params.code;
+  let qid: string = req.params.qid;
+
+  // Check user privileges
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
+    return denyAccess(res);
+  }
+
+  Subject.findOneAndUpdate({code:code, 'queue.list._id': qid},
+  {'queue.list.$.helper': req.authenticatedUser._id})
+  .exec().then((sub)=>{
+    QueueSocket.queue(code);
+    res.end();
+  }, (err) => {
+    res.status(500);
+    res.json(err);
+  });
+});
+
+/** DELETE: Remove helper on queue group */
+router.delete('/:code/queue/:qid/help', (req: Request, res: Response, next: NextFunction) => {
+  let code: string = req.params.code;
+  let qid: string = req.params.qid;
+
+  // Check user privileges
+  if (!hasAccess(req.authenticatedUser, code, /teacher|assistent/i)) {
+    return denyAccess(res);
+  }
+
+  Subject.findOneAndUpdate({code:code, 'queue.list._id': qid},
+  {'queue.list.$.helper': null})
+  .exec().then((sub)=>{
+    QueueSocket.queue(code);
+    res.end();
+  }, (err) => {
+    res.status(500);
+    res.json(err);
+  });
+
+});
+
+
+
 
 /**
  * Tasks
@@ -648,7 +835,7 @@ router.post('/:code/requirement', (req: Request, res: Response, next: NextFuncti
     });
   } else {
     // Wrong data
-    res.sendStatus(409);
+    res.sendStatus(400);
   }
 });
 
@@ -681,30 +868,29 @@ router.post('/:code/task', (req: Request, res: Response, next: NextFunction) => 
     return;
   }
 
-  var usersID = req.body.users;
-  var tasks: number[] = req.body.tasks;
+  let usersID = req.body.users;
+  let task: number = req.body.task;
+  let date = new Date();
 
-  if (usersID instanceof Array && usersID.length > 0 && tasks instanceof Array && tasks.length > 0) {
-    Subject.findOne({code:code}).select('_id').lean().exec((err, subject) => {
-      if (!err && subject) {
-        User.update(
-          {_id:{$in: usersID}, subjects:{$elemMatch:{subject:subject._id, role:'Student'}}},
-          {$addToSet: {'subjects.$.tasks':{$each:tasks}}}
-        ).exec((err, users) => {
-          if (!err && users) {
-            res.json(users);
-          } else {
-            res.json(err);
-          }
+  Subject.findOne({code:code}, (err, sub) => {
+    if (!err && sub) {
+      UserSubject.update(
+        {subject: sub._id, user: {$in: usersID}, 'tasks.number': {$ne: task}},
+        {$push: {tasks: {
+          number: task,
+          date: date,
+          approvedBy: req.authenticatedUser._id
+        }}}).exec().then(()=>{
+          res.end();
+        }, (err) => {
+          res.status(500);
+          res.json(err);
         });
-      } else {
-        res.json(err);
-      }
-    });
-  } else {
-    // Wrong data
-    res.sendStatus(409);
-  }
+    } else {
+      res.status(500);
+      res.json(err);
+    }
+  });
 });
 
 /** DELETE: Remove tasks from users */
@@ -718,29 +904,24 @@ router.delete('/:code/task', (req: Request, res: Response, next: NextFunction) =
   }
 
   var usersID = req.body.users;
-  var tasks: number[] = req.body.tasks;
+  var task: number = req.body.task;
 
-  if (usersID instanceof Array && usersID.length > 0 && tasks instanceof Array && tasks.length > 0) {
-    Subject.findOne({code:code}).select('_id').lean().exec((err, subject) => {
-      if (!err && subject) {
-        User.update(
-          {_id:{$in: usersID}, subjects:{$elemMatch:{subject:subject._id, role:'student'}}},
-          {$pullAll: {'subjects.$.tasks':tasks}}
-        ).exec((err, users) => {
-          if (!err && users) {
-            res.json(users);
-          } else {
-            res.json(err);
-          }
+  Subject.findOne({code:code}, (err, sub) => {
+    if (!err && sub) {
+      UserSubject.update(
+        {subject: sub._id, user: {$in: usersID}, 'tasks.number':task},
+        {$pull: {tasks: {number: task}}}
+      ).exec().then(()=>{
+          res.end();
+        }, (err) => {
+          res.status(500);
+          res.json(err);
         });
-      } else {
-        res.json(err);
-      }
-    });
-  } else {
-    // Wrong data
-    res.sendStatus(409);
-  }
+    } else {
+      res.status(500);
+      res.json(err);
+    }
+  });
 });
 
 

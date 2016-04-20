@@ -1,4 +1,6 @@
 import express = require('express');
+import mongoose = require('mongoose');
+//mongoose.Promise = global.Promise as any;
 
 var router = express.Router();
 

@@ -63,6 +63,7 @@ export interface QueueGroup {
   timeEntered: Date;
   comment: string;
   position: number; // in queue
+  task: number;
   location: Location;
 }
 
@@ -96,6 +97,7 @@ let subjectSchema = new mongoose.Schema({
         timeEntered: Date,
         comment: String,
         position: Number,
+        task: Number,
         location: String // not implemented
       }
     ]
