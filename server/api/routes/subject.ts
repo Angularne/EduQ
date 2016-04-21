@@ -435,7 +435,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
   let code = req.params.code;
   let users_id = req.body.users || [];
 
-  let task = req.body.task || 1;
+  let task: number  = +req.body.task || 1;
   let comment = req.body.comment || 'Comment';
   let location = req.body.location;
 
@@ -501,7 +501,6 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                timeEntered: new Date(),
                comment: comment,
                position: pos, // in queue
-               location: location,
                task: task
              }
 
@@ -640,19 +639,14 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
     if (!err) {
       // Check number of users left in group
       // Remove if no users left
-      console.log(affected);
       if (affected.nModified > 0) {
-        Subject.update(
-          {code:code, 'queue.list.users': []},
-          {$pull:{'queue.list':{'users': []}}}
-        ).exec((err) => {
-          if (!err) {
-            QueueSocket.queue(code);
-            res.end();
 
-          } else {
-            res.json(err);
-          }
+        removeEmptyQueueGroups(code).then((sub) => {
+          res.end();
+          QueueSocket.queue(code);
+        }).catch((err) => {
+          res.status(400).json(err);
+          QueueSocket.queue(code);
         });
       } else {
         QueueSocket.queue(code);
@@ -660,6 +654,39 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
     } else { res.json(err); }
   });
 });
+
+
+/** Find and removes empty groups */
+function removeEmptyQueueGroups(code) {
+  return new Promise<SubjectDocument>((resolve, reject) => {
+    Subject.findOne({code:code}).exec().then((sub) => {
+      var emptyGroups: QueueGroup[] = [];
+
+      // Find empty groups
+      for (let group of sub.queue.list) {
+          if (group.users.length == 0) {
+            emptyGroups.push(group);
+          }
+      }
+
+      // Remove groups
+      for (let group of emptyGroups) {
+          removeGroup(sub, group._id);
+      }
+
+      // Save
+      sub.save((err, res: SubjectDocument) => {
+        if (!err) {
+          resolve(res);
+        } else {
+          reject(err);
+        }
+      });
+    }, (err) => {
+      reject(err);
+    });
+  });
+}
 
 /** Removes group and updates positions to other groups */
 function removeGroup(subject: SubjectDocument, queue_id: string) {

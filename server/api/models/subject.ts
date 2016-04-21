@@ -64,7 +64,7 @@ export interface QueueGroup {
   comment: string;
   position: number; // in queue
   task: number;
-  location: Location;
+  location?: Location;
 }
 
 /** Location */
