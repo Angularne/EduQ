@@ -158,7 +158,7 @@ function authenticateJWT(req: Request, res: Response, next: NextFunction) {
 
 
 function unauthorized(res) {
-  res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+  //res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
   return res.sendStatus(401);
 };
 
