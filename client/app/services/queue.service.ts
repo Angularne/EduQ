@@ -1,7 +1,7 @@
 import {Injectable} from 'angular2/core';
 import {Http, Headers, Request, RequestMethod} from "angular2/http";
 import {User} from '../interfaces/user';
-import {Subject} from '../interfaces/subject';
+import {Subject, Task} from '../interfaces/subject';
 import {Queue} from '../interfaces/subject';
 import {authHeaders} from '../common/headers';
 
@@ -14,9 +14,15 @@ export class QueueService {
 
   constructor(private http: Http) {}
 
-  addQueueElement(users: User[]) {
+  addQueueElement(users: User[], task: Task) {
+    var json = {
+      "users": users,
+      "comment": 'Not implemented',
+      "task": task,
+      "location": null
+    }
     if (this.subject) {
-      this.http.post(`api/subject/${this.subject.code}/queue`, JSON.stringify({users:users}), {
+      this.http.post(`api/subject/${this.subject.code}/queue`, JSON.stringify(json), {
          headers: authHeaders()
        }).subscribe();
     } else {
@@ -42,8 +48,14 @@ export class QueueService {
      }).subscribe();
   }
 
-  delayQueueElement(places: number) {
-    console.error('Error: SubjectService.delayQueueElement not implemented!');
+  delayQueueElement(element: any, places: number) {
+    var json = {
+      "delay": places
+    }
+    this.http.post(`api/subject/${this.subject.code}/queue/${element.id}/delay`, JSON.stringify(json), {
+      headers: authHeaders()
+    }).subscribe();
+    console.error('Error: SubjectService.delayQueueElement not implemented on server!');
   }
 
   toggleQueueActive(active: boolean) {

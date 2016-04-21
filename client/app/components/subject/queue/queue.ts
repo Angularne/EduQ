@@ -30,6 +30,10 @@ export class QueueComponent implements OnInit, OnChanges {
   }
   get tasks() {return this._tasks;}
   _tasksIHaveDone: Task[];
+  @Input() set userTasks(userTasks) {
+    this._tasksIHaveDone = userTasks;
+  }
+  get userTasks() {return this._tasksIHaveDone;}
   haveIDoneThatTask(task: Task) {
     if (!this._tasksIHaveDone) {
       console.log(this);
@@ -39,7 +43,7 @@ export class QueueComponent implements OnInit, OnChanges {
           break;
         }
       }
-    } else if(!this._tasksIHaveDone) {
+    } else if(this._tasksIHaveDone.length > 0) {
       for ( let t of this._tasksIHaveDone) {
         if (t.number === task.number) {
           return true;
@@ -82,7 +86,10 @@ export class QueueComponent implements OnInit, OnChanges {
               private queueService: QueueService) {
 }
 
-
+  slidervalue: number = 2;
+  onSlide(value: number) {
+    this.slidervalue = value;
+  }
 
   ngOnInit() {
   }
@@ -161,19 +168,21 @@ return true;
     this.queueService.toggleQueueActive(this.queue.active);
   }
   addQueueElement() {
-    this.queueService.addQueueElement(this.usersSelected); //TODO update with tasknumber
+    this.queueService.addQueueElement(this.usersSelected, this._taskSelected);
     this.usersSelected = [];
   }
   deleteFromQueue() {
     this.queueService.deleteFromQueue();
+    this._taskSelected = null;
   }
   removeQueueElement(element: any) {
     this.queueService.removeQueueElement(element);
+    this._taskSelected = null;
   }
   helpQueueElement(element: any) {
     this.queueService.helpQueueElement(element);
   }
-  delayQueueElement() {
+  delayQueueElement(element: any, places: number) {
     console.error('Error: QueueComponent.delayQueueElement not implemented!');
   }
   acceptTask(element: any) {

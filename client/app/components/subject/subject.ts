@@ -24,6 +24,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   role: string;
   user: User;
   tasks: Task[];
+  userTasks: Task[];
 
   constructor(private params: RouteParams,
               private auth: AuthService,
@@ -48,6 +49,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
         this.user = user;
         for (let sub of this.user.subjects) {
           if (sub.code == code) {
+            this.userTasks = sub.tasks;
             this.role = sub.role;
             console.log("getUser async find role");
           }

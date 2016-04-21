@@ -4,7 +4,7 @@
 
 <div *ngIf="queue?.active">
   <div class="btn-group btn-group-sm" *ngIf="!teacherOrAssistent">
-    <button class="btn btn-primary btn-md"  *ngIf="!myUserInQueue" (click)="addQueueElement()">Queue</button>
+    <button class="btn btn-primary btn-md"  *ngIf="!myUserInQueue" (click)="addQueueElement()" [disabled]="!_taskSelected">Queue</button>
     <button class="btn btn-primary btn-md" *ngIf="myUserInQueue" (click)="deleteFromQueue()">Remove me</button>
   </div>
   <br><br>
@@ -22,6 +22,9 @@
     </tr>
     <tr>
       <td>
+        <!--
+        TODO dont work on phone. should not use (click). select can use multiple?
+        -->
         <div>
           <select size="5" class="form-control">
             <option *ngFor="#user of studentsNotInQueue" (click)="selectUser(user)" draggable="true">{{user.firstname}} {{user.lastname}}</option>
@@ -30,7 +33,7 @@
       </td>
       <td>
         <div>
-          <select size="5" class="form-control">
+          <select multiple size="5" class="form-control">
             <option *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</option>
           </select>
         </div>
@@ -87,8 +90,10 @@
             Action <span class="caret"></span>
           </button>
           <ul class="dropdown-menu dropdown-menu-right">
-            <li><a (click)="helpQueueElement(element)">Help</a></li>
-            <li><a href="#">Delay</a></li>
+            <li *ngIf="!element.helper"><a (click)="helpQueueElement(element)">Help</a></li>
+            <li *ngIf="element.helper"><a (click)="acceptTask(element)">Accept</a></li>
+            <li><a href="#" type="button" data-toggle="modal" data-target="#delayModal">Delay</a></li>
+
             <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>
             <li><a (click)="removeQueueElement(element)">Remove group</a></li>
@@ -105,3 +110,21 @@
   <h2>The queue is not active</h2>
 </div>
 <hr>
+<div class="modal bs-example-modal-sm" tabindex="-1" role="dialog" id="delayModal" aria-labelledby="delayModalTitle">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="delayModalTitle">Delay</h4>
+      </div>
+      <div class="modal-body">
+        <input type="range" value="3" id="myRange" data-slider-min="1" data-slider-step="1" data-slider-max="3" (change)="onSlide(value)">
+        Current slider value: {{slidervalue}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Delay</button>
+      </div>
+    </div>
+  </div>
+</div>
