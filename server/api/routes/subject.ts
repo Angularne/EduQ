@@ -745,6 +745,7 @@ router.post('/:code/queue/:qid/delay', (req: Request, res: Response, next: NextF
         let q = sub.queue.list[i];
         if (String(q._id) == qid) {
           pos = q.position;
+          q.helper = null;
           index = i;
           break;
         }
