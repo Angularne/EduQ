@@ -19,6 +19,9 @@
       <td>
         <b>Task</b>
       </td>
+      <td>
+        <b>Location</b>
+      </td>
     </tr>
     <tr>
       <td>
@@ -45,6 +48,22 @@
           </select>
         </div>
       </td>
+      <td>
+        <form class="form-horizontal">
+          <div class="form-group">
+            <div class="col-sm-10">
+              <p class="form-control-static">
+                Roomnumber
+              </p>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-10">
+              <input size="3" type="text" id="inputRoomDescription" class="form-control" placeholder="Description...">
+            </div>
+          </div>
+        </form>
+      </td>
     </tr>
 
   </table>
@@ -64,24 +83,28 @@
         <b>Task</b>
       </td>
       <!-- TODO Authcheck for userRole -->
-      <div>
-        <td>
 
-        </td>
-        <td>
+      <td>
+        <b>Soon to come: Location!</b>
+      </td>
+      <td>
 
-        </td>
-      </div>
+      </td>
+
     </tr>
     <tr *ngFor="#element of queue?.list; #i = index">
       <td>
         {{i+1}}
       </td>
-      <td>{{element.timeEntered}}</td>
-      <td><span *ngFor="#user of element?.users"> - {{user.firstname}} </span> </td>
+      <td>{{element.timeEntered}} <span *ngIf="element.helper"> - Helper: {{element.helper.firstname}}</span></td>
+      <td><span *ngFor="#user of element?.users; #i = index"> <span *ngIf="i != 0"> - </span>{{user.firstname}}</span> </td>
       <td>
         <span> {{element.task}}</span>
-        <span *ngIf="element.helper"> - Helper: {{element.helper.firstname}}</span>
+
+      </td>
+      <td>
+        Roomnumber<br> <!-- element.location.room -->
+        Placement description <!-- element.location.description -->
       </td>
       <!-- TODO Check for auth or own user -->
       <td class="text-right">
@@ -92,7 +115,7 @@
           <ul class="dropdown-menu dropdown-menu-right">
             <li *ngIf="!element.helper"><a (click)="helpQueueElement(element)">Help</a></li>
             <li *ngIf="element.helper"><a (click)="acceptTask(element)">Accept</a></li>
-            <li><a href="#" type="button" data-toggle="modal" data-target="#delayModal">Delay</a></li>
+            <li *ngIf="i +1 < queue.list.length"><a href="#" type="button" data-toggle="modal" data-target="#delayModal" (click)="onClickDelay(i, element)">Delay</a></li>
 
             <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>
@@ -118,12 +141,14 @@
         <h4 class="modal-title" id="delayModalTitle">Delay</h4>
       </div>
       <div class="modal-body">
-        <input type="range" value="3" id="myRange" data-slider-min="1" data-slider-step="1" data-slider-max="3" (change)="onSlide(value)">
-        Current slider value: {{slidervalue}}
+          <label for=""></label>
+          <select class="form-control">
+            <option *ngFor="#step of steppermax; #i = index" (select)="onDelaySelect(i)">{{i+1}} places</option>
+          </select>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Delay</button>
+        <button type="submit" (click)="onSubmitDelay()" class="btn btn-primary" data-dismiss="modal">Delay</button>
       </div>
     </div>
   </div>

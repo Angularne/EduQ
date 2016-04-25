@@ -86,11 +86,23 @@ export class QueueComponent implements OnInit, OnChanges {
               private queueService: QueueService) {
 }
 
-  slidervalue: number = 2;
-  onSlide(value: number) {
-    this.slidervalue = value;
+  _stepperMax : number[] = [];
+  _delaynumber: number = 1;
+  get steppermax() {return this._stepperMax;}
+  onSelectDelay(index: number) {
+    this._delaynumber = index;
   }
-
+  _element : any = null;
+  onSubmitDelay() {
+    this.queueService.delayQueueElement(this._element, this._delaynumber);
+  }
+  onClickDelay(index: number, element: any) {
+    this._element = element;
+    this._stepperMax = [];
+    for (var i = 0; i < this.queue.list.length - (index+1); i++) {
+      this._stepperMax.push(i+1);
+    }
+  }
   ngOnInit() {
   }
 
