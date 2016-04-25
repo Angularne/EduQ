@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy} from 'angular2/core';
-import {RouteParams} from 'angular2/router';
+import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {Subject} from '../../interfaces/subject';
 import {User} from '../../interfaces/user';
@@ -15,7 +15,7 @@ import {AuthService} from '../../services/auth.service';
   selector: 'subjects',
   templateUrl: 'app/components/subject/subject.html',
   providers: [SubjectService, SocketService, QueueService, BroadcastService],
-  directives: [QueueComponent, BroadcastComponent, EditSubjectComponent]
+  directives: [QueueComponent, BroadcastComponent, EditSubjectComponent, ROUTER_DIRECTIVES]
 })
 
 export class SubjectsComponent implements OnInit, OnDestroy {

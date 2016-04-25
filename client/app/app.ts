@@ -1,4 +1,4 @@
-import {Component, Inject} from 'angular2/core';
+import {Component, Inject, ChangeDetectionStrategy} from 'angular2/core';
 import {RouteConfig} from 'angular2/router';
 import {LoginComponent} from "./components/login/login";
 import {MainComponent} from "./components/main/main";
@@ -13,6 +13,8 @@ import {EditSubjectComponent} from './components/edit.subject/edit.subject';
 import {EditUserComponent} from './components/edit.user/edit.user';
 import {SubjectService} from './services/subject.service';
 import {UsersComponent} from './components/users/users';
+import {SubjectUsersComponent} from './components/subject.users/subject.users';
+import {StudentsTasksComponent} from './components/students.tasks/students.tasks';
 
 @Component({
   selector: 'my-app',
@@ -33,19 +35,25 @@ import {UsersComponent} from './components/users/users';
 @RouteConfig([
   {path: '/', component: MainComponent, as: 'MainPath', useAsDefault: true},
   {path: '/login', component: LoginComponent, as: 'LoginPath'},
-  {path: '/subjects/:code', component: SubjectsComponent, as: 'SubjectsPath'},
-  {path: '/subjects/:code/edit', component: SubjectsComponent, as: 'SubjectEditPath'},
+
   {path: '/me', component: MypageComponent, as: 'MypagePath'},
   {path: '/adminpage', component: AdminpageComponent, as: 'AdminpagePath'},
 
-  /** Edit  Users */
-  {path: '/users', component: UsersComponent, as: 'UserListPath'},
+  /** Subject */
+  // {path: '/subjects', component: SubjectsListComponent, as: 'SubjectsListPath'}, // List all subjects
+  {path: '/subjects/:code', component: SubjectsComponent, as: 'SubjectsPath'},
+  {path: '/subjects/:code/edit', component: EditSubjectComponent, as: 'EditSubjectPath'},
+  {path: '/subjects/:code/users', component: SubjectUsersComponent, as: 'SubjectUsersPath'},
+  {path: 'subjects/:code/tasks', component: StudentsTasksComponent, as: 'StudentsTasksPath'},
+
+  {path: '/subject/new', component: EditSubjectComponent, as: 'NewSubjectPath'},
 
 
+  /** Users */
+  {path: '/users', component: UsersComponent, as: 'UserListPath'}, // List all users
   {path: '/users/:user_id', component: EditUserComponent, as: 'EditUserPath'},
 
 
-  {path: '/subject/new', component: EditSubjectComponent, as: 'NewSubjectPath'},
 
 
   /** Redirect to main */

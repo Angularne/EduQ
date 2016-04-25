@@ -28,8 +28,9 @@
     <edit-users  [role]="'Assistent'" [type]="'Student'" [label]="'Assistents'" [users]="assistents"></edit-users>
 
     <!-- Students -->
+    <!-- Own page for students
     <edit-users  [role]="'Student'" [type]="'Student'" [label]="'Students'" [users]="students"></edit-users>
-
+    -->
   </fieldset>
 
   <fieldset>
@@ -48,7 +49,7 @@
     <!-- Cancel Save buttons -->
     <div class="row">
       <div class="text-right">
-        <button class="btn btn-outline btn-default" type="button" (click)="cancelEdit()">Cancel</button>
+        <button class="btn btn-outline btn-default" type="button" (click)="cancel()">Cancel</button>
         <button class="btn btn-outline btn-success" type="button" (click)="save()">Save</button>
       </div>
     </div>

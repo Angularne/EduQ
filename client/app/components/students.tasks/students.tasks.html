@@ -1,0 +1,28 @@
+<br>
+<nav>
+  <a class="btn btn-default btn-sm" [routerLink]="['SubjectsPath', {code: subject?.code}]">
+    <span class="glyphicon glyphicon-arrow-left"></span> Back
+  </a>
+  <button class="btn btn-primary btn-sm pull-right" type="button" (click)="save()">Save</button>
+
+</nav>
+
+<div *ngIf="subject">
+  <div *ngFor="#user of students">
+    <h4>
+      {{user.firstname}} {{user.lastname}}
+      <span class="label label-success" *ngIf="user.completed">Completed</span>
+    </h4>
+    <ul class="list-unstyled" *ngIf="user.tasks">
+      <li *ngFor="#task of user.tasks">
+        <label>
+          <input type="checkbox" class="" [ngModel]="task.completed" (click)="setTask(user, task)">
+          {{task.number}} {{task.title}}</label><span *ngIf="task.approvedBy">,
+           Approved by {{task.approvedBy?.firstname}} {{task.approvedBy?.lastname}} on {{task.date}}
+        </span>
+
+      </li>
+    </ul>
+    <hr>
+  </div>
+</div>

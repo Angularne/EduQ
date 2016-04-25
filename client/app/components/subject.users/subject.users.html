@@ -1,0 +1,55 @@
+<br>
+<nav>
+  <a class="btn btn-default btn-sm" [routerLink]="['SubjectsPath', {code: subject?.code}]">
+    <span class="glyphicon glyphicon-arrow-left"></span> Back
+  </a>
+  <button class="btn btn-primary btn-sm pull-right" type="button" (click)="save()">Save</button>
+</nav>
+
+<h2> <span *ngIf="subject">{{subject.name}}</span><small>- Edit Students</small></h2>
+<div class="container">
+  <div class="row">
+
+    <div class="col-sm-offset-8 col-sm-4 text-right">
+      <input class="form-control" type="text" placeholder="Search" [(ngModel)]="query" (keyup)="doFilter()">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" [(ngModel)]="allSelected" (click)="selectAll(!allSelected)">
+            </th>
+            <th>
+              name
+            </th>
+            <th>
+              Rights
+            </th>
+            <th>
+              Year
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="#user of users" >
+            <td>
+              <input type="checkbox" [(ngModel)]="user.selected">
+            </td>
+            <td>
+              {{user.firstname}} {{user.lastname}}
+            </td>
+            <td>
+              {{user.rights}}
+            </td>
+            <td>
+              {{user.classOf}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

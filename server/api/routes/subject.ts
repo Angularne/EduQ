@@ -66,7 +66,7 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
   }).exec().then((subj) => {
     if (subj.length) {
       User.populate(subj[0], {
-        path: 'users.user broadcasts.author queue.list.helper queue.list.users',
+        path: 'users.user broadcasts.author queue.list.helper queue.list.users users.tasks.approvedBy',
         select: 'firstname lastname'
       }).then((subject) => {
         // users populated
@@ -293,7 +293,49 @@ router.delete('/:code/users', (req: Request, res: Response, next: NextFunction) 
   });
 });
 
+/** PUT: Update students in subject */
+router.put('/:code/students', (req: Request, res: Response, next: NextFunction) => {
+  var code: string = req.params.code;
+  var students = req.body.students;
 
+  // Check user privileges
+  if (!hasAccess(req.authenticatedUser, code, /teacher/i)) {
+    return denyAccess(res);
+  }
+
+
+  Subject.findOne({code:code}).exec().then((subject) => {
+
+    for (var user of students || []) {
+
+
+
+      UserSubject.findOneAndUpdate({
+        user: user,
+        subject: subject._id
+      }, {
+        role: 'Student'
+      }, {
+        upsert: true
+      }).exec().then((u) => {
+      }, (err) => {
+        console.log(err);
+      });
+    }
+
+
+    UserSubject.remove({
+      subject: subject._id,
+      role: 'Student',
+      user: {$nin: students}
+    }).exec().then((usr) => {
+    }, (err) => {
+      console.log(err);
+    });
+
+    res.end();
+  });
+});
 
 
 /**
@@ -1014,7 +1056,7 @@ router.put('/:code/task', (req: Request, res: Response, next: NextFunction) => {
   Subject.findOne({code:code}).select('tasks').lean().exec().then((sub) => {
     for (let user of users) {
 
-      UserSubject.findOne({user: user._id}).exec().then((u) => {
+      UserSubject.findOne({subject: sub._id, user: user._id}).exec().then((u) => {
 
         // Add tasks
         for (let t1 of user.tasks) {

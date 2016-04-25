@@ -1,0 +1,115 @@
+import {Component, OnInit, ChangeDetectionStrategy} from 'angular2/core';
+import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
+import {SubjectService} from '../../services/subject.service';
+import {Subject, SubjectUser} from '../../interfaces/subject';
+@Component({
+  selector: 'students-tasks',
+  templateUrl: 'app/components/students.tasks/students.tasks.html',
+  directives: [ROUTER_DIRECTIVES]
+})
+
+export class StudentsTasksComponent implements OnInit {
+  subject: Subject;
+  students: SubjectUser[];
+
+  constructor(private subjectService: SubjectService, private routeParams: RouteParams) { }
+
+
+  ngOnInit(){
+
+    let code = this.routeParams.get('code');
+    if (code) {
+      this.subjectService.getSubject(code).subscribe(sub => {
+        this.subject = sub;
+        // Filter Students
+        this.students = this.subject.users.filter((usr) => {
+          return usr.role == 'Student';
+        });
+
+        this.mapTasks();
+      });
+    }
+  }
+
+  /* Map tasks */
+  mapTasks() {
+    for (let stud of this.students) {
+
+      var tasks = [];
+      for (var i = 0; i < this.subject.tasks.length; i++) {
+        tasks.push({
+        number: i + 1,
+        title: this.subject.tasks[i].title
+        });
+      }
+      if (stud.tasks) {
+        for (let task of stud.tasks) {
+          let t = tasks[task.number - 1];
+          t.completed = true;
+          t.date = new Date(task.date).toLocaleDateString();
+          t.approvedBy = task.approvedBy;
+
+        }
+      }
+      stud.tasks = tasks;
+
+      this.checkTasks(stud);
+    }
+
+  }
+
+  setTask(user, task, completed: boolean = null) {
+    task.completed = completed != null ? completed : !(task.completed || false);
+    this.checkTasks(user);
+  }
+
+  // Check if requirements are met
+  checkTasks(user) {
+    user.completed = true;
+    for (var req of this.subject.requirements) {
+      var count = 0;
+      for (var t = req.from; t <= req.to; t++) {
+        if (user.tasks[t-1].completed) {
+          count++;
+        }
+      }
+      if (count < req.required) {
+        user.completed = false;
+        break;
+      }
+    }
+  }
+
+
+
+  save() {
+
+    var users: {
+      _id: string,
+      tasks: number[]
+    }[] = [];
+
+    for (let stud of this.students) {
+      let u = {
+        _id: stud._id,
+        tasks: []
+      };
+
+      for (let task of stud.tasks) {
+        if (task.completed) {
+          u.tasks.push(task.number);
+        }
+      }
+      users.push(u);
+    }
+
+    this.subjectService.updateTasks(this.subject.code, users).subscribe((res) => {
+      if (res) {
+        // saving
+        console.log('saving');
+      } else {
+        // not
+      }
+    });
+  }
+}

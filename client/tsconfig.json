@@ -38,6 +38,8 @@
     "app/components/me/subject/subject.ts",
     "app/components/siteheader/siteheader.ts",
     "app/components/socket/socket.ts",
+    "app/components/students.tasks/students.tasks.ts",
+    "app/components/subject.users/subject.users.ts",
     "app/components/subject/broadcasts/broadcast/broadcast.ts",
     "app/components/subject/broadcasts/broadcasts.ts",
     "app/components/subject/queue/queue.ts",

@@ -123,4 +123,37 @@ export class SubjectService {
       }
     });
   }
+
+
+  updateStudents(code:string, students: string[]) {
+
+
+    return this.http.put('/api/subject/' + code + '/students', JSON.stringify({students:students}), {
+      headers: authHeaders()
+    }).map((res) => {
+      if (res.status == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
+
+
+  updateTasks(code: string, users: any[]) {
+    let body = {
+      users: users
+    };
+
+    return this.http.put('/api/subject/' + code + '/task', JSON.stringify(body), {
+      headers: authHeaders()
+    }).map((res) => {
+      if (res.status == 204) {
+        return true;
+      } else {
+        null;
+      }
+    });
+
+  }
 }
