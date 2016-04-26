@@ -22,6 +22,7 @@ export interface UserDocument extends mongoose.Document {
     requirements: Requirement[];
     tasks: any[];
 
+    realPassword?: string;
     __v?: number;
     user?: any;
     subject?: any;

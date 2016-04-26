@@ -87,6 +87,37 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
   })
 });
 
+/** POST: Create list of users */
+router.post('/class', (req: Request, res: Response, next: NextFunction) => {
+
+  // Check user privileges
+  if (!/Admin/i.test(req.authenticatedUser.rights)) {
+    denyAccess(res);
+    return;
+  }
+
+  let users = req.body.users;
+
+
+  for (var user of users) {
+    user.realPassword = randomPassword();
+    user.password = user.realPassword; /** TODO HASH */
+  }
+
+
+  User.create(users).then((us: any) => {
+    console.log(users);
+    for (let u of users) {
+      // Send mail with password
+    }
+
+    res.end();
+  }, (err) => {
+    console.log(err);
+    res.status(409).json(err);
+  });
+});
+
 /** PUT: Update user */
 router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
   /** TODO Valider data */
@@ -140,6 +171,12 @@ router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
     }
   });
 });
+
+/** TODO */
+function randomPassword() {
+  console.log('TODO: generate random password and hash');
+  return 'password';
+}
 
 
 

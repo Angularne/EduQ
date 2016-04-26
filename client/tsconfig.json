@@ -26,6 +26,7 @@
     "app/common/LoggedInOutlet.ts",
     "app/common/range.ts",
     "app/common/reverse.ts",
+    "app/components/add.class/add.class.ts",
     "app/components/adminpage/adminpage.ts",
     "app/components/edit.subject/edit.subject.ts",
     "app/components/edit.subject/requirement/requirement.ts",

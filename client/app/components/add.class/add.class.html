@@ -1,0 +1,25 @@
+
+
+<div class="form-group">
+  <label for="class">Class:</label>
+  <input class="form-control" id="class" [(ngModel)]="class">
+</div>
+
+<div class="form-group" style="vertical-align: top;">
+  <label for="users">Input:</label><br>
+  <textarea class="form-control" [(ngModel)]="input" rows="8" cols="40" placeholder="Fornavn,Etternavn,email
+Fornavn,Etternavn,email
+Fornavn,Etternavn,email
+Fornavn,..."></textarea><br>
+</div>
+
+<button class="btn btn-primary btn-sm" type="button" (click)="save()">Save</button>
+
+<br><br>
+Format:
+<div class="form-control" style="height:7em; overflow:scroll;">
+  Fornavn,Etternavn,email <br>
+  Fornavn,Etternavn,email <br>
+  Fornavn,Etternavn,email <br>
+  Fornavn,Etternavn,email
+</div>

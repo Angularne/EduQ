@@ -15,6 +15,7 @@ import {SubjectService} from './services/subject.service';
 import {UsersComponent} from './components/users/users';
 import {SubjectUsersComponent} from './components/subject.users/subject.users';
 import {StudentsTasksComponent} from './components/students.tasks/students.tasks';
+import {AddClassComponent} from './components/add.class/add.class';
 
 @Component({
   selector: 'my-app',
@@ -53,7 +54,7 @@ import {StudentsTasksComponent} from './components/students.tasks/students.tasks
   {path: '/users', component: UsersComponent, as: 'UserListPath'}, // List all users
   {path: '/users/:user_id', component: EditUserComponent, as: 'EditUserPath'},
 
-
+  {path: 'users/class/add', component: AddClassComponent, as: 'AddClassPath'},
 
 
   /** Redirect to main */

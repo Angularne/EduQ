@@ -108,4 +108,11 @@ export class UserService {
       }
     });
   }
+
+  saveUsers(users: User[]) {
+    console.log(users);
+    return this.http.post('/api/user/class', JSON.stringify({users: users}), {headers: authHeaders()}).map((res) => {
+
+    });
+  }
 }
