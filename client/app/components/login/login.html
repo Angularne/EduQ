@@ -1,14 +1,39 @@
-<form [ngFormModel]="form">
-      <div *ngIf="error">Check your password</div>
-      <div>
-        <label for="username">Username</label>
-        <input type="text" ngControl="username">
-      </div>
-      <div>
-        <label for="password">Password</label>
-        <input type="password" ngControl="password">
-      </div>
-      <div class="form-group">
-        <button type="submit" [disabled]="!form.valid" (click)="onSubmit(form.value)">Login</button>
-      </div>
-    </form>
+<br>
+<div [ngSwitch]="pane">
+  <template ngSwitchDefault>
+    <div class="container">
+
+      <form class="form-signin" [ngFormModel]="form">
+        <h2 class="form-signin-heading">Please sign in</h2>
+
+        <p class="error">{{error}}</p>
+        <p >{{message}}</p>
+
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" class="form-control" ngControl="username" placeholder="Email address" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" ngControl="password" placeholder="Password" required>
+
+        <button class="btn btn-lg btn-primary btn-block" [disabled]="!form.valid" type="submit" (click)="onSubmit(form.value)">Sign in</button>
+        <br>
+        <span class="pull-right"><a class="clickable" (click)="pane = 'forgot password'">Forgot password?</a></span>
+      </form>
+
+    </div> <!-- /container -->
+  </template>
+  <template [ngSwitchWhen]="'forgot password'">
+    <div class="container">
+
+      <form class="form-forgot-pw" [ngFormModel]="form">
+        <h2 class="form-signin-heading">Forgot password</h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" class="form-control" ngControl="username" placeholder="Email address" required autofocus>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" (click)="forgotPassword(form.value.username)">Send new password</button>
+        <br>
+        <span class="pull-right"><a class="clickable" (click)="pane = ''">Sign in</a></span>
+      </form>
+
+    </div> <!-- /container -->
+  </template>
+</div>

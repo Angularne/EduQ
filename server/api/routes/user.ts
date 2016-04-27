@@ -2,6 +2,7 @@ import express = require('express');
 import {User, UserDocument} from '../models/user';
 import {Subject} from '../models/subject';
 import {Request, Response, NextFunction} from "express";
+import {Password} from '../password';
 
 /** Router */
 var router = express.Router();
@@ -100,7 +101,7 @@ router.post('/class', (req: Request, res: Response, next: NextFunction) => {
 
 
   for (var user of users) {
-    user.realPassword = randomPassword();
+    user.realPassword = Password.random();
     user.password = user.realPassword; /** TODO HASH */
   }
 
@@ -115,6 +116,26 @@ router.post('/class', (req: Request, res: Response, next: NextFunction) => {
   }, (err) => {
     console.log(err);
     res.status(409).json(err);
+  });
+});
+
+/** Description */
+router.put('/password', (req: Request, res: Response, next: NextFunction) => {
+  let id = req.authenticatedUser._id;
+  let oldPw = req.body.oldPassword;
+  let newPw = req.body.newPassword;
+
+
+  User.findOneAndUpdate({_id:id, password: oldPw}, {password: newPw}, (err, u) => {
+    if (!err) {
+      if (u) {
+        res.end();
+      } else {
+        res.status(400).json({message: 'Feil password'});
+      }
+    } else {
+      res.status(400).json(err);
+    }
   });
 });
 
@@ -172,11 +193,16 @@ router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-/** TODO */
-function randomPassword() {
-  console.log('TODO: generate random password and hash');
-  return 'password';
-}
+
+
+
+
+/** Description */
+router.post('/forgotpassword', (req: Request, res: Response, next: NextFunction) => {
+
+
+
+});
 
 
 

@@ -43,7 +43,7 @@ export const User = mongoose.model<UserDocument>('User', UserSchema);
 export function authenticateUser(username: string, password: string) {
   return new Promise<UserDocument>((resolve, reject) => {
     User.aggregate().match({
-      email:username, password:password
+      email:username
     }).limit(1)
     .append({
       $lookup: {
@@ -53,6 +53,17 @@ export function authenticateUser(username: string, password: string) {
         as: 'subjects'            //<output array field>
       }
     }).exec().then((users) => {
+
+      let u = users[0];
+      if (!u) {
+        return reject({message: 'Brukernavn er ikke registrert'});
+      }
+
+      if (u.password !== password) {
+        return reject({message: 'Feil passord eller brukernavn'})
+      }
+
+
       Subject.populate(users[0], {
         path: 'subjects.subject',
         select: 'code name tasks requirements'
@@ -101,5 +112,4 @@ export function authenticateUser(username: string, password: string) {
       console.error(err);
     });
   });
-    //User.findOne({email:username, password:password}).lean().exec(cb);
 }

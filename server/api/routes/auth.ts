@@ -62,8 +62,8 @@ function authenticateBasicAuth(req: Request, res: Response, next: NextFunction) 
     authenticateUser(data.name, data.pass).then((user) => {
       req.authenticatedUser = user;
       res.sendStatus(200);
-    }, (err) => {
-      unauthorized(res);
+    }).catch(err => {
+      res.status(401).json(err);
     });
 
   } else {
@@ -108,52 +108,52 @@ function authenticateJWT(req: Request, res: Response, next: NextFunction) {
 */
 
 
-  /** Using jwt to authenticate */
-  /*
-  router.use((req, res, next) => {
-    // check header or url parameters or post parameters for token
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
-    // decode token
-    if (token) {
+/** Using jwt to authenticate */
+/*
+router.use((req, res, next) => {
+  // check header or url parameters or post parameters for token
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  // decode token
+  if (token) {
 
-      // verifies secret and checks exp
-      jwt.verify(token, secret,
-        (err, decoded) => {
-          if (err) {
-            res.status(403);
-            res.json({ success: false, message: 'Failed to authenticate token.' });
-            res.end();
-          } else {
-            // if everything is good, save to request for use in other routes
-            delete decoded.iat;
-            delete decoded.exp;
-            req.authenticatedUser = decoded;
+    // verifies secret and checks exp
+    jwt.verify(token, secret,
+      (err, decoded) => {
+        if (err) {
+          res.status(403);
+          res.json({ success: false, message: 'Failed to authenticate token.' });
+          res.end();
+        } else {
+          // if everything is good, save to request for use in other routes
+          delete decoded.iat;
+          delete decoded.exp;
+          req.authenticatedUser = decoded;
 
-            next();
-          }
+          next();
         }
-      );
-    } else {
-      res.status(403);
-      res.json({ success: false, message: 'Failed to authenticate token.' });
-    }
-  });
+      }
+    );
+  } else {
+    res.status(403);
+    res.json({ success: false, message: 'Failed to authenticate token.' });
+  }
+});
 
   /** Using basic auth */
-  router.use((req: Request, res: Response, next: NextFunction) => {
-    let data = basicAuth(req);
-    if (data && data.name && data.pass) {
-      authenticateUser(data.name, data.pass).then((user) => {
-        // Correct username and password
-        req.authenticatedUser = user;
-        next();
-      }, (err) => {
-        unauthorized(res);
-      });
-    } else {
+router.use((req: Request, res: Response, next: NextFunction) => {
+  let data = basicAuth(req);
+  if (data && data.name && data.pass) {
+    authenticateUser(data.name, data.pass).then((user) => {
+      // Correct username and password
+      req.authenticatedUser = user;
+      next();
+    }, (err) => {
       unauthorized(res);
-    }
-  });
+    });
+  } else {
+    unauthorized(res);
+  }
+});
 
 
 

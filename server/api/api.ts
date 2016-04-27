@@ -4,8 +4,11 @@ import mongoose = require('mongoose');
 
 var router = express.Router();
 
+/** Pupluc routes */
+router.use(require('./routes/public'))
+
 /** Authentication */
-router.use(require('./routes/auth.js'));
+router.use(require('./routes/auth'));
 
 /** User */
 router.use('/user', require('./routes/user'));

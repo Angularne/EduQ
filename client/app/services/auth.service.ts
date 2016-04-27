@@ -64,6 +64,8 @@ export class AuthService {
               this.authenticated$.value = false;
             }
             resolve(this.authenticated);
+          }, (err) => {
+            reject(err);
           });
       });
   }
@@ -104,6 +106,11 @@ export class AuthService {
     });
   }
 
+  forgotPassword(email) {
+    return this.http.post('/api/forgotPassword', JSON.stringify({email: email})).map((res) => {
+      return res.json();
+    })
+  }
 
   get headers() {
     let headers = new Headers();

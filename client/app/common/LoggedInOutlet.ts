@@ -22,10 +22,9 @@ export class LoggedInRouterOutlet extends RouterOutlet {
 
   activate(instruction: ComponentInstruction) {
     let url = instruction.urlPath;
-    console.log(url);
     if (!this.publicRoutes[url] && !sessionStorage.getItem('authToken')) {
       // todo: redirect to Login, may be there a better way?
-      this.parentRouter.navigateByUrl('/login');
+      this.parentRouter.navigate(['LoginPath']);
     }
     return super.activate(instruction);
   }
