@@ -47,8 +47,13 @@ export class LoginComponent {
 
 
   forgotPassword(email) {
-    this.message = 'Nytt passord er send på mail';
-    this.error = undefined;
-    this.pane = undefined;
+
+    this.auth.forgotPassword(email).subscribe(res => {
+      this.message = res.message;
+      this.pane = undefined;
+    }, err => {
+      this.message = err.json().message;
+    });
+
   }
 }

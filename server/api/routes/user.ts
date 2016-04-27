@@ -3,6 +3,7 @@ import {User, UserDocument} from '../models/user';
 import {Subject} from '../models/subject';
 import {Request, Response, NextFunction} from "express";
 import {Password} from '../password';
+import {Mail} from '../mail';
 
 /** Router */
 var router = express.Router();
@@ -78,10 +79,19 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
   req.body.subjects = [];
   var user = new User(req.body);
 
+
+  let password = Password.random();
+  /** TODO HASH */
+
+  user.password = password;
+
   user.save((err) => {
     if (!err) {
       res.status(201);
       res.json(user);
+
+      Mail.newUser(user.email, password);
+
     } else {
       res.json(err);
     }
@@ -110,6 +120,7 @@ router.post('/class', (req: Request, res: Response, next: NextFunction) => {
     console.log(users);
     for (let u of users) {
       // Send mail with password
+      Mail.newUser(u.email, u.realPassword);
     }
 
     res.end();
@@ -191,17 +202,6 @@ router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
       res.json(err);
     }
   });
-});
-
-
-
-
-
-/** Description */
-router.post('/forgotpassword', (req: Request, res: Response, next: NextFunction) => {
-
-
-
 });
 
 
