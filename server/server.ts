@@ -9,7 +9,7 @@ import socket = require('./api/socket');
 import socketio = require("socket.io");
 var config = require('../config');
 import {QueueSocket} from './api/socket';
-
+import {Mail} from './api/mail';
 //import minimist = require('minimist');
 //var argv = minimist(process.argv.slice(2));
 //console.log(argv);
@@ -24,11 +24,11 @@ app.use(express.static(__dirname+"/../../client"));
 app.use(express.static(__dirname+"/../../client/node_modules"));
 
 /** Connect to mongodb */
-mongoose.connect(config.mongodbUrl, (err, res) => {
+mongoose.connect(config.db.url, (err, res) => {
   if (err) {
-    console.error('ERROR connecting to: ' + config.mongodbUrl + '. ' + err);
+    console.error('ERROR connecting to: ' + config.db.url + '. ' + err);
   } else {
-    console.log ('Successfully connected to: ' + config.mongodbUrl);
+    console.log ('Successfully connected to: ' + config.db.url);
   }
 });
 

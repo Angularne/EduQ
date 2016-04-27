@@ -107,9 +107,10 @@ export class AuthService {
   }
 
   forgotPassword(email) {
-    return this.http.post('/api/forgotPassword', JSON.stringify({email: email})).map((res) => {
-      return res.json();
-    })
+    return this.http.post('/api/forgotPassword', JSON.stringify({email: email}), {headers: this.headers}).map(
+      res => res.json(),
+      err => err.json()
+    );
   }
 
   get headers() {

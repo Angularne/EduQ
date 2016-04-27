@@ -1,0 +1,7 @@
+{
+  "ambientDependencies": {
+    "nodemailer-direct-transport": "registry:dt/nodemailer-direct-transport#0.0.0+20160317120654",
+    "nodemailer-smtp-transport": "registry:dt/nodemailer-smtp-transport#0.0.0+20160317120654",
+    "nodemailer-types": "registry:dt/nodemailer-types#0.0.0+20160317120654"
+  }
+}
