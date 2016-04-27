@@ -73,11 +73,11 @@ import {AddClassComponent} from './components/add.class/add.class';
 export class App {
   constructor(public auth: AuthService, private router: Router, private _applicationRef: ApplicationRef) {
 
-    router.subscribe(() => {
-      this._applicationRef.tick();
-      setTimeout(() => {
-        this._applicationRef.tick();
-      }, 100);
-    });
+    // router.subscribe(() => {
+    //   this._applicationRef.tick();
+    //   setTimeout(() => {
+    //     this._applicationRef.tick();
+    //   }, 100);
+    // });
   }
 }
