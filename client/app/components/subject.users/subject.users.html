@@ -1,13 +1,18 @@
-<br>
-<nav>
-  <a class="btn btn-default btn-sm" [routerLink]="['SubjectsPath', {code: subject?.code}]">
-    <span class="glyphicon glyphicon-arrow-left"></span> Back
-  </a>
-  <button class="btn btn-primary btn-sm pull-right" type="button" (click)="save()">Save</button>
-</nav>
 
-<h2> <span *ngIf="subject">{{subject.name}}</span><small>- Edit Students</small></h2>
-<div class="container">
+
+<legend> <span>{{subject?.code}}{{subject?.name}}</span><small>- Edit Students</small></legend>
+
+
+<div class="">
+  <!-- Cancel Save buttons -->
+  <div class="row">
+    <div class="text-right">
+      <button class="btn btn-outline btn-default btn-sm" type="button" (click)="cancel()">Cancel</button>
+      <button class="btn btn-outline btn-success btn-sm" type="button" (click)="save()">Save</button>
+    </div>
+  </div>
+
+  <br>
   <div class="row">
 
     <div class="col-sm-offset-8 col-sm-4 text-right">
@@ -23,7 +28,7 @@
               <input type="checkbox" [(ngModel)]="allSelected" (click)="selectAll(!allSelected)">
             </th>
             <th>
-              name
+              Name
             </th>
             <th>
               Rights

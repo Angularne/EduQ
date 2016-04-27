@@ -51,15 +51,15 @@ export class EditSubjectComponent implements OnInit {
       }
 
       // Get subject if no input
-      let code = this.routeParams.get('code');
+      let code = this.routeParams.get('code') || this.routeParams.get('id');
       if (code) {
         this.subjectService.getSubject(code).subscribe((sub) => {
+          console.log(this.subject);
           this.subject = sub;
         });
       }
     }
   }
-
 
   splitUsers(){
     this.students = [];
@@ -109,7 +109,6 @@ export class EditSubjectComponent implements OnInit {
   }
 
   validateRequirement(req: any) {
-    console.log(req);
     if (req.end - req.start + 1 < req.required) {
       req.required = req.end - req.start + 1;
     }

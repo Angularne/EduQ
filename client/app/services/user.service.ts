@@ -115,4 +115,14 @@ export class UserService {
 
     });
   }
+
+  deleteUser(id: string) {
+    return this.http.delete('/api/user/' + id, {headers: authHeaders()}).map(res => {
+      if (res.status = 200) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
 }

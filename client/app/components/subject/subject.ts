@@ -33,6 +33,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(){
+    console.log('ngOnInit');
     let code = this.params.get('code');
     if (code) {
       this.subjectService.getSubject(code).subscribe((sub) => {
@@ -58,5 +59,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.socket.close();
+
+
   }
 }

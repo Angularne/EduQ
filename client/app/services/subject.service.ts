@@ -119,7 +119,7 @@ export class SubjectService {
       } else {
         // Error
         console.error(res);
-        return false;
+        return null;
       }
     });
   }
@@ -155,5 +155,15 @@ export class SubjectService {
       }
     });
 
+  }
+
+  deleteSubject(code: string) {
+    return this.http.delete('/api/subject/' + code, {headers: authHeaders()}).map(res => {
+      if (res.status = 200) {
+        return true;
+      } else {
+        return false;
+      }
+    });
   }
 }

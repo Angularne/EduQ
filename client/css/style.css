@@ -23,3 +23,16 @@
 .side-bar {
   padding: 0;
 }
+
+
+.clickable {
+  cursor: pointer;
+}
+
+
+
+
+
+.nav-pills > li > a {
+  padding: 0.3em 0.6em;
+}

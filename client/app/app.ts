@@ -1,11 +1,11 @@
-import {Component, Inject, ChangeDetectionStrategy} from 'angular2/core';
-import {RouteConfig} from 'angular2/router';
+import {Component, Inject, ApplicationRef} from 'angular2/core';
+import {Router, RouteConfig} from 'angular2/router';
 import {LoginComponent} from "./components/login/login";
 import {MainComponent} from "./components/main/main";
 import {SubjectsComponent} from './components/subject/subject';
 import {AuthService} from './services/auth.service';
 import {MypageComponent} from './components/me/me';
-import {AdminpageComponent} from "./components/adminpage/adminpage";
+import {AdminpageComponent} from "./components/admin/admin";
 import {LoggedInRouterOutlet} from './common/LoggedInOutlet';
 import {UserService} from './services/user.service';
 import {SiteHeaderComponent} from './components/siteheader/siteheader';
@@ -38,7 +38,14 @@ import {AddClassComponent} from './components/add.class/add.class';
   {path: '/login', component: LoginComponent, as: 'LoginPath'},
 
   {path: '/me', component: MypageComponent, as: 'MypagePath'},
-  {path: '/adminpage', component: AdminpageComponent, as: 'AdminpagePath'},
+
+  /** Admin */
+  {path: '/admin', component: AdminpageComponent, as: 'AdminpagePath'},
+  {path: '/admin/:component', component: AdminpageComponent, as: 'AdminOption1Path'},
+  {path: '/admin/:component/:action', component: AdminpageComponent, as: 'AdminOption2Path'},
+  {path: '/admin/:component/:id/:action', component: AdminpageComponent, as: 'AdminOption3Path'},
+
+
 
   /** Subject */
   // {path: '/subjects', component: SubjectsListComponent, as: 'SubjectsListPath'}, // List all subjects
@@ -64,5 +71,13 @@ import {AddClassComponent} from './components/add.class/add.class';
 
 
 export class App {
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService, private router: Router, private _applicationRef: ApplicationRef) {
+
+    router.subscribe(() => {
+      this._applicationRef.tick();
+      setTimeout(() => {
+        this._applicationRef.tick();
+      }, 100);
+    });
+  }
 }

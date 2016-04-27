@@ -52,7 +52,7 @@ export class EditUserComponent implements OnInit {
    if (!this._user) {
     this.user = null; // Creates empty user in setter
     }
-    let id = this._params.get('user_id');
+    let id = this._params.get('user_id') || this._params.get('id');
     if (id) {
       this.userService.getUser(id).subscribe((user) => {
         this.user = user;
@@ -63,7 +63,6 @@ export class EditUserComponent implements OnInit {
   setEdits() {
     this.auth.getUser().then((user) => {
       this.editable = {};
-      console.log(user.rights);
       if (user.rights == "Admin") {
         this.editable['name'] = true;
         this.editable['email'] = true;
@@ -100,13 +99,12 @@ export class EditUserComponent implements OnInit {
         user.password = this.newpw;
       }
       this.userService.saveUser(user).subscribe((user) => {
-        console.log('User saved');
         this.saved.emit(user);
       });
     }
   }
 
   close() {
-    this.cancel.emit('null');
+    this.cancel.emit(null);
   }
 }

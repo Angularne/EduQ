@@ -33,7 +33,7 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
     if (!err) {
       res.json(user);
     } else {
-      res.json(err);
+      res.status(400).json(err);
     }
   });
 });
@@ -59,7 +59,7 @@ router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
     if (!err) {
       res.json(user);
     } else {
-      res.json(err);
+      res.status(400).json(err);
     }
   });
 });

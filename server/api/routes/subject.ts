@@ -337,6 +337,24 @@ router.put('/:code/students', (req: Request, res: Response, next: NextFunction) 
   });
 });
 
+/** DELETE: Delete subject */
+router.delete('/:code', (req: Request, res: Response, next: NextFunction) => {
+  var code: string = req.params.code;
+
+  // Check user privileges
+  if (!hasAccess(req.authenticatedUser, code, /teacher/i)) {
+    return denyAccess(res);
+  }
+
+  Subject.remove({code:code}, (err) => { 
+    if (!err) {
+      res.end();
+    } else {
+      res.status(400).json(err);
+    }
+  })
+
+});
 
 /**
  * Broadcast

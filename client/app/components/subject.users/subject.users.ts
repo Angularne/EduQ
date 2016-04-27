@@ -1,4 +1,4 @@
-import {Component, OnInit} from 'angular2/core';
+import {Component, OnInit, Input, Output, EventEmitter} from 'angular2/core';
 import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {UserService} from '../../services/user.service';
@@ -12,7 +12,7 @@ import {Subject} from '../../interfaces/subject';
   directives: [ROUTER_DIRECTIVES]
 })
 export class SubjectUsersComponent implements OnInit {
-  subject: Subject;
+  @Input() subject: Subject;
   all: UserSelect[];
   users: UserSelect[] = [];
 
@@ -24,11 +24,12 @@ export class SubjectUsersComponent implements OnInit {
   allSelected: boolean = false;
 
 
+  @Output() saved: EventEmitter<Subject> = new EventEmitter<Subject>();
+  @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
+
   constructor(private routeParams: RouteParams, private subjectService: SubjectService, private userService: UserService) { }
 
   ngOnInit(){
-    let code = this.routeParams.params['code'];
-
     var subjectAndUsers = -2;
     let done = () => {
       if (!++subjectAndUsers) {
@@ -36,11 +37,16 @@ export class SubjectUsersComponent implements OnInit {
       }
     }
 
-    this.subjectService.getSubject(code).subscribe((sub) => {
-      this.subject = sub;
-      done();
-    });
+    if (!this.subject) {
+      let code = this.routeParams.params['code'] || this.routeParams.params['id'];
 
+      this.subjectService.getSubject(code).subscribe((sub) => {
+        this.subject = sub;
+        done();
+      });
+    } else {
+      subjectAndUsers++;
+    }
     this.userService.getAllUsers().subscribe((users) => {
       this.all = users.filter((val)=> { return val.rights == 'Student'});
       this.users = this.all;
@@ -113,8 +119,12 @@ export class SubjectUsersComponent implements OnInit {
 
 
     this.subjectService.updateStudents(this.subject.code, selectedUsers).subscribe((val) => {
-
+      this.saved.emit(this.subject);
     });
+  }
+
+  cancel(){
+    this.canceled.emit(null);
   }
 
 }
