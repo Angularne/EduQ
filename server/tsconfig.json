@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES5",
     "module": "commonjs",
+    "moduleResolution": "classic",
     "sourceMap": true,
     "watch": false,
     "outDir": "build",
@@ -11,8 +12,29 @@
     "noImplicitAny": false
   },
   "compileOnSave": true,
-  "exclude": [
-    "node_modules",
-    "typings"
-  ]
+  "filesGlob": [
+    "**/*.ts",
+    "**/*.tsx",
+    "!node_modules/**",
+    "!typings/**"
+  ],
+  "files": [
+    "api/api.ts",
+    "api/mail.ts",
+    "api/models/error.ts",
+    "api/models/location.ts",
+    "api/models/subject.ts",
+    "api/models/user.subject.ts",
+    "api/models/user.ts",
+    "api/password.ts",
+    "api/routes/auth.ts",
+    "api/routes/public.ts",
+    "api/routes/subject.ts",
+    "api/routes/user.ts",
+    "api/socket.ts",
+    "server.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": true
+  }
 }

@@ -1,9 +1,12 @@
 
 
 
-<div [ngSwitch]="editing">
-  <template [ngSwitchWhen]="true">
+<div [ngSwitch]="pane">
+  <template [ngSwitchWhen]="'edit'">
     <edit-user [user]="user" (saved)="savedUser($event)" (cancel)="editing = false" ></edit-user>
+  </template>
+  <template [ngSwitchWhen]="'password'">
+    <change-password></change-password>
   </template>
   <template ngSwitchDefault>
     <div class="container">
@@ -12,7 +15,8 @@
           <h3>Subjects</h3>
         </div>
         <div class="col-xs-4 text-right">
-          <a class="btn btn-default" (click)="editing = true">Edit user</a>
+          <a class="btn btn-default" (click)="pane = 'password'">Change Password</a>
+          <a class="btn btn-default" (click)="pane = 'edit'">Edit user</a>
         </div>
       </div>
       <subject-tasks class="row" *ngFor="#subject of user?.subjects" [subject]="subject">Subject tasks loading...</subject-tasks>

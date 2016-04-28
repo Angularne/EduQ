@@ -1,3 +1,10 @@
+<br><nav *ngIf="role == 'Teacher' || role == 'Assistent'" class="pull-right">
+  <a [routerLink]="['EditSubjectPath',{code:subject?.code}]" *ngIf="role == 'Teacher'">Edit Subject</a>
+  &nbsp;
+  <a [routerLink]="['SubjectUsersPath',{code:subject?.code}]" *ngIf="role == 'Teacher'">Edit Students</a>
+  &nbsp;
+  <a [routerLink]="['StudentsTasksPath',{code:subject?.code}]">Students</a>
+</nav>
 <h1 *ngIf="subject"><small>{{subject.code}} </small> {{subject.name}} <br>
 </h1>
   <h4> {{userRole}}</h4>

@@ -12,94 +12,115 @@ export class AuthService {
     return this.authenticated$.value;
   }
   authenticated$ : Binding<boolean> = new Binding<boolean>(false);
-  token: string;
   user: User;
 
-  constructor(private http: Http) {
-    this.token = sessionStorage.getItem("authToken")
-    if (this.token) {
-      this.http.get('/api/user/me', {headers: new Headers({
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${this.token}`
-      })})
-      .subscribe((res) => {
-          if (res.status == 200) {
-            this.user = res.json();
-            this.authenticated$.value = true;
-          }
-        });
+  get token() {
+    return sessionStorage.getItem('authToken');
+  }
+  set token(t: string) {
+    if (t != undefined) {
+      sessionStorage.setItem('authToken', t);
+    } else {
+      sessionStorage.removeItem('authToken');
     }
   }
 
+  constructor(private http: Http) {
+    this.authenticate();
+  }
 
-  authenticate(username: string, password: string) {
-    return new Promise<boolean>((resolve, reject) => {
-      let authToken = btoa(`${username}:${password}`);
+  authenticate() : Promise<boolean>;
+  authenticate(token: string) : Promise<boolean>;
+  authenticate(username: string, password: string) : Promise<boolean>;
+  authenticate(usernameOrToken: string = undefined, password: string = undefined) : Promise<boolean> {
+      return new Promise<boolean>((resolve, reject) => {
+        var token: string;
 
-      this.http.post('/api/auth/login', '', {
-          headers: new Headers({
-            'Content-Type': 'application/json',
-            'Authorization': `Basic ${authToken}`
+        if (usernameOrToken && password) {
+          token = btoa(`${usernameOrToken}:${password}`);
+        } else if (usernameOrToken){
+          token = usernameOrToken;
+        } else if (this.authenticated) {
+          return resolve(true);
+        } else if (this.token){
+          token = this.token;
+        } else {
+          return resolve(false);
+        }
+
+        this.http.post('/api/auth/login', '', {
+            headers: new Headers({
+              'Content-Type': 'application/json',
+              'Authorization': `Basic ${token}`
+            })
           })
-        })
-        .map(
-          (res : Response) => {
+          .subscribe((res) => {
             if (res.status == 200) {
-              return true;
-            }
-            return false;
-          }
-          //,(err) => {reject(err);}
-        ).subscribe((res) => {
-          if (res) {
-            sessionStorage.setItem('authToken', authToken);
-            this.token = authToken;
-            this.authenticated$.value = true;
+              this.token = token;
+              this.authenticated$.value = true;
 
-          } else {
-            this.token = null;
-            this.authenticated$.value = false;
-          }
-          resolve(this.authenticated);
-        });
-    });
+            } else {
+              this.token = undefined;
+              this.authenticated$.value = false;
+            }
+            resolve(this.authenticated);
+          }, (err) => {
+            reject(err);
+          });
+      });
   }
 
   logout() {
 
-    this.token = null;
-    this.user = null;
-    sessionStorage.removeItem('authToken');
+    this.token = undefined;
+    this.user = undefined;
     this.authenticated$.value = false;
     return Observable.of(true);
   }
 
   getUser() {
     return new Promise<User>((resolve, reject) => {
-      if (this.user) {
-        return resolve(this.user);
-      }
+      this.authenticate().then((authenticated) => {
+        if (authenticated) {
+          // Authenticated
+          if (this.user) {
+            // User cached
+            resolve(this.user);
+          } else {
+            // Get user
+            this.http.get('/api/user/me', {
+              headers: this.headers
+            }).subscribe((res) => {
+              if (res.status == 200) {  // OK
+                this.user = res.json()
+                resolve(this.user);
+              } else {
+                reject(res.statusText);
+              }
+             });
+           }
 
-      if (this.authenticated) {
-        this.http.get('/api/user/me', {
-           headers: authHeaders()
-         })
-         .map((res) => {
-           if (res.status == 200) {
-             return res.json();
-           }
-           return null;
-         }).subscribe((user) => {
-           if (user) {
-             resolve(user)
-           } else {
-             this.logout();
-             reject(user);
-           }
-         });
-       } else {
-         reject(null);
-       }
+        } else {
+          reject('not authenticated');
+        }
+      });
     });
+  }
+
+  forgotPassword(email) {
+    return this.http.post('/api/forgotPassword', JSON.stringify({email: email}), {headers: this.headers}).map(
+      res => res.json(),
+      err => err.json()
+    );
+  }
+
+  get headers() {
+    let headers = new Headers();
+    let batoken = this.token;
+    if (batoken) {
+      headers.append('Authorization', `Basic ${batoken}`);
+    }
+    headers.append('Content-Type', 'application/json');
+    return headers;
   }
 }

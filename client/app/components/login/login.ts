@@ -10,11 +10,13 @@ import {AuthService} from "../../services/auth.service";
 })
 
 export class LoginComponent {
-  form: ControlGroup;
-  error: boolean = false;
-  auth: AuthService;
 
-  constructor(fb: FormBuilder, @Inject(AuthService) auth: AuthService, public router: Router) {
+  form: ControlGroup;
+  pane: string;
+  error: string;
+  message: string;
+
+  constructor(fb: FormBuilder, private auth: AuthService, public router: Router) {
     this.auth = auth;
     this.form = fb.group({
       username:  ['', Validators.required],
@@ -25,13 +27,12 @@ export class LoginComponent {
     this.auth.authenticated$.subscribe((authenticated) => {
       if (authenticated) {
         this.router.navigate(['MainPath']);
-
       }
     });
   }
 
 
-
+  /** Login */
   onSubmit(value: any) {
     this.auth.authenticate(value.username, value.password)
     .then((authenticated: boolean) => {
@@ -39,8 +40,20 @@ export class LoginComponent {
           this.router.navigate(['MainPath']);
         }
       }).catch((err) => {
-        console.log(err);
-        this.error = true;
+        this.error = err.json().message;
+        this.message = undefined;
       });
+  }
+
+
+  forgotPassword(email) {
+
+    this.auth.forgotPassword(email).subscribe(res => {
+      this.message = res.message;
+      this.pane = undefined;
+    }, err => {
+      this.message = err.json().message;
+    });
+
   }
 }

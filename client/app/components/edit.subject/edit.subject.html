@@ -1,6 +1,6 @@
 <form class="">
   <fieldset>
-    <legend>Subject <span class="label label-success" *ngIf="new">New</span></legend>
+    <legend>Subject</legend>
 
     <!-- Code -->
     <div class="form-group row">
@@ -28,8 +28,9 @@
     <edit-users  [role]="'Assistent'" [type]="'Student'" [label]="'Assistents'" [users]="assistents"></edit-users>
 
     <!-- Students -->
+    <!-- Own page for students
     <edit-users  [role]="'Student'" [type]="'Student'" [label]="'Students'" [users]="students"></edit-users>
-
+    -->
   </fieldset>
 
   <fieldset>
@@ -48,8 +49,8 @@
     <!-- Cancel Save buttons -->
     <div class="row">
       <div class="text-right">
-        <button class="btn btn-outline btn-default" type="button" (click)="cancelEdit()">Cancel</button>
-        <button class="btn btn-outline btn-success" type="button" (click)="save()">Save</button>
+        <button class="btn btn-outline btn-default btn-sm" type="button" (click)="cancel()">Cancel</button>
+        <button class="btn btn-outline btn-success btn-sm" type="button" (click)="save()">Save</button>
       </div>
     </div>
 

@@ -2,7 +2,7 @@ import {Injectable} from 'angular2/core';
 import {User} from '../interfaces/user';
 import {Subject, Queue, Broadcast} from '../interfaces/subject';
 
-let SERVER_ADDRESS = 'http://localhost:3000';
+let SERVER_ADDRESS = location.host;
 
 @Injectable()
 export class SocketService {

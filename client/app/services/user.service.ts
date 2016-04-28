@@ -108,4 +108,21 @@ export class UserService {
       }
     });
   }
+
+  saveUsers(users: User[]) {
+    console.log(users);
+    return this.http.post('/api/user/class', JSON.stringify({users: users}), {headers: authHeaders()}).map((res) => {
+
+    });
+  }
+
+  deleteUser(id: string) {
+    return this.http.delete('/api/user/' + id, {headers: authHeaders()}).map(res => {
+      if (res.status = 200) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
 }

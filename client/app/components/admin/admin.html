@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-3 side-bar">
+      <aside class="">
+        <br>
+        <ul class="list-group">
+          <a *ngFor="#pane of panes" class="list-group-item clickable"
+            [routerLink]="['AdminOption1Path', {component:pane.path}]"
+            [class.active]="pane.path == activePane" (click)="activePane = pane.path">{{pane.label}}</a>
+        </ul>
+      </aside>
+    </div>
+    <div class="col-xs-12 col-sm-9 main-content">
+        <br>
+        <div [ngSwitch]="activePane">
+          <template ngSwitchDefault [ngSwitchWhen]="'subjects'">
+            <!-- Subjects -->
+            <admin-subjects></admin-subjects>
+          </template>
+          <template [ngSwitchWhen]="'users'">
+            <!-- Users -->
+            <admin-users>USERS</admin-users>
+          </template>
+          <template [ngSwitchWhen]="'rooms'">
+            <!-- Rooms -->
+            <admin-rooms></admin-rooms>
+          </template>
+
+        </div>
+    </div>
+  </div>
+</div>

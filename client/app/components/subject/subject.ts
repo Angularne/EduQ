@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy} from 'angular2/core';
-import {RouteParams} from 'angular2/router';
+import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {Subject, Task} from '../../interfaces/subject';
 import {User} from '../../interfaces/user';
@@ -16,8 +16,8 @@ import {LocationService} from "../../services/location.service";
 @Component({
   selector: 'subjects',
   templateUrl: 'app/components/subject/subject.html',
-  providers: [SubjectService, SocketService, QueueService, BroadcastService],
-  directives: [QueueComponent, BroadcastComponent, EditSubjectComponent]
+  providers: [SubjectService, SocketService, QueueService, BroadcastService, LocationService],
+  directives: [QueueComponent, BroadcastComponent, EditSubjectComponent, ROUTER_DIRECTIVES]
 })
 
 export class SubjectsComponent implements OnInit, OnDestroy {
@@ -39,6 +39,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(){
+    console.log('ngOnInit');
     let code = this.params.get('code');
     if (code) {
       this.subjectService.getSubject(code).subscribe((sub) => {
@@ -69,5 +70,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.socket.close();
+
+
   }
 }

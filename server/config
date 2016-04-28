@@ -1,5 +1,0 @@
-module.exports = {
-  port: 3000,
-  mongodbUrl: 'mongodb://158.38.190.205:27017/queue'
-
-}

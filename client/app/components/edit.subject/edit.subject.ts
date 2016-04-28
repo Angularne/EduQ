@@ -1,4 +1,5 @@
 import {Component, OnInit, Input, EventEmitter, Output} from 'angular2/core';
+import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {Subject, SubjectUser} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';
@@ -9,7 +10,7 @@ import {EditUsersComponent} from './users/users';
 @Component({
   selector: 'edit-subject',
   templateUrl: 'app/components/edit.subject/edit.subject.html',
-  directives: [EditRequirementComponent, EditTaskComponent, EditUsersComponent]
+  directives: [ROUTER_DIRECTIVES, EditRequirementComponent, EditTaskComponent, EditUsersComponent]
 })
 export class EditSubjectComponent implements OnInit {
   _subject: Subject;
@@ -32,7 +33,7 @@ export class EditSubjectComponent implements OnInit {
   private assistents: SubjectUser[] = [];
   private students: SubjectUser[] = [];
 
-  constructor(private subjectService: SubjectService) { }
+  constructor(private subjectService: SubjectService, private routeParams: RouteParams) { }
 
   ngOnInit() {
     if(!this.subject){
@@ -48,9 +49,17 @@ export class EditSubjectComponent implements OnInit {
         },
         users: []
       }
+
+      // Get subject if no input
+      let code = this.routeParams.get('code') || this.routeParams.get('id');
+      if (code) {
+        this.subjectService.getSubject(code).subscribe((sub) => {
+          console.log(this.subject);
+          this.subject = sub;
+        });
+      }
     }
   }
-
 
   splitUsers(){
     this.students = [];
@@ -87,7 +96,6 @@ export class EditSubjectComponent implements OnInit {
     this._subject.users = this.students.concat(this.teachers, this.assistents);
 
 
-    console.log(this._subject.users);
     // Save
     this.subjectService.saveSubject(this.subject).subscribe((subject) => {
       this.saved.emit(subject);
@@ -101,7 +109,6 @@ export class EditSubjectComponent implements OnInit {
   }
 
   validateRequirement(req: any) {
-    console.log(req);
     if (req.end - req.start + 1 < req.required) {
       req.required = req.end - req.start + 1;
     }
