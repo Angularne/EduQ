@@ -73,6 +73,7 @@ export namespace Auth {
                 if (val) {
                   // Success
                   getUser(user._id).then(u => {
+                    delete u.password;
                     req.authenticatedUser = u;
                     next();
                   }).catch(err => {

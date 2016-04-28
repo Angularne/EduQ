@@ -12,11 +12,16 @@ export class Binding<T> {
   }
 
   set value(value: T) {
+    let oldValue = this._value;
     this._value = value;
-    this.post();
+
+    if (value != oldValue) {
+      this.post();
+    }
   }
 
   private post(){
+    console.log(this._subscribers);
     for (let sub of this._subscribers) {
       sub(this._value);
     }

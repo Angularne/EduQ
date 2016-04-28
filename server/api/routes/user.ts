@@ -138,7 +138,7 @@ router.post('/class', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-/** Description */
+/** PUT: Change password */
 router.put('/password', (req: Request, res: Response, next: NextFunction) => {
   let id = req.authenticatedUser._id;
   let oldPw = req.body.oldPassword;

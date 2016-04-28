@@ -6,7 +6,7 @@
     <edit-user [user]="user" (saved)="savedUser($event)" (cancel)="editing = false" ></edit-user>
   </template>
   <template [ngSwitchWhen]="'password'">
-    <change-password></change-password>
+    <change-password (saved)="pane = 'subjects'" (canceled)="pane = 'subjects'"></change-password>
   </template>
   <template ngSwitchDefault>
     <div class="container">
