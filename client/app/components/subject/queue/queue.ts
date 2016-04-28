@@ -6,6 +6,7 @@ import {SubjectUser, Task, Subject} from '../../../interfaces/subject';
 import {SubjectService} from '../../../services/subject.service';
 import {UserService} from '../../../services/user.service';
 import {QueueService} from '../../../services/queue.service';
+import {LocationService} from "../../../services/location.service";
 
 @Component({
   selector: 'queue',
@@ -66,6 +67,12 @@ export class QueueComponent implements OnInit, OnChanges {
   }
   get students() {return this._students;}
 
+  _locations: Location[];
+  @Input() set locations(locations) {
+    this._locations = locations;
+  }
+  get locations() {return this._locations;}
+
   _studentsNotInQueue: SubjectUser[] = [];
   get studentsNotInQueue() {return this._studentsNotInQueue;}
   set studentsNotInQueue(users) {
@@ -83,9 +90,11 @@ export class QueueComponent implements OnInit, OnChanges {
 
   constructor(private subjectService: SubjectService,
               private auth: AuthService,
-              private queueService: QueueService) {
+              private queueService: QueueService,
+              private locationService: LocationService) {
 }
 
+/** Delay Modal functions */
   _stepperMax : number[] = [];
   _delaynumber: number = 1;
   get steppermax() {return this._stepperMax;}
@@ -103,6 +112,8 @@ export class QueueComponent implements OnInit, OnChanges {
       this._stepperMax.push(i+1);
     }
   }
+/** /Delay Modal functions/ */
+
   ngOnInit() {
   }
 

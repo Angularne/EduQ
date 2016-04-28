@@ -4,69 +4,10 @@
 
 <div *ngIf="queue?.active">
   <div class="btn-group btn-group-sm" *ngIf="!teacherOrAssistent">
-    <button class="btn btn-primary btn-md"  *ngIf="!myUserInQueue" (click)="addQueueElement()" [disabled]="!_taskSelected">Queue</button>
-    <button class="btn btn-primary btn-md" *ngIf="myUserInQueue" (click)="deleteFromQueue()">Remove me</button>
+    <button class="btn btn-primary btn-md"  *ngIf="!myUserInQueue" data-toggle="modal" data-target="#queueModal">Queue</button>
+    <a class="btn btn-primary btn-md" *ngIf="myUserInQueue" (click)="deleteFromQueue()">Remove me</a>
   </div>
   <br><br>
-  <table class="table" *ngIf="!(myUserInQueue || teacherOrAssistent) " (change)="checkMyUserInQueue()">
-    <tr>
-      <td>
-        <b>Users in subject</b>
-      </td>
-      <td>
-        <b>Add friends</b>
-      </td>
-      <td>
-        <b>Task</b>
-      </td>
-      <td>
-        <b>Location</b>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <!--
-        TODO dont work on phone. should not use (click). select can use multiple?
-        -->
-        <div>
-          <select size="5" class="form-control">
-            <option *ngFor="#user of studentsNotInQueue" (click)="selectUser(user)" draggable="true">{{user.firstname}} {{user.lastname}}</option>
-          </select>
-        </div>
-      </td>
-      <td>
-        <div>
-          <select multiple size="5" class="form-control">
-            <option *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</option>
-          </select>
-        </div>
-      </td>
-      <td>
-        <div>
-          <select size="5" class="form-control">
-            <option *ngFor="#task of tasks" (click)="selectTask(task)">{{task.number}} - {{task.title}}</option>
-          </select>
-        </div>
-      </td>
-      <td>
-        <form class="form-horizontal">
-          <div class="form-group">
-            <div class="col-sm-10">
-              <p class="form-control-static">
-                Roomnumber
-              </p>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-10">
-              <input size="3" type="text" id="inputRoomDescription" class="form-control" placeholder="Description...">
-            </div>
-          </div>
-        </form>
-      </td>
-    </tr>
-
-  </table>
 
   <table class="table table-hover">
     <tr>
@@ -133,6 +74,11 @@
   <h2>The queue is not active</h2>
 </div>
 <hr>
+
+
+
+<!-- DELAYMODAL -->
+
 <div class="modal bs-example-modal-sm" tabindex="-1" role="dialog" id="delayModal" aria-labelledby="delayModalTitle">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
@@ -149,6 +95,72 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" (click)="onSubmitDelay()" class="btn btn-primary" data-dismiss="modal">Delay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- QUEUEMODAL -->
+
+<div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="queueModal" aria-labelledby="delayModalTitle">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="queueModalTitle">Queue</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-8">
+            <div class="row">
+              <div class="col-sm-6">
+                <b>Users in subject</b><br>
+                <div>
+                  <select size="5" class="form-control">
+                    <option *ngFor="#user of studentsNotInQueue" (click)="selectUser(user)" draggable="true">{{user.firstname}} {{user.lastname}}</option>
+                  </select>
+                </div>
+                <br>
+              </div>
+              <div class="col-sm-6">
+                <b>Add friends</b><br>
+                <div>
+                  <select size="5" class="form-control">
+                    <option *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</option>
+                  </select>
+                </div>
+                <br>
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <b>Task</b><br>
+                <div>
+                  <select size="5" class="form-control">
+                    <option *ngFor="#task of tasks" (click)="selectTask(task)">{{task.number}} - {{task.title}}</option>
+                  </select>
+                </div>
+                <br>
+              </div>
+              <div class="col-sm-6">
+                <b>Location</b><br>
+                <input size="5" type="text" id="inputRoomDescription" class="form-control" placeholder="Description...">
+                <br>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-sm-4">
+            ImageLocation
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" (click)="addQueueElement()" data-dismiss="modal" class="btn btn-primary">Queue</button>
       </div>
     </div>
   </div>

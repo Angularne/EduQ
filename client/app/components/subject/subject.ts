@@ -3,6 +3,7 @@ import {RouteParams} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {Subject, Task} from '../../interfaces/subject';
 import {User} from '../../interfaces/user';
+import {Location} from "../../interfaces/location";
 import {QueueComponent} from './queue/queue';
 import {BroadcastComponent} from './broadcasts/broadcasts';
 import {EditSubjectComponent} from '../edit.subject/edit.subject';
@@ -10,6 +11,7 @@ import {SocketService} from '../../services/socket.service';
 import {QueueService} from '../../services/queue.service';
 import {BroadcastService} from '../../services/broadcast.service';
 import {AuthService} from '../../services/auth.service';
+import {LocationService} from "../../services/location.service";
 
 @Component({
   selector: 'subjects',
@@ -25,13 +27,15 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   user: User;
   tasks: Task[];
   userTasks: Task[];
+  locations: Location[] = [];
 
   constructor(private params: RouteParams,
               private auth: AuthService,
               private subjectService: SubjectService,
               private socket: SocketService,
               private queueService: QueueService,
-              private broadcastService: BroadcastService) {}
+              private broadcastService: BroadcastService,
+              private locationService: LocationService) {}
 
 
   ngOnInit(){
@@ -56,6 +60,9 @@ export class SubjectsComponent implements OnInit, OnDestroy {
         }
       }).catch((err) => {console.log("getUser error");}); // TODO sometimes this runs...
 
+      // this.locationService.getLocations(code).subscribe((locations) => {
+      //   this.locations = locations
+      // });
 
     }
   }
