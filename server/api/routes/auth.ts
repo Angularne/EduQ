@@ -1,165 +1,119 @@
-import {User, authenticateUser} from "../models/user";
+
+
+import {User, authenticateUser, getUser} from "../models/user";
 import {Subject} from '../models/subject';
 import {Request, Response, NextFunction} from 'express';
 import express = require('express');
-import jwt = require('jsonwebtoken');
 import basicAuth = require('basic-auth');
+import bcrypt = require('bcrypt');
 
+export namespace Auth {
 
-var router = express.Router();
+  export var router = express.Router();
 
-let secret = 'qwerty';
-let authType = 'Basic Auth';
+  router.post('/auth/login', (req: Request, res: Response, next: NextFunction) => {
+    let data = basicAuth(req);
+    if (data && data.name && data.pass) {
+      User.findOne({email: data.name}).select('password').exec((err, user) => {
+        if (!err) {
+          if (user) {
+            bcrypt.compare(data.pass, user.password, (err, val) => {
+              if (!err) {
+                if (val) {
+                  // Success
+                  res.end();
 
-router.post('/auth/login', (req: Request, res: Response, next: NextFunction) => {
-
-  authenticateBasicAuth(req, res, next);
-
-});
-
-router.post('/auth/validate', (req: Request, res: Response, next: NextFunction) => {
-  let data = basicAuth(req);
-  if (data && data.name && data.pass) {
-    authenticateUser(data.name, data.pass).then((user) => {
-      res.end();
-    }, (err) => {
-      res.sendStatus(403);
-    });
-  } else {
-    unauthorized(res);
-  }
-});
-
-router.post('/auth/token', (req: Request, res: Response, next: NextFunction) => {
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  // decode token
-  if (token) {
-
-    // verifies secret and checks exp
-    jwt.verify(token, secret,
-      (err, decoded) => {
-        if (err) {
-          res.status(403);
-          res.json({ success: false, message: 'Failed to authenticate token.' });
-          res.end();
+                } else {
+                  // Wrong password
+                  res.status(401).json({message: 'Feil passord eller brukernavn'});
+                }
+              } else {
+                res.status(400).json(err);
+              }
+            });
+          } else {
+            // User not found
+            res.status(401).json({message: 'Brukeren er ikke registrert'});
+          }
         } else {
-          res.json({});
+          res.status(400).json(err);
         }
-      }
-    );
-  } else {
-    res.status(403);
-    res.json({ success: false, message: 'Failed to authenticate token.' });
+      });
+    }
+  });
+
+
+    /** Basic Auth */
+  function authenticateBasicAuth(req: Request, res: Response, next: NextFunction) {
+    let data = basicAuth(req);
+    if (data && data.name && data.pass) {
+      authenticateUser(data.name, data.pass).then((user) => {
+        req.authenticatedUser = user;
+        res.sendStatus(200);
+      }).catch(err => {
+        res.status(401).json(err);
+      });
+
+    } else {
+      unauthorized(res);
+    }
   }
-});
-
-
-  /** Basic Auth */
-function authenticateBasicAuth(req: Request, res: Response, next: NextFunction) {
-  let data = basicAuth(req);
-  if (data && data.name && data.pass) {
-    authenticateUser(data.name, data.pass).then((user) => {
-      req.authenticatedUser = user;
-      res.sendStatus(200);
-    }).catch(err => {
-      res.status(401).json(err);
-    });
-
-  } else {
-    unauthorized(res);
-  }
-}
-
-/** JWT Authentication *//*
-function authenticateJWT(req: Request, res: Response, next: NextFunction) {
-  let data  = req.body;
-  if (data) {
-    authenticateUser(data.username, data.password, (err, user) => {
-      if (!err) {
-        // Handle res
-        if (user) {
-          // User found and correct password
-          // login success
-          var token = jwt.sign(user, secret, {expiresIn:'3600000'});
-
-          res.json({
-            success: true,
-            token: token
-          });
-        } else {
-          // Wrong username/password
-          // login failed
-          res.status(403);
-          res.send('Feil brukernavn eller passord');
-        }
-      } else {
-        // Handle error
-        res.json(err);
-      }
-    });
-
-  } else {
-    res.status(401);
-    res.end();
-  }
-
-}
-*/
-
-
-/** Using jwt to authenticate */
-/*
-router.use((req, res, next) => {
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  // decode token
-  if (token) {
-
-    // verifies secret and checks exp
-    jwt.verify(token, secret,
-      (err, decoded) => {
-        if (err) {
-          res.status(403);
-          res.json({ success: false, message: 'Failed to authenticate token.' });
-          res.end();
-        } else {
-          // if everything is good, save to request for use in other routes
-          delete decoded.iat;
-          delete decoded.exp;
-          req.authenticatedUser = decoded;
-
-          next();
-        }
-      }
-    );
-  } else {
-    res.status(403);
-    res.json({ success: false, message: 'Failed to authenticate token.' });
-  }
-});
 
   /** Using basic auth */
-router.use((req: Request, res: Response, next: NextFunction) => {
-  let data = basicAuth(req);
-  if (data && data.name && data.pass) {
-    authenticateUser(data.name, data.pass).then((user) => {
-      // Correct username and password
-      req.authenticatedUser = user;
-      next();
-    }, (err) => {
-      unauthorized(res);
-    });
-  } else {
-    unauthorized(res);
+  router.use((req: Request, res: Response, next: NextFunction) => {
+    let data = basicAuth(req);
+
+    if (data && data.name && data.pass) {
+
+      User.findOne({email: data.name}).select('password').exec((err, user) => {
+        if (!err) {
+          if (user) {
+            bcrypt.compare(data.pass, user.password, (err, val) => {
+              if (!err) {
+                if (val) {
+                  // Success
+                  getUser(user._id).then(u => {
+                    req.authenticatedUser = u;
+                    next();
+                  }).catch(err => {
+                    res.status(400).json(err);
+                  })
+                } else {
+                  // Wrong password
+                  res.status(401).json({message: 'Feil passord eller brukernavn'});
+                }
+              } else {
+                res.status(400).json(err);
+              }
+            });
+          } else {
+            // User not found
+            res.status(401).json({message: 'Brukeren er ikke registrert'});
+          }
+        } else {
+          res.status(400).json(err);
+        }
+      });
+    }
+  });
+
+
+
+  function unauthorized(res) {
+    //res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+    return res.sendStatus(401);
+  };
+
+
+  export function generateRandomPassword(){
+    var password = '';
+    let dictionary = 'abcdefghijklmnopqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+    for (let i = 0; i < 8; i++) {
+      let random = Math.floor(Math.random() * dictionary.length);
+      password += dictionary.charAt(random);
+    }
+    return password;
   }
-});
-
-
-
-function unauthorized(res) {
-  //res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-  return res.sendStatus(401);
-};
-
-module.exports = router;
+}
+//module.exports = router;

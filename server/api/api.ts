@@ -1,5 +1,6 @@
 import express = require('express');
 import mongoose = require('mongoose');
+import {Auth} from './routes/auth';
 //mongoose.Promise = global.Promise as any;
 
 var router = express.Router();
@@ -8,7 +9,7 @@ var router = express.Router();
 router.use(require('./routes/public'))
 
 /** Authentication */
-router.use(require('./routes/auth'));
+router.use(Auth.router);
 
 /** User */
 router.use('/user', require('./routes/user'));

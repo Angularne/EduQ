@@ -11,6 +11,7 @@ export interface UserDocument extends mongoose.Document {
   rights: string;
   classOf: string;
 
+  realPassword?: string;
 
   // Not stored
   subjects?: {
@@ -22,7 +23,6 @@ export interface UserDocument extends mongoose.Document {
     requirements: Requirement[];
     tasks: any[];
 
-    realPassword?: string;
     __v?: number;
     user?: any;
     subject?: any;
@@ -39,6 +39,78 @@ let UserSchema: mongoose.Schema = new mongoose.Schema({
 });
 
 export const User = mongoose.model<UserDocument>('User', UserSchema);
+
+
+export function getUser(id: string) {
+  return new Promise<UserDocument>((resolve, reject) => {
+    User.aggregate().match({
+      _id:id
+    }).limit(1)
+    .append({
+      $lookup: {
+        from: 'usersubjects',        //<collection to join>,
+        localField: '_id',          //<field from the input documents>,
+        foreignField: 'user',      //<field from the documents of the "from" collection>,
+        as: 'subjects'            //<output array field>
+      }
+    }).exec().then((users) => {
+
+      let u = users[0];
+      if (!u) {
+        return reject({message: 'Brukernavn er ikke registrert'});
+      }
+
+
+      Subject.populate(users[0], {
+        path: 'subjects.subject',
+        select: 'code name tasks requirements'
+      }).then((user) => {
+        // subjects populated
+
+        User.populate(user, {
+          path: 'subjects.tasks.approvedBy',
+          select: 'firstname lastname'
+        }).then((user2) => {
+
+
+
+          for (var subject of user.subjects) {
+            // Remap fields
+            subject._id = subject.subject._id;
+            subject.code = subject.subject.code;
+            subject.name = subject.subject.name;
+
+            if (subject.role == "Student") {
+              subject.subjectTasks = subject.subject.tasks;
+              subject.requirements = subject.subject.requirements;
+            } else {
+              delete subject.tasks;
+            }
+
+            delete subject.__v;
+            delete subject.user;
+            delete subject.subject;
+          }
+          // Send user
+          resolve(user);
+        }, (err) => {
+          reject(err);
+          console.error(err);
+        });
+      }, (err) => {
+        // ERROR
+        reject(err);
+        console.error(err);
+      });
+
+    }, (err) => {
+      // ERROR
+      reject(err);
+      console.error(err);
+    });
+  });
+}
+
 
 export function authenticateUser(username: string, password: string) {
   return new Promise<UserDocument>((resolve, reject) => {

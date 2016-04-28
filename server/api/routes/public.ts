@@ -1,8 +1,9 @@
 import express = require('express');
+import bcrypt = require('bcrypt');
 import {User, UserDocument} from '../models/user';
+import {Auth} from './auth';
 import {Subject} from '../models/subject';
 import {Request, Response, NextFunction} from "express";
-import {Password} from '../password';
 import {Mail} from '../mail';
 
 var router = express.Router();
@@ -22,16 +23,21 @@ router.post('/forgotpassword', (req: Request, res: Response, next: NextFunction)
       }
 
       if (u) {
-        let password = Password.random();
+        let password = Auth.generateRandomPassword();
 
-        u.password = password;
-
-        u.save((err) => {
+        bcrypt.hash(password, 11, (err: Error, encrypted: string) => {
           if (!err) {
+            u.password = encrypted;
+            u.save((err) => {
+              if (!err) {
 
-            Mail.forgotpassword(email, password);
+                Mail.forgotpassword(email, password);
 
-            res.json({message: 'Nytt passord blir sendt på epost'});
+                res.json({message: 'Nytt passord blir sendt på epost'});
+              } else {
+                res.status(400).json(err);
+              }
+            });
           } else {
             res.status(400).json(err);
           }

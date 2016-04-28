@@ -1,25 +1,26 @@
-/** TODO
-  Hash password
-  random password
- */
+import bcrypt = require('bcrypt');
+
+  export function test() {
+    let password = ' ';
+
+    bcrypt.genSalt((err: Error, salt: string) => {
+      bcrypt.hash(password, salt, (err: Error, hash) => {
+
+        console.log('salt: ' + salt);
+        console.log('hash: ' + hash);
 
 
-export namespace Password {
 
-  export function hash() {
+        bcrypt.compare(password, hash, (err: Error, same: boolean) => {
+          console.log('same: ' + same);
+        })
 
-    
+      });
+    });
   }
 
-  export function random() {
-    var password = '';
-    let dictionary = 'abcdefghijklmnopqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-    for (let i = 0; i < 8; i++) {
-      let random = Math.floor(Math.random() * dictionary.length);
-      password += dictionary.charAt(random);
-    }
-    return password;
-  };
 
-}
+
+
+setTimeout(() => {test()}, 1000);

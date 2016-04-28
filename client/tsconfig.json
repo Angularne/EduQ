@@ -31,6 +31,7 @@
     "app/components/admin/rooms/rooms.ts",
     "app/components/admin/subjects/subjects.ts",
     "app/components/admin/users/users.ts",
+    "app/components/change.password/change.password.ts",
     "app/components/edit.subject/edit.subject.ts",
     "app/components/edit.subject/requirement/requirement.ts",
     "app/components/edit.subject/task/task.ts",
