@@ -9,6 +9,9 @@ import {AuthService} from '../../services/auth.service';
   templateUrl: 'app/components/edit.user/edit.user.html',
 })
 export class EditUserComponent implements OnInit {
+
+  message: string;
+
   private _user: User;
 
   get user() {
@@ -36,7 +39,7 @@ export class EditUserComponent implements OnInit {
   }
 
   @Output() saved: EventEmitter<User> = new EventEmitter<User>();
-  @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
+  @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
 
   private editable: any = {};
 
@@ -68,43 +71,47 @@ export class EditUserComponent implements OnInit {
         this.editable['email'] = true;
         this.editable['classOf'] = true;
         this.editable['rights'] = true;
-        this.editable['password'] = this.new;
-      }
-      if (user._id == this.user._id) {
-        // This is me
-        this.editable['password'] = true;
-        delete this.editable['rights'];
-
       }
     });
   }
 
-  valid() {
-    return this.user.firstname.trim() != ''
-    && this.user.lastname.trim() != ''
-    && (!(this.oldpw || this.newpw || this.confpw) || (this.oldpw && this.newpw && this.newpw == this.confpw))
-    /** TODO: Match email RegExp */
-    // && this.user.email
-    ;
+  validate() {
+    this.message = "";
+    var re: RegExp  = /^\s*$/;
+
+    if (re.test(this.user.firstname)) {
+      this.message = "Firstname cannot be empty";
+      return false;
+    }
+
+    if (re.test(this.user.lastname)) {
+      this.message = "Lastname cannot be empty";
+      return false;
+    }
+
+
+    re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (!re.test(this.user.email)) {
+      this.message = "Email is not correct";
+      return false;
+    }
+
+
+    //return true;
+
   }
 
 
   onSubmit() {
-    if (this.valid()) {
-      console.log(this.user);
-      var user: any = this.user;
-
-      if (!this.new) {
-        user.oldPassword = this.oldpw;
-        user.password = this.newpw;
-      }
-      this.userService.saveUser(user).subscribe((user) => {
+    if (this.validate()) {
+      this.userService.saveUser(this.user).subscribe((user) => {
         this.saved.emit(user);
       });
     }
   }
 
   close() {
-    this.cancel.emit(null);
+    this.canceled.emit(null);
   }
 }

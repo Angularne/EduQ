@@ -63,6 +63,7 @@ export class AdminUsersComponent implements OnInit {
     this.router.navigate(['AdminOption2Path',{component: 'users', action: 'all'}]);
   }
   canceled() {
+    console.log('canceled');
     this.router.navigate(['AdminOption2Path',{component: 'users', action: 'all'}]);
   }
 }
