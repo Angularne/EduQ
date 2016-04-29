@@ -69,6 +69,7 @@ export namespace Auth {
         if (!err) {
           if (user) {
             bcrypt.compare(data.pass, user.password, (err, val) => {
+              delete user.password;
               if (!err) {
                 if (val) {
                   // Success

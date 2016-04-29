@@ -1,5 +1,6 @@
 import mongoose = require("mongoose");
 import {UserDocument} from './user';
+import {LocationDocument} from './location';
 
 /** Subject */
 export interface SubjectDocument extends  mongoose.Document {
@@ -9,6 +10,8 @@ export interface SubjectDocument extends  mongoose.Document {
   queue: Queue;
   tasks: Task[];
   requirements: Requirement[];
+
+  locations: LocationDocument[];
 
   // Not stored
   users?: {
@@ -98,7 +101,10 @@ let subjectSchema = new mongoose.Schema({
         comment: String,
         position: Number,
         task: Number,
-        location: String // not implemented
+        location: {
+          name: String,
+          table: Number
+        }
       }
     ]
   },
@@ -110,7 +116,8 @@ let subjectSchema = new mongoose.Schema({
     from: Number,
     to: Number,
     required: Number
-  }]
+  }],
+  locations: [{type: mongoose.Schema.Types.ObjectId, ref: 'Location'}]
 });
 
 /** Model */

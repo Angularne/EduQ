@@ -1,20 +1,15 @@
 import mongoose = require("mongoose");
 
-export interface ILocation extends mongoose.Document {
+export interface LocationDocument extends mongoose.Document {
   name: string;
-  rooms: {
-    name: string;
-
-    imagePath: string;
-  }[];
+  imagePath: string;
+  count: number;
 }
 
 let locationSchema = new mongoose.Schema({
   name: String,
-  rooms: [{
-    name: String,
-    imagePath: String
-  }]
+  imagePath: String,
+  count: Number,
 });
 
-export const Location = mongoose.model<ILocation>('Location', locationSchema);
+export const Location = mongoose.model<LocationDocument>('Location', locationSchema);

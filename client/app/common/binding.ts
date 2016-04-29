@@ -21,7 +21,6 @@ export class Binding<T> {
   }
 
   private post(){
-    console.log(this._subscribers);
     for (let sub of this._subscribers) {
       sub(this._value);
     }

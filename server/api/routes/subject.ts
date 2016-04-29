@@ -1,6 +1,7 @@
 import express = require('express');
-import {Subject, SubjectDocument, Broadcast, Task, Queue, QueueGroup, Requirement, Location} from '../models/subject';
+import {Subject, SubjectDocument, Broadcast, Task, Queue, QueueGroup, Requirement} from '../models/subject';
 import {User, UserDocument} from '../models/user';
+import {Location, LocationDocument} from '../models/location';
 import {Request, Response, NextFunction} from "express";
 import {QueueSocket} from '../socket';
 import {UserSubject} from '../models/user.subject';
@@ -70,22 +71,31 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
         select: 'firstname lastname'
       }).then((subject) => {
         // users populated
-        for (var user of subject.users) {
-          // Remap fields
-          user.firstname = user.user.firstname;
-          user.lastname = user.user.lastname;
-          user._id = user.user._id;
+        Location.populate(subject, {
+          path: 'locations',
+          select: 'name count imagePath'
+        }).then(subject => {
+          // locations populated
+          for (var user of subject.users) {
+            // Remap fields
+            user.firstname = user.user.firstname;
+            user.lastname = user.user.lastname;
+            user._id = user.user._id;
 
-          // remove unnecessary fields
-          if (user.role != 'Student' || !showTasks) {
-            delete user.tasks;
+            // remove unnecessary fields
+            if (user.role != 'Student' || !showTasks) {
+              delete user.tasks;
+            }
+            delete user.__v;
+            delete user.user;
+            delete user.subject;
           }
-          delete user.__v;
-          delete user.user;
-          delete user.subject;
-        }
-        // Send subject
-        res.json(subject);
+          // Send subject
+          res.json(subject);
+
+        }, (err) => {
+          res.json(err);
+        })
       }, (err) => {
         res.json(err);
       });
@@ -346,7 +356,7 @@ router.delete('/:code', (req: Request, res: Response, next: NextFunction) => {
     return denyAccess(res);
   }
 
-  Subject.remove({code:code}, (err) => { 
+  Subject.remove({code:code}, (err) => {
     if (!err) {
       res.end();
     } else {
@@ -496,8 +506,8 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
   let users_id = req.body.users || [];
 
   let task: number  = +req.body.task || 1;
-  let comment = req.body.comment || 'Comment';
-  let location = req.body.location;
+  let comment: string = req.body.comment || 'Comment';
+  let location: string = req.body.location;
 
 
   users_id.push(req.authenticatedUser._id);

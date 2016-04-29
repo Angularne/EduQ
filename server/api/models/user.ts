@@ -1,6 +1,5 @@
 import mongoose = require('mongoose');
-import {SubjectDocument, Task, Requirement} from './subject';
-import {Subject} from './subject';
+import {Subject, SubjectDocument, Task, Requirement, Broadcast} from './subject';
 
 /* User */
 export interface UserDocument extends mongoose.Document {
@@ -22,6 +21,7 @@ export interface UserDocument extends mongoose.Document {
     subjectTasks: Task[], // Tasks in subject
     requirements: Requirement[];
     tasks: any[];
+    broadcasts?: Broadcast[];
 
     __v?: number;
     user?: any;
@@ -63,22 +63,22 @@ export function getUser(id: string) {
 
       Subject.populate(users[0], {
         path: 'subjects.subject',
-        select: 'code name tasks requirements'
+        select: 'code name tasks requirements broadcasts'
       }).then((user) => {
         // subjects populated
 
         User.populate(user, {
-          path: 'subjects.tasks.approvedBy',
+          path: 'subjects.tasks.approvedBy subjects.subject.broadcasts.author',
           select: 'firstname lastname'
         }).then((user2) => {
 
 
-
-          for (var subject of user.subjects) {
+          for (var subject of user2.subjects) {
             // Remap fields
             subject._id = subject.subject._id;
             subject.code = subject.subject.code;
             subject.name = subject.subject.name;
+            subject.broadcasts = subject.subject.broadcasts;
 
             if (subject.role == "Student") {
               subject.subjectTasks = subject.subject.tasks;
@@ -92,7 +92,7 @@ export function getUser(id: string) {
             delete subject.subject;
           }
           // Send user
-          resolve(user);
+          resolve(user2);
         }, (err) => {
           reject(err);
           console.error(err);

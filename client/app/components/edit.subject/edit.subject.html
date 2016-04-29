@@ -6,7 +6,7 @@
     <div class="form-group row">
       <label class="form-control-label col-sm-2" for="code">Code</label>
       <div class="col-sm-10" >
-        <input class="form-control"  id="code" [(ngModel)]="subject.code" placeholder="TDAT1001" required [disabled]="!new">
+        <input class="form-control"  id="code" [(ngModel)]="subject.code" placeholder="TDAT1001" required [readonly]="!new">
       </div>
     </div>
 
@@ -43,6 +43,15 @@
     <edit-requirement [requirements]="subject.requirements" [count]="subject.tasks.length"></edit-requirement>
 
     <hr>
+
+    <fieldset>
+
+      <!-- Students -->
+
+      <edit-locations [locations]="subject.locations"></edit-locations>
+
+
+    </fieldset>
 
   </fieldset>
 

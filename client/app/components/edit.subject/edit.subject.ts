@@ -5,12 +5,13 @@ import {Subject, SubjectUser} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';
 import {EditTaskComponent} from './task/task';
 import {EditUsersComponent} from './users/users';
+import {EditLocationComponent} from './location/location';
 
 
 @Component({
   selector: 'edit-subject',
   templateUrl: 'app/components/edit.subject/edit.subject.html',
-  directives: [ROUTER_DIRECTIVES, EditRequirementComponent, EditTaskComponent, EditUsersComponent]
+  directives: [ROUTER_DIRECTIVES, EditRequirementComponent, EditTaskComponent, EditUsersComponent, EditLocationComponent]
 })
 export class EditSubjectComponent implements OnInit {
   _subject: Subject;
@@ -47,14 +48,14 @@ export class EditSubjectComponent implements OnInit {
           list: [],
           active: false
         },
-        users: []
+        users: [],
+        locations: []
       }
 
       // Get subject if no input
       let code = this.routeParams.get('code') || this.routeParams.get('id');
       if (code) {
         this.subjectService.getSubject(code).subscribe((sub) => {
-          console.log(this.subject);
           this.subject = sub;
         });
       }
