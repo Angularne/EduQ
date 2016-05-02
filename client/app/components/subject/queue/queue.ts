@@ -74,6 +74,7 @@ export class QueueComponent implements OnInit, OnChanges {
   @Input() set locations(locations) {
     this._locations = locations;
     this._selectedLocation = this._locations[0];
+    console.log(this._locations);
   }
   get locations() {return this._locations;}
 
@@ -130,7 +131,7 @@ export class QueueComponent implements OnInit, OnChanges {
 /** Carousel functions */
 
   isActive(url: string) {
-      return url === this.locations[0].imagePath;
+      return url === this.locations[0].image;
   }
   /** /Carousel functions/ */
 

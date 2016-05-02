@@ -24,8 +24,8 @@ export class LoginComponent {
     });
 
 
-    this.auth.authenticated$.subscribe((authenticated) => {
-      if (authenticated) {
+    this.auth.authenticate().then((val) => {
+      if (val) {
         this.router.navigate(['MainPath']);
       }
     });

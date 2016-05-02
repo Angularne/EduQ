@@ -2,12 +2,12 @@ import {Component, OnInit} from "angular2/core";
 import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {AdminUsersComponent} from './users/users';
 import {AdminSubjectsComponent} from './subjects/subjects';
-import {AdminRoomsComponent} from './rooms/rooms';
+import {AdminLocationComponent} from './location/location';
 
 @Component({
   selector: 'adminpage',
   templateUrl: 'app/components/admin/admin.html',
-  directives: [AdminUsersComponent, AdminSubjectsComponent, AdminRoomsComponent, ROUTER_DIRECTIVES]
+  directives: [AdminUsersComponent, AdminSubjectsComponent, AdminLocationComponent, ROUTER_DIRECTIVES]
 })
 
 export class AdminpageComponent {
@@ -15,7 +15,7 @@ export class AdminpageComponent {
   panes: {path:string, label:string}[] = [
     {path: 'subjects', label: 'Subjects'},
     {path: 'users', label: 'Users'},
-    {path: 'rooms', label: 'Rooms'}
+    {path: 'locations', label: 'Locations'}
   ];
   activePane: string;
 

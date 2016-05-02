@@ -70,8 +70,6 @@ router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
 
 /** POST: Create new user */
 router.post('/',(req: Request, res: Response, next: NextFunction) => {
-  /** TODO Valider data */
-
   // Check user privileges
   if (!/Admin/i.test(req.authenticatedUser.rights)) {
     denyAccess(res);
@@ -81,6 +79,24 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
   req.body.subjects = [];
   var user = new User(req.body);
 
+  // Validate
+  var re: RegExp  = /^\s*$/; // Null or empty
+
+  if (re.test(user.firstname)) {
+    return res.status(400).json({message: "firstname cannot be empty"});
+  }
+
+  if (re.test(user.lastname)) {
+    return res.status(400).json({message: "lastname cannot be empty"});
+  }
+
+  re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;  // email
+
+  if (!re.test(user.email)) {
+    return res.status(400).json({message: "email is not correct"});
+  }
+
+  // Generate password
   let password = Auth.generateRandomPassword();
 
   bcrypt.hash(password, 11, (err: Error, encrypted: string) => {
@@ -118,8 +134,27 @@ router.post('/class', (req: Request, res: Response, next: NextFunction) => {
 
   let users = req.body.users;
 
-
   for (var user of users) {
+    var re: RegExp  = /^\s*$/;
+    if (re.test(user.firstname)) {
+      res.status(400).json({message: "firstname cannot be empty"});
+      return false;
+    }
+
+    if (re.test(user.lastname)) {
+      res.status(400).json({message: "lastname cannot be empty"});
+      return false;
+    }
+
+    re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (!re.test(user.email)) {
+      res.status(400).json({message: "email is not correct"});
+      return false;
+    }
+
+
+
     user.realPassword = Auth.generateRandomPassword();
     user.password = bcrypt.hashSync(user.realPassword, 11);
   }
@@ -138,7 +173,7 @@ router.post('/class', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-/** Description */
+/** PUT: Change password */
 router.put('/password', (req: Request, res: Response, next: NextFunction) => {
   let id = req.authenticatedUser._id;
   let oldPw = req.body.oldPassword;
@@ -183,8 +218,6 @@ router.put('/password', (req: Request, res: Response, next: NextFunction) => {
 
 /** PUT: Update user */
 router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
-  /** TODO Valider data */
-  /** Bør gjøres noe med */
   var id = req.params.id;
 
   // Check user privileges
@@ -197,25 +230,34 @@ router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
   var user = req.body;
   delete user.subjects;
   delete user.__v;
+  delete user.password;
 
-  var cond: any = {
-    _id: id
-  };
+  var re: RegExp  = /^\s*$/; // Null or empty
 
-  if (user.password) {
-    cond.password = user.oldPassword;
 
-    delete user.oldPassword;
+  if (re.test(user.firstname)) {
+    return res.status(400).json({message: "firstname cannot be empty"});
   }
 
-  User.findOneAndUpdate(cond, user, (err: any, user: UserDocument) => {
+  if (re.test(user.lastname)) {
+    return res.status(400).json({message: "lastname cannot be empty"});
+  }
+
+  re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  if (!re.test(user.email)) {
+    return res.status(400).json({message: "email is not correct"});
+  }
+
+
+
+  User.findByIdAndUpdate(id, user, (err: any, user: UserDocument) => {
     if (!err) {
       res.json(user);
     } else {
       res.json(err);
     }
   });
-
 });
 
 /** DELETE: Delete user */

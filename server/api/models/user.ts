@@ -1,6 +1,5 @@
 import mongoose = require('mongoose');
-import {SubjectDocument, Task, Requirement} from './subject';
-import {Subject} from './subject';
+import {Subject, SubjectDocument, Task, Requirement, Broadcast} from './subject';
 
 /* User */
 export interface UserDocument extends mongoose.Document {
@@ -22,6 +21,7 @@ export interface UserDocument extends mongoose.Document {
     subjectTasks: Task[], // Tasks in subject
     requirements: Requirement[];
     tasks: any[];
+    broadcasts?: Broadcast[];
 
     __v?: number;
     user?: any;
@@ -63,22 +63,22 @@ export function getUser(id: string) {
 
       Subject.populate(users[0], {
         path: 'subjects.subject',
-        select: 'code name tasks requirements'
+        select: 'code name tasks requirements broadcasts'
       }).then((user) => {
         // subjects populated
 
         User.populate(user, {
-          path: 'subjects.tasks.approvedBy',
+          path: 'subjects.tasks.approvedBy subjects.subject.broadcasts.author',
           select: 'firstname lastname'
         }).then((user2) => {
 
 
-
-          for (var subject of user.subjects) {
+          for (var subject of user2.subjects) {
             // Remap fields
             subject._id = subject.subject._id;
             subject.code = subject.subject.code;
             subject.name = subject.subject.name;
+            subject.broadcasts = subject.subject.broadcasts;
 
             if (subject.role == "Student") {
               subject.subjectTasks = subject.subject.tasks;
@@ -92,7 +92,7 @@ export function getUser(id: string) {
             delete subject.subject;
           }
           // Send user
-          resolve(user);
+          resolve(user2);
         }, (err) => {
           reject(err);
           console.error(err);
@@ -184,4 +184,38 @@ export function authenticateUser(username: string, password: string) {
       console.error(err);
     });
   });
+}
+
+export function validateUser(user: UserDocument, res) {
+
+  var re: RegExp  = /^\s*$/; // Null or empty
+
+
+  if (re.test(user.firstname)) {
+    res.status(400).json({message: "firstname cannot be empty"});
+    return false;
+  }
+
+  if (re.test(user.lastname)) {
+    res.status(400).json({message: "lastname cannot be empty"});
+    return false;
+  }
+
+  re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  if (!re.test(user.email)) {
+    res.status(400).json({message: "email is not correct"});
+    return false;
+  }
+
+  return true;
+}
+
+interface Validation {
+  valid: boolean;
+  error?: {
+    field: string;
+    message: string;
+    value: string;
+  }
 }

@@ -39,6 +39,8 @@ export namespace Auth {
           res.status(400).json(err);
         }
       });
+    } else {
+      res.status(401).json({message: 'Username or password not provided'});
     }
   });
 
@@ -69,10 +71,12 @@ export namespace Auth {
         if (!err) {
           if (user) {
             bcrypt.compare(data.pass, user.password, (err, val) => {
+              delete user.password;
               if (!err) {
                 if (val) {
                   // Success
                   getUser(user._id).then(u => {
+                    delete u.password;
                     req.authenticatedUser = u;
                     next();
                   }).catch(err => {
@@ -97,13 +101,10 @@ export namespace Auth {
     }
   });
 
-
-
   function unauthorized(res) {
     //res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
     return res.sendStatus(401);
   };
-
 
   export function generateRandomPassword(){
     var password = '';

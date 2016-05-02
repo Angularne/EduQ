@@ -1,6 +1,10 @@
 
 <legend>Add Class</legend>
 <div class="form-group">
+  <p>
+    {{errorMsg}}
+  </p>
+
   <label for="class">Class:</label>
   <input class="form-control" id="class" [(ngModel)]="class">
 </div>
@@ -10,11 +14,12 @@
   <textarea class="form-control" [(ngModel)]="input" rows="8" cols="40"></textarea><br>
 </div>
 
-<p>
-  {{errorMsg}}
-</p>
+<div class="text-right">
+  <button class="btn btn-default btn-sm" type="button" (click)="canceled.emit()">Cancel</button>
 
-<button class="btn btn-primary btn-sm" type="button" (click)="save()">Save</button>
+  <button class="btn btn-success btn-sm" type="button" (click)="save()">Save</button>
+</div>
+
 
 <br><br>
 Format:

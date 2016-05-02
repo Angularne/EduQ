@@ -4,7 +4,7 @@ import {User} from "../../interfaces/user";
 import {SubjectTaskDetailComponent} from "./subject/subject";
 import {EditUserComponent} from '../edit.user/edit.user';
 import {AuthService} from '../../services/auth.service';
-import {ChangePasswordComponent} from '../change.password/change.password';
+import {ChangePasswordComponent} from './password/password';
 
 @Component({
   selector: 'mypage',

@@ -5,12 +5,13 @@ import {Subject, SubjectUser} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';
 import {EditTaskComponent} from './task/task';
 import {EditUsersComponent} from './users/users';
+import {EditLocationComponent} from './location/location';
 
 
 @Component({
   selector: 'edit-subject',
   templateUrl: 'app/components/edit.subject/edit.subject.html',
-  directives: [ROUTER_DIRECTIVES, EditRequirementComponent, EditTaskComponent, EditUsersComponent]
+  directives: [ROUTER_DIRECTIVES, EditRequirementComponent, EditTaskComponent, EditUsersComponent, EditLocationComponent]
 })
 export class EditSubjectComponent implements OnInit {
   _subject: Subject;
@@ -20,6 +21,7 @@ export class EditSubjectComponent implements OnInit {
   }
   get subject() {return this._subject;}
 
+  message: string;
 
   get new() {
     return this.subject._id == null;
@@ -47,14 +49,14 @@ export class EditSubjectComponent implements OnInit {
           list: [],
           active: false
         },
-        users: []
+        users: [],
+        locations: []
       }
 
       // Get subject if no input
       let code = this.routeParams.get('code') || this.routeParams.get('id');
       if (code) {
         this.subjectService.getSubject(code).subscribe((sub) => {
-          console.log(this.subject);
           this.subject = sub;
         });
       }
@@ -89,29 +91,52 @@ export class EditSubjectComponent implements OnInit {
     this.subject.requirements.splice(index, 1);
   }
 
+  validate() {
+    this.message = "";
+    var re: RegExp  = /^\s*$/;
+
+    if (re.test(this.subject.code)) {
+      this.message = "Code cannot be empty: ";
+      return false;
+    }
+
+
+    if (re.test(this.subject.name)) {
+      this.message = "Name cannot be empty: ";
+      return false;
+    }
+
+
+    for (let task of this.subject.tasks) {
+      if (re.test(task.title)) {
+        this.message = "Some tasks does not have a title"
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   save() {
 
     // Join users
     this._subject.users = [];
     this._subject.users = this.students.concat(this.teachers, this.assistents);
 
-
-    // Save
-    this.subjectService.saveSubject(this.subject).subscribe((subject) => {
-      this.saved.emit(subject);
-    }, (err) => {
-      console.error(err);
-    });
+    if (this.validate()) {
+      // Save
+      this.subjectService.saveSubject(this.subject).subscribe((subject) => {
+        this.saved.emit(subject);
+      }, (err) => {
+        console.error(err);
+      });
+    }
   }
 
   cancel() {
     this.canceled.emit(null);
   }
 
-  validateRequirement(req: any) {
-    if (req.end - req.start + 1 < req.required) {
-      req.required = req.end - req.start + 1;
-    }
-  }
+
 
 }

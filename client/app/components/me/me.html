@@ -6,7 +6,7 @@
     <edit-user [user]="user" (saved)="savedUser($event)" (cancel)="editing = false" ></edit-user>
   </template>
   <template [ngSwitchWhen]="'password'">
-    <change-password></change-password>
+    <change-password (saved)="pane = 'subjects'" (canceled)="pane = 'subjects'"></change-password>
   </template>
   <template ngSwitchDefault>
     <div class="container">
@@ -16,7 +16,6 @@
         </div>
         <div class="col-xs-4 text-right">
           <a class="btn btn-default" (click)="pane = 'password'">Change Password</a>
-          <a class="btn btn-default" (click)="pane = 'edit'">Edit user</a>
         </div>
       </div>
       <subject-tasks class="row" *ngFor="#subject of user?.subjects" [subject]="subject">Subject tasks loading...</subject-tasks>

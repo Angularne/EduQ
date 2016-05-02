@@ -1,0 +1,49 @@
+<form class="">
+  <fieldset>
+    <legend>Location</legend>
+    <p class="error">
+      {{message}}
+    </p>
+    <!-- Name -->
+    <div class="form-group row">
+      <label class="form-control-label col-sm-2" for="name">Name</label>
+      <div class="col-sm-10" >
+        <input class="form-control"  id="name" [(ngModel)]="location.name" required="">
+      </div>
+    </div>
+
+    <!-- Count -->
+    <div class="form-group row">
+      <label class="form-control-label col-sm-2" for="count">Count</label>
+      <div class="col-sm-10" >
+        <input type="number" class="form-control" min="0" id="count" [(ngModel)]="location.count" required>
+      </div>
+    </div>
+
+  </fieldset>
+
+
+  <div class="row">
+    <div class="col-sm-10 col-sm-offset-2">
+      <img class="img-responsive" src='{{ file_src }}' alt=""/>
+      <br>
+      <input type="file" (change)="fileChange(input)" #input accept="image/*"/>
+
+    </div>
+  </div>
+
+
+  <div>
+  </div>
+  <!-- Cancel Save buttons -->
+  <div class="row">
+    <div class="text-right col-sm-12" >
+      <button class="btn btn-default btn-sm" type="button" (click)="canceled.emit()">Cancel</button>
+      <button class="btn btn-success btn-sm" type="submit" (click)="save()">Save</button>
+    </div>
+  </div>
+
+
+
+
+</form>

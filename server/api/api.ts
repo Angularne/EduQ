@@ -17,7 +17,8 @@ router.use('/user', require('./routes/user'));
 /** Subject */
 router.use('/subject', require('./routes/subject'));
 
-
+/** Location */
+router.use('/location', require('./routes/location'));
 
 
 

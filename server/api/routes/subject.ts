@@ -1,6 +1,7 @@
 import express = require('express');
-import {Subject, SubjectDocument, Broadcast, Task, Queue, QueueGroup, Requirement, Location} from '../models/subject';
+import {Subject, SubjectDocument, Broadcast, Task, Queue, QueueGroup, Requirement} from '../models/subject';
 import {User, UserDocument} from '../models/user';
+import {Location, LocationDocument} from '../models/location';
 import {Request, Response, NextFunction} from "express";
 import {QueueSocket} from '../socket';
 import {UserSubject} from '../models/user.subject';
@@ -70,22 +71,31 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
         select: 'firstname lastname'
       }).then((subject) => {
         // users populated
-        for (var user of subject.users) {
-          // Remap fields
-          user.firstname = user.user.firstname;
-          user.lastname = user.user.lastname;
-          user._id = user.user._id;
+        Location.populate(subject, {
+          path: 'locations',
+          select: 'name count image'
+        }).then(subject => {
+          // locations populated
+          for (var user of subject.users) {
+            // Remap fields
+            user.firstname = user.user.firstname;
+            user.lastname = user.user.lastname;
+            user._id = user.user._id;
 
-          // remove unnecessary fields
-          if (user.role != 'Student' || !showTasks) {
-            delete user.tasks;
+            // remove unnecessary fields
+            if (user.role != 'Student' || !showTasks) {
+              delete user.tasks;
+            }
+            delete user.__v;
+            delete user.user;
+            delete user.subject;
           }
-          delete user.__v;
-          delete user.user;
-          delete user.subject;
-        }
-        // Send subject
-        res.json(subject);
+          // Send subject
+          res.json(subject);
+
+        }, (err) => {
+          res.json(err);
+        })
       }, (err) => {
         res.json(err);
       });
@@ -99,7 +109,9 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
 
 /** POST: Create new subject */
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
-  /** TODO Kun superbruker kan lage nye emner? */
+  if (!/admin|teacher/i.test(req.authenticatedUser.rights)) {
+    return res.sendStatus(401);
+  }
 
   // Check body
   if (!req.body.code || !req.body.name) {
@@ -346,7 +358,7 @@ router.delete('/:code', (req: Request, res: Response, next: NextFunction) => {
     return denyAccess(res);
   }
 
-  Subject.remove({code:code}, (err) => { 
+  Subject.remove({code:code}, (err) => {
     if (!err) {
       res.end();
     } else {
@@ -496,7 +508,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
   let users_id = req.body.users || [];
 
   let task: number  = +req.body.task || 1;
-  let comment = req.body.comment || 'Comment';
+  let comment: string = req.body.comment || 'Comment';
   let location = req.body.location;
 
 
@@ -549,8 +561,6 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                  }
                }
              }
-             // TODO: get room from user
-
              // Add group to queue and save
 
              let pos = subj.queue.list.length + 1;
@@ -561,7 +571,8 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                timeEntered: new Date(),
                comment: comment,
                position: pos, // in queue
-               task: task
+               task: task,
+               location: location
              }
 
              subj.queue.list.push(q);
@@ -714,7 +725,6 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
     } else { res.json(err); }
   });
 });
-
 
 /** Find and removes empty groups */
 function removeEmptyQueueGroups(code) {
@@ -1114,8 +1124,6 @@ router.put('/:code/task', (req: Request, res: Response, next: NextFunction) => {
     res.end();
 });
 
-
-
 function hasAccess(user: UserDocument, code: string, role: RegExp = /.*/) {
   if (user.rights == 'Admin') {
     return true;
@@ -1127,9 +1135,6 @@ function hasAccess(user: UserDocument, code: string, role: RegExp = /.*/) {
   return false;
 }
 
-
-
-
 /**
  * Denies access
  */
@@ -1138,10 +1143,7 @@ function denyAccess(res: Response, message: string = 'Access Denied') {
   res.json({message:message});
 }
 
-
-
 module.exports = router;
-
 
 function validateFailed(res: Response, err: ErrorMessage, status: number = 400) {
   res.status(status).json(err);

@@ -1,4 +1,5 @@
 import {Injectable, Inject} from 'angular2/core';
+import {Router} from 'angular2/router';
 import {Observable} from 'rxjs/Rx';
 import {Http, Headers, Response} from "angular2/http";
 import {authHeaders} from '../common/headers';
@@ -25,7 +26,7 @@ export class AuthService {
     }
   }
 
-  constructor(private http: Http) {
+  constructor(private http: Http, private router: Router) {
     this.authenticate();
   }
 
@@ -60,12 +61,14 @@ export class AuthService {
               this.authenticated$.value = true;
 
             } else {
-              this.token = undefined;
-              this.authenticated$.value = false;
+              this.logout();
+              this.router.navigate(['LoginPath']);
             }
             resolve(this.authenticated);
           }, (err) => {
-            reject(err);
+            this.logout();
+            this.router.navigate(['LoginPath']);
+            resolve(false);
           });
       });
   }
@@ -99,7 +102,6 @@ export class AuthService {
               }
              });
            }
-
         } else {
           reject('not authenticated');
         }
@@ -112,6 +114,13 @@ export class AuthService {
       res => res.json(),
       err => err.json()
     );
+  }
+
+
+  changePassword(oldPw: string, newPw: string) {
+    return this.http.put('/api/user/password',JSON.stringify({oldPassword: oldPw, newPassword: newPw}), {headers: this.headers}).map(
+      res => res.status == 200,
+      err  => err.json());
   }
 
   get headers() {

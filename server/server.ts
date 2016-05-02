@@ -19,9 +19,12 @@ import {Mail} from './api/mail';
 
 var app = express();
 //.use(logger('dev'));
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 app.use(express.static(__dirname+"/../../client"));
 app.use(express.static(__dirname+"/../../client/node_modules"));
+
+app.use(bodyParser.json({limit: '5mb'}));
+//app.use(bodyParser.urlencoded({limit: '5mb', extended: false}));
 
 /** Connect to mongodb */
 mongoose.connect(config.db.url, (err, res) => {

@@ -12,8 +12,12 @@ export class Binding<T> {
   }
 
   set value(value: T) {
+    let oldValue = this._value;
     this._value = value;
-    this.post();
+
+    if (value != oldValue) {
+      this.post();
+    }
   }
 
   private post(){
