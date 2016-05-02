@@ -5,16 +5,11 @@ import {Request, Response, NextFunction} from "express";
 
 var router = express.Router();
 
-/** TODO: Handle image upload */
-
-
-
 
 /** POST: Create location */
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
   var location = new Location(req.body);
 
-console.log(location);
   if (!/Admin/i.test(req.authenticatedUser.rights)) {
     return res.status(403).end();
   }
@@ -67,7 +62,6 @@ router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-
 /** PUT: Update location */
 router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
   var id: string = req.params.id;
@@ -77,8 +71,6 @@ router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
   }
 
   let update: LocationDocument = req.body;
-
-  delete update.imagePath;
 
   Location.findOneAndUpdate({_id: id}, update, {new: true}).exec((err, location) => {
     if (!err) {

@@ -2,13 +2,13 @@ import mongoose = require("mongoose");
 
 export interface LocationDocument extends mongoose.Document {
   name: string;
-  imagePath: string;
+  image: string;
   count: number;
 }
 
 let locationSchema = new mongoose.Schema({
   name: String,
-  imagePath: String,
+  image: String,
   count: Number,
 });
 

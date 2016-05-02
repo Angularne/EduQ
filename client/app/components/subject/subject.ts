@@ -59,7 +59,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
             console.log("getUser async find role");
           }
         }
-      }).catch((err) => {console.log("getUser error");}); // TODO sometimes this runs...
+      }).catch((err) => {console.log("getUser error");});
 
       // this.locationService.getLocations(code).subscribe((locations) => {
       //   this.locations = locations

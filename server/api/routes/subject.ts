@@ -109,7 +109,9 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
 
 /** POST: Create new subject */
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
-  /** TODO Kun superbruker kan lage nye emner? */
+  if (!/admin|teacher/i.test(req.authenticatedUser.rights)) {
+    return res.sendStatus(401);
+  }
 
   // Check body
   if (!req.body.code || !req.body.name) {
@@ -559,8 +561,6 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                  }
                }
              }
-             // TODO: get room from user
-
              // Add group to queue and save
 
              let pos = subj.queue.list.length + 1;
@@ -724,7 +724,6 @@ router.delete('/:code/queue', (req: Request, res: Response, next: NextFunction) 
     } else { res.json(err); }
   });
 });
-
 
 /** Find and removes empty groups */
 function removeEmptyQueueGroups(code) {
@@ -1124,8 +1123,6 @@ router.put('/:code/task', (req: Request, res: Response, next: NextFunction) => {
     res.end();
 });
 
-
-
 function hasAccess(user: UserDocument, code: string, role: RegExp = /.*/) {
   if (user.rights == 'Admin') {
     return true;
@@ -1137,9 +1134,6 @@ function hasAccess(user: UserDocument, code: string, role: RegExp = /.*/) {
   return false;
 }
 
-
-
-
 /**
  * Denies access
  */
@@ -1148,10 +1142,7 @@ function denyAccess(res: Response, message: string = 'Access Denied') {
   res.json({message:message});
 }
 
-
-
 module.exports = router;
-
 
 function validateFailed(res: Response, err: ErrorMessage, status: number = 400) {
   res.status(status).json(err);

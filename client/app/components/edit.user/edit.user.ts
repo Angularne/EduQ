@@ -97,9 +97,7 @@ export class EditUserComponent implements OnInit {
       return false;
     }
 
-
-    //return true;
-
+    return true;
   }
 
 

@@ -12,7 +12,9 @@ export class EditLocationComponent implements OnInit{
 
   message: string;
 
-  location: Location = {name: '', count:0, imagePath: ''};
+  location: Location = {name: '', count:0, image: ''};
+  file_src: string;
+
 
   @Output() saved: EventEmitter<Location> = new EventEmitter<Location>();
   @Output() canceled: EventEmitter<Location> = new EventEmitter<Location>();
@@ -25,6 +27,8 @@ export class EditLocationComponent implements OnInit{
       if (id) {
         this.locationService.getLocation(id).subscribe((location) => {
           this.location = location;
+
+          this.file_src = this.location.image;
         });
       }
   }
@@ -46,11 +50,38 @@ export class EditLocationComponent implements OnInit{
   }
 
   save(){
+
+    this.location.image = this.file_src;
+
     if (this.validate()) {
       this.locationService.saveLocation(this.location).subscribe(loc => {
         this.saved.emit(loc);
       });
     }
 
+  }
+
+
+
+
+
+  fileChange(input){
+    var reader = new FileReader();
+
+    console.log(reader);
+
+
+
+    reader.addEventListener("load", (event: any)=>{
+
+    this.file_src = event.target.result;
+     // event.target selects the loaded reader
+    }, false);
+
+
+    if (input.files[0]) {
+
+      reader.readAsDataURL(input.files[0]);
+    }
   }
 }

@@ -1,6 +1,6 @@
 export interface Location  {
   _id?: string;
   name: string;
-  imagePath: string;
+  image: string;
   count: number;
 }

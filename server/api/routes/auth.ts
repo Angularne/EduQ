@@ -39,6 +39,8 @@ export namespace Auth {
           res.status(400).json(err);
         }
       });
+    } else {
+      res.status(401).json({message: 'Username or password not provided'});
     }
   });
 
@@ -99,13 +101,10 @@ export namespace Auth {
     }
   });
 
-
-
   function unauthorized(res) {
     //res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
     return res.sendStatus(401);
   };
-
 
   export function generateRandomPassword(){
     var password = '';

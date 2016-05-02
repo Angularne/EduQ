@@ -185,3 +185,37 @@ export function authenticateUser(username: string, password: string) {
     });
   });
 }
+
+export function validateUser(user: UserDocument, res) {
+
+  var re: RegExp  = /^\s*$/; // Null or empty
+
+
+  if (re.test(user.firstname)) {
+    res.status(400).json({message: "firstname cannot be empty"});
+    return false;
+  }
+
+  if (re.test(user.lastname)) {
+    res.status(400).json({message: "lastname cannot be empty"});
+    return false;
+  }
+
+  re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  if (!re.test(user.email)) {
+    res.status(400).json({message: "email is not correct"});
+    return false;
+  }
+
+  return true;
+}
+
+interface Validation {
+  valid: boolean;
+  error?: {
+    field: string;
+    message: string;
+    value: string;
+  }
+}
