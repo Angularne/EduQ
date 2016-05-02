@@ -38,6 +38,7 @@
     "app/components/edit.subject/users/users.ts",
     "app/components/edit.user/edit.user.ts",
     "app/components/login/login.ts",
+    "app/components/main/main-broadcasts/main-broadcasts.ts",
     "app/components/main/main.ts",
     "app/components/me/me.ts",
     "app/components/me/subject/subject.ts",

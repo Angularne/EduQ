@@ -14,12 +14,12 @@ export class QueueService {
 
   constructor(private http: Http) {}
 
-  addQueueElement(users: User[], task: Task) {
+  addQueueElement(users: User[], task: Task, location: any) {
     var json = {
       "users": users,
       "comment": 'Not implemented',
       "task": task,
-      "location": null
+      "location": location
     }
     if (this.subject) {
       this.http.post(`api/subject/${this.subject.code}/queue`, JSON.stringify(json), {

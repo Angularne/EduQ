@@ -1,7 +1,7 @@
 {
   "port": 3000,
   "db": {
-    "url": "mongodb://158.38.190.205:27017/queue",
+    "url": "mongodb://158.38.191.172:27017/queue",
     "auth": {
       "user": "",
       "pass": ""

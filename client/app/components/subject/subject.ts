@@ -64,6 +64,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
       // this.locationService.getLocations(code).subscribe((locations) => {
       //   this.locations = locations
       // });
+      this.locations = this.locationService.getLocations(code);
 
     }
   }
