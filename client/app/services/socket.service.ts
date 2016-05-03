@@ -36,6 +36,9 @@ export class SocketService {
 
   private onQueue(queue: Queue) {
     this.subject.queue = queue;
+    this.subject.queue.list = queue.list.sort((a: any, b: any) => {
+      return a.position - b.position;
+    });
   }
 
   private onBroadcast(broadcasts: Broadcast[]) {

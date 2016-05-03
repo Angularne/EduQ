@@ -50,7 +50,7 @@
         <b>Task</b>
       </td>
       <td>
-        <b>Location!</b>
+        <b>Location</b>
       </td>
       <td>
 
@@ -81,7 +81,6 @@
             <li *ngIf="element.helper"><a (click)="acceptTask(element)">Accept</a></li>
             <li *ngIf="i +1 < queue.list.length"><a href="#" type="button" data-toggle="modal" data-target="#delayModal" (click)="onClickDelay(i, element)">Delay</a></li>
 
-            <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>
             <li><a (click)="removeQueueElement(element)">Remove group</a></li>
           </ul>

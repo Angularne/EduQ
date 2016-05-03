@@ -74,7 +74,6 @@ export class QueueComponent implements OnInit, OnChanges {
   @Input() set locations(locations) {
     this._locations = locations;
     this._selectedLocation = this._locations[0];
-    console.log(this._locations);
   }
   get locations() {return this._locations;}
 
@@ -231,9 +230,13 @@ return true;
     this.queueService.helpQueueElement(element);
   }
   delayQueueElement(element: any, places: number) {
-    console.error('Error: QueueComponent.delayQueueElement not implemented!');
+    this.queueService.delayQueueElement(element, places);
   }
   acceptTask(element: any) {
-    console.error('Error: QueueComponent.acceptTask not implemented!');
+    this.queueService.acceptQueueElement(element.users, element.task).subscribe((res) => {
+      if (res.status == 200) {
+        this.removeQueueElement(element);
+      }
+    });
   }
 }
