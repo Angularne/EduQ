@@ -54,43 +54,43 @@ export function getUser(id: string) {
         as: 'subjects'            //<output array field>
       }
     }).exec().then((users) => {
-
       let u = users[0];
       if (!u) {
         return reject({message: 'Brukernavn er ikke registrert'});
       }
-
 
       Subject.populate(users[0], {
         path: 'subjects.subject',
         select: 'code name tasks requirements broadcasts'
       }).then((user) => {
         // subjects populated
-
+        
         User.populate(user, {
           path: 'subjects.tasks.approvedBy subjects.subject.broadcasts.author',
           select: 'firstname lastname'
         }).then((user2) => {
 
-
           for (var subject of user2.subjects) {
             // Remap fields
-            subject._id = subject.subject._id;
-            subject.code = subject.subject.code;
-            subject.name = subject.subject.name;
-            subject.broadcasts = subject.subject.broadcasts;
+            if (subject.subject) {
+              subject._id = subject.subject._id;
+              subject.code = subject.subject.code;
+              subject.name = subject.subject.name;
+              subject.broadcasts = subject.subject.broadcasts;
 
-            if (subject.role == "Student") {
-              subject.subjectTasks = subject.subject.tasks;
-              subject.requirements = subject.subject.requirements;
-            } else {
-              delete subject.tasks;
+              if (subject.role == "Student") {
+                subject.subjectTasks = subject.subject.tasks;
+                subject.requirements = subject.subject.requirements;
+              } else {
+                delete subject.tasks;
+              }
+
+              delete subject.__v;
+              delete subject.user;
+              delete subject.subject;
             }
-
-            delete subject.__v;
-            delete subject.user;
-            delete subject.subject;
           }
+
           // Send user
           resolve(user2);
         }, (err) => {

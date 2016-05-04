@@ -1,17 +1,18 @@
-import {Component, OnInit, Input, EventEmitter, Output} from 'angular2/core';
-import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component, OnInit, Input, EventEmitter, Output, ViewChild} from 'angular2/core';
+import {RouteParams, Router, ROUTER_DIRECTIVES} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {Subject, SubjectUser} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';
 import {EditTaskComponent} from './task/task';
 import {EditUsersComponent} from './users/users';
 import {EditLocationComponent} from './location/location';
+import {AlertComponent} from '../alert/alert';
 
 
 @Component({
   selector: 'edit-subject',
   templateUrl: 'app/components/edit.subject/edit.subject.html',
-  directives: [ROUTER_DIRECTIVES, EditRequirementComponent, EditTaskComponent, EditUsersComponent, EditLocationComponent]
+  directives: [ROUTER_DIRECTIVES, EditRequirementComponent, EditTaskComponent, EditUsersComponent, EditLocationComponent, AlertComponent]
 })
 export class EditSubjectComponent implements OnInit {
   _subject: Subject;
@@ -30,12 +31,13 @@ export class EditSubjectComponent implements OnInit {
   @Output() saved: EventEmitter<Subject> = new EventEmitter<Subject>();
   @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
 
+  @ViewChild(AlertComponent) alert: AlertComponent;
 
   private teachers: SubjectUser[] = [];
   private assistents: SubjectUser[] = [];
   private students: SubjectUser[] = [];
 
-  constructor(private subjectService: SubjectService, private routeParams: RouteParams) { }
+  constructor(private subjectService: SubjectService, private routeParams: RouteParams, private router: Router) { }
 
   ngOnInit() {
     if(!this.subject){
@@ -127,16 +129,33 @@ export class EditSubjectComponent implements OnInit {
       // Save
       this.subjectService.saveSubject(this.subject).subscribe((subject) => {
         this.saved.emit(subject);
+        this.close();
       }, (err) => {
-        console.error(err);
+        this.alert.text =  err.json().errmsg;
+        this.alert.show();
       });
+    } else {
+      this.alert.text = this.message;
+      this.alert.show();
     }
   }
 
   cancel() {
     this.canceled.emit(null);
+    this.close();
   }
 
+  close() {
+    let path = this.router.parent.parent.currentInstruction.component.routeName;
+    switch (path) {
+      case 'AdminSubjectsPath':
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
+      break;
 
+      case 'SubjectsPath':
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, 'QueuePath', {code: this.subject.code}]);
+      break;
+    }
+  }
 
 }

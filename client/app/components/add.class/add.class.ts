@@ -1,4 +1,5 @@
 import {Component, Output, EventEmitter} from 'angular2/core';
+import {Router} from 'angular2/router';
 import {UserService} from '../../services/user.service';
 import {User} from '../../interfaces/user';
 
@@ -16,7 +17,7 @@ export class AddClassComponent {
   @Output() saved: EventEmitter<any> = new EventEmitter<any>();
   @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private router: Router) { }
 
 
 
@@ -48,13 +49,16 @@ export class AddClassComponent {
     if (users.length) {
       this.userService.saveUsers(users).subscribe(res => {
         this.saved.emit(null);
+        this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
       });
     } else {
       this.saved.emit(null);
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
     }
   }
 
   cancel() {
     this.canceled.emit(null);
+    this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
   }
 }

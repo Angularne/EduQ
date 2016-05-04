@@ -1,68 +1,17 @@
 <ul class="nav nav-pills ">
-  <li role="presentation" [class.active]="activePane == 'all' || activePane == 'edit'">
-    <a [routerLink]="['AdminOption1Path', {component:'users'}]" >All Users</a>
+  <li role="presentation" [class.active]="router.currentInstruction.component.routeName == 'AllPath'">
+    <a [routerLink]="['AllPath']" >All Users</a>
   </li>
-  <li role="presentation" [class.active]="activePane == 'add'">
-    <a [routerLink]="['AdminOption2Path', {component:'users', action:'add'}]">
+  <li role="presentation" [class.active]="router.currentInstruction.component.routeName == 'AddPath'">
+    <a [routerLink]="['AddPath']">
       <span class="glyphicon glyphicon-plus"></span> User
     </a>
     </li>
-  <li role="presentation" [class.active]="activePane == 'class'">
-    <a [routerLink]="['AdminOption2Path', {component:'users', action:'class'}]" >
+  <li role="presentation" [class.active]="router.currentInstruction.component.routeName == 'AddClassPath'">
+    <a [routerLink]="['AddClassPath']" >
       <span class="glyphicon glyphicon-plus"></span> Class
     </a>
     </li>
 </ul>
 
-<div [ngSwitch]="activePane">
-  <template ngSwitchDefault [ngSwitchWhen]="'all'">
-    <legend>Users</legend>
-    <input class="form-control" #q (keyup)="filter(q.value)" placeholder="Search">
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>
-            Name
-          </th>
-          <th>
-            Rights
-          </th>
-          <th>
-            Year
-          </th>
-          <th>
-
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="#user of filteredUsers">
-          <td>
-            <a [routerLink]="['AdminOption3Path', {component:'users', action:'edit', id:user._id}]">{{user.firstname}} {{user.lastname}}</a>
-          </td>
-          <td>
-            {{user.rights}}
-          </td>
-          <td>
-            {{user.classOf}}
-          </td>
-          <td>
-            <a class="close" aria-hidden="true" (click)="delete(user)">&times;</a>
-          </td>
-        </tr>
-
-      </tbody>
-    </table>
-
-  </template>
-  <template [ngSwitchWhen]="'add'">
-    <edit-user (saved)="created($event)" (canceled)="canceled()"></edit-user>
-  </template>
-  <template [ngSwitchWhen]="'class'">
-    <add-class (saved)="saved()" (canceled)="canceled()"></add-class>
-  </template>
-  <template [ngSwitchWhen]="'edit'" >
-    <edit-user (saved)="saved()" (canceled)="canceled()"></edit-user>
-  </template>
-</div>
+<router-outlet></router-outlet>

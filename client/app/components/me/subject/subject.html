@@ -1,6 +1,6 @@
 
   <h4 >
-    <a [routerLink]="['SubjectsPath', {code: subject.code}]">
+    <a [routerLink]="['SubjectsPath', 'QueuePath', {code: subject.code}]">
       {{subject.code}} {{subject.name}}
       <small>{{subject.role}}</small>
       <span *ngIf="subject.role == 'Student'">

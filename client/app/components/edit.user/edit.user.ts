@@ -1,14 +1,18 @@
-import {Component, OnInit, Input, Output, EventEmitter} from 'angular2/core';
-import {RouteParams} from 'angular2/router';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from 'angular2/core';
+import {RouteParams, Router} from 'angular2/router';
 import {UserService} from '../../services/user.service';
 import {User} from '../../interfaces/user';
 import {AuthService} from '../../services/auth.service';
+import {AlertComponent} from '../alert/alert';
 
 @Component({
   selector: 'edit-user',
   templateUrl: 'app/components/edit.user/edit.user.html',
+  directives: [AlertComponent]
 })
 export class EditUserComponent implements OnInit {
+
+  @ViewChild(AlertComponent) alert: AlertComponent;
 
   message: string;
 
@@ -49,7 +53,7 @@ export class EditUserComponent implements OnInit {
   private confpw: string;
 
 
-  constructor(private userService: UserService, private auth: AuthService, private _params: RouteParams) { }
+  constructor(private userService: UserService, private auth: AuthService, private _params: RouteParams, private router: Router) { }
 
   ngOnInit() {
    if (!this._user) {
@@ -94,7 +98,8 @@ export class EditUserComponent implements OnInit {
 
     if (!re.test(this.user.email)) {
       this.message = "Email is not correct";
-      return false;
+      /* HACK: diabled email check */
+      //return false;
     }
 
     return true;
@@ -105,11 +110,21 @@ export class EditUserComponent implements OnInit {
     if (this.validate()) {
       this.userService.saveUser(this.user).subscribe((user) => {
         this.saved.emit(user);
+        this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
+
+      }, (err) => {
+        console.log(err.json());
+        this.alert.text = err.json().errmsg;
+        this.alert.show();
       });
+    } else {
+      this.alert.text = this.message;
+      this.alert.show();
     }
   }
 
-  close() {
+  cancel() {
     this.canceled.emit(null);
+    this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
   }
 }

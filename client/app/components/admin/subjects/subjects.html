@@ -1,54 +1,12 @@
 <ul class="nav nav-pills ">
-  <li role="presentation" [class.active]="activePane == 'all' || activePane == 'edit'">
-    <a [routerLink]="['AdminOption1Path', {component:'subjects'}]" >All Subjects</a>
+  <li role="presentation" [class.active]="router.currentInstruction.component.routeName == 'AllPath'">
+    <a [routerLink]="['AllPath']" >All Subjects</a>
   </li>
-  <li role="presentation" [class.active]="activePane == 'add'">
-    <a [routerLink]="['AdminOption2Path', {component:'subjects', action:'add'}]">
+  <li role="presentation" [class.active]="router.currentInstruction.component.routeName == 'AddPath'">
+    <a [routerLink]="['AddPath']">
       <span class="glyphicon glyphicon-plus"></span> Subject
     </a>
   </li>
 </ul>
-<div [ngSwitch]="activePane">
-  <template ngSwitchDefault [ngSwitchWhen]="'all'">
-    <legend>Subjects</legend>
-    <input class="form-control" #q (keyup)="filter(q.value)" placeholder="Search">
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>
-            Code - Name
-          </th>
-          <th>
-
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="#subject of filteredSubjects">
-          <td>
-            <a [routerLink]="['AdminOption3Path', {component: 'subjects', action:'edit', id:subject.code}]">{{subject.code}} - {{subject.name}}</a>
-          </td>
-          <td>
-            <a [routerLink]="['AdminOption3Path', {component: 'subjects', action:'students', id:subject.code}]">Students</a>
-          </td>
-          <td>
-            <a class="close" aria-hidden="true" (click)="delete(subject)">&times;</a>
-          </td>
-        </tr>
-
-      </tbody>
-    </table>
-
-  </template>
-  <template [ngSwitchWhen]="'add'">
-    <edit-subject (saved)="saved()" (canceled)="canceled()"></edit-subject>
-  </template>
-
-  <template [ngSwitchWhen]="'edit'">
-    <edit-subject (saved)="saved()" (canceled)="canceled()"></edit-subject>
-  </template>
-  <template [ngSwitchWhen]="'students'">
-    <subject-users (saved)="saved()" (canceled)="canceled()"></subject-users>
-  </template>
-</div>
+<router-outlet></router-outlet>

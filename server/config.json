@@ -1,14 +1,14 @@
 {
   "port": 3000,
-  "db": {
-    "url": "mongodb://localhost:27017/queue",
-    "auth": {
-      "user": "",
-      "pass": ""
-    }
+  "mongodb": {
+    "host": "localhost",
+    "port": "27017",
+    "path": "queue",
+    "user": "admin",
+    "pass": "1234"
   },
   "smtp": {
-    "name": "Angulare",
+    "name": "Angularne",
     "host": "smtp.gmail.com",
     "port": 465,
     "secure": true,

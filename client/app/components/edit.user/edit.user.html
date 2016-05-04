@@ -1,9 +1,8 @@
 <form class="">
   <fieldset>
     <legend> User <span *ngIf="new" class="label label-success"></span></legend>
-    <p class="error">
-      {{message}}
-    </p>
+    <alert [type]="'warning'">alert</alert>
+
     <!-- Firstname -->
     <div class="form-group row">
       <label class="form-control-label col-sm-2" for="firstname">Firstname</label>
@@ -59,7 +58,7 @@
   <!-- Cancel Save buttons -->
   <div class="row">
     <div class="text-right col-sm-12" >
-      <button class="btn btn-default btn-sm" type="button" (click)="canceled.emit(null)">Cancel</button>
+      <button class="btn btn-default btn-sm" type="button" (click)="cancel()">Cancel</button>
       <button class="btn btn-success btn-sm" type="submit" (click)="onSubmit()">Save</button>
     </div>
   </div>

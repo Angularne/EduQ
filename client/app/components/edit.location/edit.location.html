@@ -1,9 +1,7 @@
 <form class="">
   <fieldset>
     <legend>Location</legend>
-    <p class="error">
-      {{message}}
-    </p>
+      <alert [type]="'warning'">alert</alert>
     <!-- Name -->
     <div class="form-group row">
       <label class="form-control-label col-sm-2" for="name">Name</label>
@@ -38,7 +36,7 @@
   <!-- Cancel Save buttons -->
   <div class="row">
     <div class="text-right col-sm-12" >
-      <button class="btn btn-default btn-sm" type="button" (click)="canceled.emit()">Cancel</button>
+      <button class="btn btn-default btn-sm" type="button" (click)="cancel()">Cancel</button>
       <button class="btn btn-success btn-sm" type="submit" (click)="save()">Save</button>
     </div>
   </div>

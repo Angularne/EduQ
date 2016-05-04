@@ -1,5 +1,5 @@
 import {Component, OnInit, ChangeDetectionStrategy} from 'angular2/core';
-import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
+import {RouteParams, ROUTER_DIRECTIVES, Router} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {Subject, SubjectUser} from '../../interfaces/subject';
 @Component({
@@ -12,7 +12,7 @@ export class StudentsTasksComponent implements OnInit {
   subject: Subject;
   students: SubjectUser[];
 
-  constructor(private subjectService: SubjectService, private routeParams: RouteParams) { }
+  constructor(private subjectService: SubjectService, private routeParams: RouteParams, private router: Router) { }
 
 
   ngOnInit(){
@@ -106,10 +106,24 @@ export class StudentsTasksComponent implements OnInit {
     this.subjectService.updateTasks(this.subject.code, users).subscribe((res) => {
       if (res) {
         // saving
-        console.log('saving');
+        this.close();
       } else {
         // not
       }
     });
+  }
+
+
+  close() {
+    let path = this.router.parent.parent.currentInstruction.component.routeName;
+    switch (path) {
+      case 'AdminSubjectsPath':
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
+      break;
+
+      case 'SubjectsPath':
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, 'QueuePath', {code: this.subject.code}]);
+      break;
+    }
   }
 }

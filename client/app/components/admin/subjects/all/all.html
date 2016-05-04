@@ -1,0 +1,30 @@
+<legend>Subjects</legend>
+<input class="form-control" #q (keyup)="filter(q.value)" placeholder="Search">
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        Code - Name
+      </th>
+      <th>
+
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="#subject of filteredSubjects">
+      <td>
+        <a [routerLink]="['EditPath',{code:subject.code}]">{{subject.code}} - {{subject.name}}</a>
+      </td>
+      <td>
+        <a [routerLink]="['StudentsPath', {code:subject.code}]">Students</a>
+      </td>
+      <td>
+        <a class="close" aria-hidden="true" (click)="delete(subject)">&times;</a>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+<confirm-modal [modal]="modal"></confirm-modal>

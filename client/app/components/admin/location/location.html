@@ -1,54 +1,11 @@
 <ul class="nav nav-pills ">
-  <li role="presentation" [class.active]="activePane == 'all' || activePane == 'edit'">
-    <a [routerLink]="['AdminOption1Path', {component:'locations'}]" >All Locations</a>
+  <li role="presentation" [class.active]="router.currentInstruction.component.routeName == 'AllPath'">
+    <a [routerLink]="['AllPath']" >All Locations</a>
   </li>
-  <li role="presentation" [class.active]="activePane == 'add'">
-    <a [routerLink]="['AdminOption2Path', {component:'locations', action:'add'}]">
+  <li role="presentation" [class.active]="router.currentInstruction.component.routeName == 'AddPath'">
+    <a [routerLink]="['AddPath']">
       <span class="glyphicon glyphicon-plus"></span> Location
     </a>
     </li>
 </ul>
-<div [ngSwitch]="activePane">
-  <template ngSwitchDefault [ngSwitchWhen]="'all'">
-    <legend>Locations</legend>
-    <input class="form-control" #q (keyup)="filter(q.value)" placeholder="Search">
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>
-            Name
-          </th>
-          <th>
-            Count
-          </th>
-
-          <th>
-
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="#location of filteredLocations">
-          <td>
-            <a [routerLink]="['AdminOption3Path', {component:'locations', action:'edit', id:location._id}]">{{location.name}}</a>
-          </td>
-          <td>
-            {{location.count}}
-          </td>
-          <td>
-            <a class="close" aria-hidden="true" (click)="delete(location)">&times;</a>
-          </td>
-        </tr>
-
-      </tbody>
-    </table>
-
-  </template>
-  <template [ngSwitchWhen]="'add'">
-    <edit-location (saved)="saved()" (canceled)="canceled()"></edit-location>
-  </template>
-  <template [ngSwitchWhen]="'edit'" >
-    <edit-location (saved)="saved()" (canceled)="canceled()"></edit-location>
-  </template>
-</div>
+<router-outlet></router-outlet>

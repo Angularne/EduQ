@@ -1,0 +1,22 @@
+<br>
+<nav class="pull-right" *ngIf="assistent">
+  <ul class="nav nav-pills">
+    <li [class.active]="router.currentInstruction.component.routeName == 'QueuePath'">
+      <a [routerLink]="['QueuePath',{code:code}]"  >Queue</a>
+    </li>
+    <li *ngIf="teacher" [class.active]="router.currentInstruction.component.routeName == 'EditPath'">
+      <a [routerLink]="['EditPath',{code:code}]" >Edit Subject</a>
+    </li>
+    <li *ngIf="teacher" [class.active]="router.currentInstruction.component.routeName == 'UsersPath'">
+      <a [routerLink]="['UsersPath',{code:code}]">Edit Students</a>
+    </li>
+    <li [class.active]="router.currentInstruction.component.routeName == 'TasksPath'">
+      <a [routerLink]="['TasksPath',{code:code}]">Students</a>
+    </li>
+    </ul>
+</nav>
+<br>
+
+
+
+<router-outlet></router-outlet>

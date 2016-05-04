@@ -2,7 +2,7 @@ import {Component, OnInit, OnChanges} from 'angular2/core';
 import {Router, ROUTER_DIRECTIVES} from 'angular2/router';
 import {AuthService} from '../../services/auth.service';
 import {Subject} from '../../interfaces/subject';
-import {SubjectsComponent} from '../subject/subject';
+import {SubjectsComponent} from '../subjects/subjects';
 import {LoggedInRouterOutlet} from '../../common/LoggedInOutlet';
 import {User} from '../../interfaces/user';
 

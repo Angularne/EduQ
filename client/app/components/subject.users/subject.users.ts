@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from 'angular2/core';
-import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
+import {RouteParams, ROUTER_DIRECTIVES, Router} from 'angular2/router';
 import {SubjectService} from '../../services/subject.service';
 import {UserService} from '../../services/user.service';
 import {User} from '../../interfaces/user';
@@ -27,7 +27,7 @@ export class SubjectUsersComponent implements OnInit {
   @Output() saved: EventEmitter<Subject> = new EventEmitter<Subject>();
   @Output() canceled: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private routeParams: RouteParams, private subjectService: SubjectService, private userService: UserService) { }
+  constructor(private routeParams: RouteParams, private subjectService: SubjectService, private userService: UserService, private router: Router) { }
 
   ngOnInit(){
     var subjectAndUsers = -2;
@@ -120,11 +120,26 @@ export class SubjectUsersComponent implements OnInit {
 
     this.subjectService.updateStudents(this.subject.code, selectedUsers).subscribe((val) => {
       this.saved.emit(this.subject);
+      this.close();
     });
   }
 
   cancel(){
     this.canceled.emit(null);
+    this.close();
+  }
+
+  close() {
+    let path = this.router.parent.parent.currentInstruction.component.routeName;
+    switch (path) {
+      case 'AdminSubjectsPath':
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
+      break;
+
+      case 'SubjectsPath':
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, 'QueuePath', {code: this.subject.code}]);
+      break;
+    }
   }
 
 }

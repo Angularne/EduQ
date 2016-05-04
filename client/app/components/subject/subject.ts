@@ -14,13 +14,13 @@ import {AuthService} from '../../services/auth.service';
 import {LocationService} from "../../services/location.service";
 
 @Component({
-  selector: 'subjects',
+  selector: 'subject',
   templateUrl: 'app/components/subject/subject.html',
   providers: [SubjectService, SocketService, QueueService, BroadcastService, LocationService],
   directives: [QueueComponent, BroadcastComponent, EditSubjectComponent, ROUTER_DIRECTIVES]
 })
 
-export class SubjectsComponent implements OnInit, OnDestroy {
+export class SubjectComponent implements OnInit, OnDestroy {
   subject: Subject;
   subjectString: string;
   role: string;
@@ -41,6 +41,7 @@ export class SubjectsComponent implements OnInit, OnDestroy {
   ngOnInit(){
     console.log('ngOnInit');
     let code = this.params.get('code');
+    console.log(code);
     if (code) {
       this.subjectService.getSubject(code).subscribe((sub) => {
         this.subject = sub;

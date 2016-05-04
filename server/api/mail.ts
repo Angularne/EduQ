@@ -11,23 +11,6 @@ var transporter = nodemailer.createTransport(smtp, defaults);
 
 
 export namespace Mail {
-  export function test() {
-    var options = {
-      //from: '"Fred Foo 👥" <foo@blurdybloop.com>', // sender address
-      to: 'achrs@hotmail.com', // list of receivers
-      subject: 'Hello ✔', // Subject line
-      html: '<b>Hello world 🐴</b><br><i>Denne eposten er sendt fra node</i>' // html body
-    };
-    transporter.sendMail(options, (err, info) => {
-      if (!err) {
-        console.log(info);
-      } else {
-        console.error(err);
-      }
-    });
-  }
-
-
   export function newUser(email: string, password: string) {
     let options = {
       to: email,
@@ -68,8 +51,6 @@ export namespace Mail {
         Hilsen ${smtp.name}
       `
     };
-
-    console.log(options);
 
     transporter.sendMail(options, (err, info) => {
       if (!err) {

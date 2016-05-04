@@ -66,7 +66,6 @@ export namespace Auth {
     let data = basicAuth(req);
 
     if (data && data.name && data.pass) {
-
       User.findOne({email: data.name}).select('password').exec((err, user) => {
         if (!err) {
           if (user) {
@@ -98,6 +97,8 @@ export namespace Auth {
           res.status(400).json(err);
         }
       });
+    } else {
+      res.status(401).json({message: 'Username or password not provided'});
     }
   });
 

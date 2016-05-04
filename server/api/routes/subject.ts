@@ -109,6 +109,9 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
 
 /** POST: Create new subject */
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
+
+  console.log('create new subject');
+
   if (!/admin|teacher/i.test(req.authenticatedUser.rights)) {
     return res.sendStatus(401);
   }
@@ -131,16 +134,34 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
         user: string,
         subject: string,
         role: string
-      }[] = req.body.users;
+      }[] = req.body.users || [];
+
+      // Add only if user is teacher
+      var userFound = /admin/i.test(req.authenticatedUser.rights);
 
       for (var u of users) {
         u.subject = subject._id;
+
+        // Check if user is added
+        if (!userFound && String(u.user) == String(req.authenticatedUser._id)) {
+          u.role = 'Teacher';
+          userFound = true;
+        }
+      }
+
+      // Add teacher of not already added
+      if (!userFound) {
+        users.push({
+          user: req.authenticatedUser._id,
+          subject: subject._id,
+          role: 'Teacher'
+        });
       }
 
       UserSubject.create(users).then((res)=> {});
       QueueSocket.createNamespace(subject.code);
     } else {
-      res.json(err);
+      res.status(409).json({errmsg: 'Code is alredy registered on another subject.'});
     }
   });
 
@@ -358,14 +379,16 @@ router.delete('/:code', (req: Request, res: Response, next: NextFunction) => {
     return denyAccess(res);
   }
 
-  Subject.remove({code:code}, (err) => {
+  Subject.findOneAndRemove({code:code}, (err, sub) => {
     if (!err) {
       res.end();
+      UserSubject.remove({subject: sub._id}, (err)=>{
+        if (err) console.log(err);
+      });
     } else {
       res.status(400).json(err);
     }
-  })
-
+  });
 });
 
 /**

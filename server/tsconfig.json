@@ -26,7 +26,6 @@
     "api/models/subject.ts",
     "api/models/user.subject.ts",
     "api/models/user.ts",
-    "api/password.ts",
     "api/routes/auth.ts",
     "api/routes/location.ts",
     "api/routes/public.ts",

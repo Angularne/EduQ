@@ -2,7 +2,7 @@ import {Component, Inject, ApplicationRef} from 'angular2/core';
 import {Router, RouteConfig} from 'angular2/router';
 import {LoginComponent} from "./components/login/login";
 import {MainComponent} from "./components/main/main";
-import {SubjectsComponent} from './components/subject/subject';
+import {SubjectsComponent} from './components/subjects/subjects';
 import {AuthService} from './services/auth.service';
 import {MypageComponent} from './components/me/me';
 import {AdminpageComponent} from "./components/admin/admin";
@@ -37,32 +37,14 @@ import {AddClassComponent} from './components/add.class/add.class';
   {path: '/', component: MainComponent, as: 'MainPath', useAsDefault: true},
   {path: '/login', component: LoginComponent, as: 'LoginPath'},
 
+  /** My Page */
   {path: '/me', component: MypageComponent, as: 'MypagePath'},
 
   /** Admin */
-  {path: '/admin', component: AdminpageComponent, as: 'AdminpagePath'},
-  {path: '/admin/:component', component: AdminpageComponent, as: 'AdminOption1Path'},
-  {path: '/admin/:component/:action', component: AdminpageComponent, as: 'AdminOption2Path'},
-  {path: '/admin/:component/:id/:action', component: AdminpageComponent, as: 'AdminOption3Path'},
-
-
+  {path: '/admin/...', component: AdminpageComponent, as: 'AdminpagePath'},
 
   /** Subject */
-  // {path: '/subjects', component: SubjectsListComponent, as: 'SubjectsListPath'}, // List all subjects
-  {path: '/subjects/:code', component: SubjectsComponent, as: 'SubjectsPath'},
-  {path: '/subjects/:code/edit', component: EditSubjectComponent, as: 'EditSubjectPath'},
-  {path: '/subjects/:code/users', component: SubjectUsersComponent, as: 'SubjectUsersPath'},
-  {path: 'subjects/:code/tasks', component: StudentsTasksComponent, as: 'StudentsTasksPath'},
-
-  {path: '/subject/new', component: EditSubjectComponent, as: 'NewSubjectPath'},
-
-
-  /** Users */
-  {path: '/users', component: UsersComponent, as: 'UserListPath'}, // List all users
-  {path: '/users/:user_id', component: EditUserComponent, as: 'EditUserPath'},
-
-  {path: 'users/class/add', component: AddClassComponent, as: 'AddClassPath'},
-
+  {path: '/subjects/...', component: SubjectsComponent, as: 'SubjectsPath'},
 
   /** Redirect to main */
   {path: '/**', redirectTo:['MainPath']}

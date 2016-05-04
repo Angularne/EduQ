@@ -4,29 +4,40 @@
       <aside class="">
         <br>
         <ul class="list-group">
-          <a *ngFor="#pane of panes" class="list-group-item clickable"
+
+          <a [routerLink]="['AdminSubjectsPath']" class="list-group-item" [class.active]="router.currentInstruction.component.routeName == 'AdminSubjectsPath'" >Subjects</a>
+          <a [routerLink]="['AdminUsersPath']" class="list-group-item" [class.active]="router.currentInstruction.component.routeName == 'AdminUsersPath'" >Users</a>
+          <a [routerLink]="['AdminLocationsPath']" class="list-group-item" [class.active]="router.currentInstruction.component.routeName == 'AdminLocationsPath'" >Locations</a>
+
+
+          <!-- <a *ngFor="#pane of panes" class="list-group-item clickable"
             [routerLink]="['AdminOption1Path', {component:pane.path}]"
-            [class.active]="pane.path == activePane" (click)="activePane = pane.path">{{pane.label}}</a>
+            [class.active]="pane.path == activePane" (click)="activePane = pane.path">{{pane.label}}</a> -->
         </ul>
       </aside>
     </div>
     <div class="col-xs-12 col-sm-9 main-content">
         <br>
+        <router-outlet></router-outlet>
+
+
+        <!--
         <div [ngSwitch]="activePane">
           <template ngSwitchDefault [ngSwitchWhen]="'subjects'">
-            <!-- Subjects -->
+            <!- Subjects ->
             <admin-subjects></admin-subjects>
           </template>
           <template [ngSwitchWhen]="'users'">
-            <!-- Users -->
+            <!- Users ->
             <admin-users>USERS</admin-users>
           </template>
           <template [ngSwitchWhen]="'locations'">
-            <!-- Locations -->
+            <!- Locations ->
             <admin-locations></admin-locations>
           </template>
 
         </div>
+      -->
     </div>
   </div>
 </div>

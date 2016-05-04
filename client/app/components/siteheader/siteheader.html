@@ -22,7 +22,7 @@
 
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Subjects <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li  *ngFor="#subject of user?.subjects"><a [routerLink]="['SubjectsPath', {code:subject.code}]">{{subject.name}} <small>{{subject.role}}</small> </a></li>
+            <li  *ngFor="#subject of user?.subjects"><a [routerLink]="['SubjectsPath', 'QueuePath', {code:subject.code}]">{{subject.name}} <small>{{subject.role}}</small> </a></li>
             <li *ngIf="user?.subjects?.length == 0"><center><p>No subjects</p></center></li>
           </ul>
         </li>

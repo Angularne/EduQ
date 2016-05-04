@@ -1,0 +1,6 @@
+<div *ngIf="visible" class="alert alert-{{type}} alert-dismissible" role="alert">
+  <button type="button" class="close" aria-label="Close" (click)="close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>{{strong}} </strong> {{text}}
+</div>

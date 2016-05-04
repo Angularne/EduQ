@@ -1,0 +1,41 @@
+<legend>Locations</legend>
+<input class="form-control" #q (keyup)="filter(q.value)" placeholder="Search">
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        Image
+      </th>
+      <th>
+        Name
+      </th>
+      <th>
+        Count
+      </th>
+      <th>
+
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="#location of filteredLocations">
+      <td width="100px">
+        <img [src]="location.image" alt="No image" class="img-thumbnail" width="100px"/>
+      </td>
+      <td>
+        <a [routerLink]="['EditPath', {id:location._id}]">{{location.name}}</a>
+      </td>
+      <td>
+        {{location.count}}
+      </td>
+      <td>
+        <a class="close" aria-hidden="true" (click)="delete(location)">&times;</a>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<confirm-modal [modal]="modal"></confirm-modal>
