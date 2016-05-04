@@ -73,7 +73,7 @@ export interface QueueGroup {
 /** Location */
 export interface Location {
   _id?: string;
-  room: string;
+  name: string;
   table: string;
 }
 

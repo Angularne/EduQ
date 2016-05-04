@@ -15,8 +15,17 @@ Estimated time of development completion: Late May 2016
 
 ## To-Do
 
-1. Set up site authorization and authentication
-2. +++++
+1. Improve visuals
+2. Implement dataexport
+
+## Dependencies
+
+Windows have problem building node-gyp. To handle that issue, make sure you have the following dependencies. Linux and OSX should not have any problems.
+
+1. Python 2.7.X (x86)
+2. Node (x86)
+3. Add python as an Environment Variable
+4. Visual Studio 2013 with C++ Tools
 
 ## Setup
 

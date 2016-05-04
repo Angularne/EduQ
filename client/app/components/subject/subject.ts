@@ -49,10 +49,12 @@ export class SubjectComponent implements OnInit, OnDestroy {
         this.queueService.subject = this.subject;
         this.broadcastService.subject = this.subject;
         this.socket.open(this.subject);
+        this.locations = sub.locations;
       });
 
       this.auth.getUser().then((user) => {
         this.user = user;
+
         for (let sub of this.user.subjects) {
           if (sub.code == code) {
             this.userTasks = sub.tasks;
@@ -62,9 +64,6 @@ export class SubjectComponent implements OnInit, OnDestroy {
         }
       }).catch((err) => {console.log("getUser error");});
 
-      // this.locationService.getLocations(code).subscribe((locations) => {
-      //   this.locations = locations
-      // });
 
     }
   }

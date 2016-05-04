@@ -7,6 +7,32 @@
     <button class="btn btn-primary btn-md"  *ngIf="!myUserInQueue" data-toggle="modal" data-target="#queueModal">Queue</button>
     <a class="btn btn-primary btn-md" *ngIf="myUserInQueue" (click)="deleteFromQueue()">Remove me</a>
   </div>
+
+  <!-- CAROUSEL -->
+
+  <div id="carousel-generic" class="carousel slide" data-ride="carousel" data-interval="10000" *ngIf="locations.length > 0">
+      <div class="carousel-inner" role="listbox">
+          <div *ngFor="#loc of locations" class="item" [ngClass]="{active: isActive(loc.image)}">
+              <img class="img-responsive" src='{{loc.image}}' alt="Oh noes! Something went wrong!">
+              <div class="carousel-caption">
+                <h3>{{loc.name}}</h3>
+              </div>
+          </div>
+      </div>
+
+      <!-- Controls -->
+      <a class="left carousel-control" href="#carousel-generic" role="button" data-slide="prev">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#carousel-generic" role="button" data-slide="next">
+          <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+      </a>
+  </div>
+
+  <!-- /CAROUSEL -->
+
   <br><br>
 
   <table class="table table-hover">
@@ -24,7 +50,7 @@
         <b>Task</b>
       </td>
       <td>
-        <b>Soon to come: Location!</b>
+        <b>Location</b>
       </td>
       <td>
 
@@ -42,8 +68,8 @@
 
       </td>
       <td>
-        Roomnumber<br> <!-- element.location.room -->
-        Placement description <!-- element.location.description -->
+        {{element.location.name}}<br> <!-- element.location.name -->
+        {{element.location.table}} <!-- element.location.table -->
       </td>
       <td class="text-right">
         <div class="btn-group btn-group-sm" *ngIf="teacherOrAssistent">
@@ -55,7 +81,6 @@
             <li *ngIf="element.helper"><a (click)="acceptTask(element)">Accept</a></li>
             <li *ngIf="i +1 < queue.list.length"><a href="#" type="button" data-toggle="modal" data-target="#delayModal" (click)="onClickDelay(i, element)">Delay</a></li>
 
-            <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>
             <li><a (click)="removeQueueElement(element)">Remove group</a></li>
           </ul>
@@ -112,6 +137,37 @@
           <div class="col-sm-8">
             <div class="row">
               <div class="col-sm-6">
+                <b>Task</b><br>
+                <div>
+                  <select size="5" class="form-control">
+                    <option *ngFor="#task of tasks" (click)="selectTask(task)">{{task.number}} - {{task.title}}</option>
+                  </select>
+                </div>
+                <br>
+              </div>
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="col-sm-8">
+                    <b>Location</b><br>
+                    <select class="form-control" size="5">
+                      <option *ngFor="#loc of locations" (click)="selectLocation(loc)">{{loc.name}}</option>
+                    </select>
+                    <br>
+                  </div>
+                  <div class="col-sm-4">
+                    <b>Seat</b><br>
+                    <select class="form-control">
+                      <option *ngFor="#num of _selectedLocation?.count|range; #i = index" (click)="selectSeatnumber(i+1)"> {{i+1}}</option>
+                    </select>
+                    <br>
+                  </div>
+                </div>
+                <br>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-6">
                 <b>Users in subject</b><br>
                 <div>
                   <select size="5" class="form-control">
@@ -132,26 +188,13 @@
 
             </div>
 
-            <div class="row">
-              <div class="col-sm-6">
-                <b>Task</b><br>
-                <div>
-                  <select size="5" class="form-control">
-                    <option *ngFor="#task of tasks" (click)="selectTask(task)">{{task.number}} - {{task.title}}</option>
-                  </select>
-                </div>
-                <br>
-              </div>
-              <div class="col-sm-6">
-                <b>Location</b><br>
-                <input size="5" type="text" id="inputRoomDescription" class="form-control" placeholder="Description...">
-                <br>
-              </div>
-            </div>
+
 
           </div>
           <div class="col-sm-4">
-            ImageLocation
+            <div *ngIf="_selectedLocation">
+              <img [src]="_selectedLocation.image" id="locationImage" alt=" Oh noes! You must have broken something :o" class="img-responsive"/>
+            </div>
           </div>
         </div>
       </div>

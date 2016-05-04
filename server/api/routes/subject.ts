@@ -73,7 +73,7 @@ router.get('/:code', (req: Request, res: Response, next: NextFunction) => {
         // users populated
         Location.populate(subject, {
           path: 'locations',
-          select: 'name count imagePath'
+          select: 'name count image'
         }).then(subject => {
           // locations populated
           for (var user of subject.users) {
@@ -532,7 +532,7 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
 
   let task: number  = +req.body.task || 1;
   let comment: string = req.body.comment || 'Comment';
-  let location: string = req.body.location;
+  let location = req.body.location;
 
 
   users_id.push(req.authenticatedUser._id);
@@ -594,7 +594,8 @@ router.post('/:code/queue', (req: Request, res: Response, next: NextFunction) =>
                timeEntered: new Date(),
                comment: comment,
                position: pos, // in queue
-               task: task
+               task: task,
+               location: location
              }
 
              subj.queue.list.push(q);

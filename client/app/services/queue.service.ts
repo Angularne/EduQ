@@ -14,12 +14,12 @@ export class QueueService {
 
   constructor(private http: Http) {}
 
-  addQueueElement(users: User[], task: Task) {
+  addQueueElement(users: User[], task: Task, location: any) {
     var json = {
       "users": users,
       "comment": 'Not implemented',
       "task": task,
-      "location": null
+      "location": location
     }
     if (this.subject) {
       this.http.post(`api/subject/${this.subject.code}/queue`, JSON.stringify(json), {
@@ -52,10 +52,10 @@ export class QueueService {
     var json = {
       "delay": places
     }
-    this.http.post(`api/subject/${this.subject.code}/queue/${element.id}/delay`, JSON.stringify(json), {
+    this.http.post(`api/subject/${this.subject.code}/queue/${element._id}/delay`, JSON.stringify(json), {
       headers: authHeaders()
     }).subscribe();
-    console.error('Error: SubjectService.delayQueueElement not implemented on server!');
+    console.log(json);
   }
 
   toggleQueueActive(active: boolean) {
@@ -66,4 +66,15 @@ export class QueueService {
        headers: authHeaders()
      }).subscribe();
   }
+
+  acceptQueueElement(users: User[], task: number) {
+    var json = {
+      "users" : users,
+      "task": task
+    }
+    return this.http.post(`api/subject/${this.subject.code}/task`, JSON.stringify(json), {
+      headers: authHeaders()
+    });
+  }
+
 }

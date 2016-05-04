@@ -8,7 +8,7 @@ let SERVER_ADDRESS = 'http://localhost:3000';
 @Injectable()
 export class LocationService {
 
-  _locations: Location[];
+  _locations: Location[] = [];
 
   constructor(private http: Http) {}
 
@@ -72,6 +72,7 @@ export class LocationService {
   }
 
   getLocations(code: string, select: string = null, populate: string = null) {
+
     let url = '/api/location/' + code + '?'
     + (select ? 'select=' + select + '&': '')
     + (populate ? 'populate=' + populate : '');
@@ -84,6 +85,8 @@ export class LocationService {
       } else return null;
     });
 
+
   }
+
 
 }

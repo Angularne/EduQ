@@ -2,15 +2,19 @@ import {Injector, Component, OnInit, Input, OnChanges} from 'angular2/core';
 import {AuthService} from '../../../services/auth.service';
 import {Queue} from '../../../interfaces/subject';
 import {User, UserSubject} from '../../../interfaces/user';
+import {Location} from "../../../interfaces/location";
 import {SubjectUser, Task, Subject} from '../../../interfaces/subject';
 import {SubjectService} from '../../../services/subject.service';
 import {UserService} from '../../../services/user.service';
 import {QueueService} from '../../../services/queue.service';
 import {LocationService} from "../../../services/location.service";
+import {RangePipe} from "../../../common/range";
 
 @Component({
   selector: 'queue',
-  templateUrl: 'app/components/subject/queue/queue.html'
+  templateUrl: 'app/components/subject/queue/queue.html',
+  styleUrls: ['app/components/subject/queue/queue.css'],
+  pipes: [RangePipe]
 })
 
 export class QueueComponent implements OnInit, OnChanges {
@@ -37,7 +41,6 @@ export class QueueComponent implements OnInit, OnChanges {
   get userTasks() {return this._tasksIHaveDone;}
   haveIDoneThatTask(task: Task) {
     if (!this._tasksIHaveDone) {
-      console.log(this);
       for (let sub of this.user.subjects) {
         if (sub.code === this.subjectService.subject.code) {
           this._tasksIHaveDone = sub.tasks;
@@ -70,8 +73,18 @@ export class QueueComponent implements OnInit, OnChanges {
   _locations: Location[];
   @Input() set locations(locations) {
     this._locations = locations;
+    this._selectedLocation = this._locations[0];
   }
   get locations() {return this._locations;}
+
+  _selectedLocation: Location;
+  selectLocation(loc: Location) {
+    this._selectedLocation = loc;
+  }
+  _selectedSeatnumber: number = 1;
+  selectSeatnumber(i: number) {
+    this._selectedSeatnumber = i;
+  }
 
   _studentsNotInQueue: SubjectUser[] = [];
   get studentsNotInQueue() {return this._studentsNotInQueue;}
@@ -113,6 +126,13 @@ export class QueueComponent implements OnInit, OnChanges {
     }
   }
 /** /Delay Modal functions/ */
+
+/** Carousel functions */
+
+  isActive(url: string) {
+      return url === this.locations[0].image;
+  }
+  /** /Carousel functions/ */
 
   ngOnInit() {
   }
@@ -191,7 +211,11 @@ return true;
     this.queueService.toggleQueueActive(this.queue.active);
   }
   addQueueElement() {
-    this.queueService.addQueueElement(this.usersSelected, this._taskSelected);
+    var loc = {
+      name: this._selectedLocation.name,
+      table: this._selectedSeatnumber
+    }
+    this.queueService.addQueueElement(this.usersSelected, this._taskSelected, loc);
     this.usersSelected = [];
   }
   deleteFromQueue() {
@@ -206,9 +230,13 @@ return true;
     this.queueService.helpQueueElement(element);
   }
   delayQueueElement(element: any, places: number) {
-    console.error('Error: QueueComponent.delayQueueElement not implemented!');
+    this.queueService.delayQueueElement(element, places);
   }
   acceptTask(element: any) {
-    console.error('Error: QueueComponent.acceptTask not implemented!');
+    this.queueService.acceptQueueElement(element.users, element.task).subscribe((res) => {
+      if (res.status == 200) {
+        this.removeQueueElement(element);
+      }
+    });
   }
 }
