@@ -1,5 +1,5 @@
-import {Component, OnInit, OnDestroy} from 'angular2/core';
-import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {SubjectService} from '../../services/subject.service';
 import {Subject, Task} from '../../interfaces/subject';
 import {User} from '../../interfaces/user';

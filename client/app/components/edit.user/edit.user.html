@@ -45,7 +45,7 @@
       <label class="form-control-label" class="col-sm-2" for="classOf">Rights</label>
       <div class="col-sm-10">
         <select class="selectpicker form-control" name="rights" [(ngModel)]="user.rights" [disabled]="!editable['rights']">
-          <option *ngFor="#right of ['Student', 'Teacher', 'Admin'];" [value]="right">
+          <option *ngFor="let right of ['Student', 'Teacher', 'Admin'];" [value]="right">
             {{right}}
           </option>
         </select>

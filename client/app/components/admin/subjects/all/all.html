@@ -13,7 +13,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="#subject of filteredSubjects">
+    <tr *ngFor="let subject of filteredSubjects">
       <td>
         <a [routerLink]="['EditPath',{code:subject.code}]">{{subject.code}} - {{subject.name}}</a>
       </td>

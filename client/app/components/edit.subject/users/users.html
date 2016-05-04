@@ -2,7 +2,7 @@
   <label class="form-control-label" [attr.for]="'input-'+label" class="col-sm-2" >{{label}}</label>
   <div class="col-sm-10">
     <ul class="list-group">
-      <li *ngFor="#user of users; #i = index" class="list-group-item">{{user.firstname}} {{user.lastname}}
+      <li *ngFor="let user of users; let i = index" class="list-group-item">{{user.firstname}} {{user.lastname}}
         <a class="close" (click)="removeUser(user)"><span class="glyphicon glyphicon-remove"></span></a>
       </li>
 
@@ -14,7 +14,7 @@
           </div>
         </div>
         <ul class="list-group" *ngIf="suggestions.length" style="position: absolute; z-index: 1000">
-          <a class="list-group-item" *ngFor="#sug of suggestions" (click)="addUser(sug)" >{{sug.firstname}} {{sug.lastname}}</a>
+          <a class="list-group-item" *ngFor="let sug of suggestions" (click)="addUser(sug)" >{{sug.firstname}} {{sug.lastname}}</a>
         </ul>
       </li>
     </ul>

@@ -1,5 +1,5 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from 'angular2/core';
-import {RouteParams, Router} from 'angular2/router';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from '@angular/core';
+import {RouteParams, Router} from '@angular/router-deprecated';
 import {UserService} from '../../services/user.service';
 import {User} from '../../interfaces/user';
 import {AuthService} from '../../services/auth.service';
@@ -98,8 +98,7 @@ export class EditUserComponent implements OnInit {
 
     if (!re.test(this.user.email)) {
       this.message = "Email is not correct";
-      /* HACK: diabled email check */
-      //return false;
+      return false;
     }
 
     return true;

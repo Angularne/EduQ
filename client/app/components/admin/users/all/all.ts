@@ -1,5 +1,5 @@
-import {Component} from 'angular2/core';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component} from '@angular/core';
+import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {UserService} from '../../../../services/user.service';
 import {User} from '../../../../interfaces/user';
 import {ConfirmModalOptions, ConfirmModalComponent} from '../../../confirm.modal/confirm.modal';
@@ -51,7 +51,6 @@ export class AdminUsersAllComponent {
       }
     };
 
-    /** HACK:  as any*/
     ($('#confirmModal') as any).modal('show');
   }
 

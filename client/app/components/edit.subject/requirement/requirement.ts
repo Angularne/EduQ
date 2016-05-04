@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, OnChanges, Output, EventEmitter} from 'angular2/core';
+import {Component, Input, OnInit, OnChanges, Output, EventEmitter} from '@angular/core';
 import {RangePipe} from '../../../common/range';
 import {Requirement} from '../../../interfaces/subject';
 @Component({

@@ -1,5 +1,5 @@
-import {Injectable, Inject} from 'angular2/core';
-import {Http, Headers, Request, RequestMethod} from "angular2/http";
+import {Injectable, Inject} from '@angular/core';
+import {Http, Headers, Request, RequestMethod} from "@angular/http";
 import {Subject} from '../interfaces/subject';
 import {User} from "../interfaces/user";
 import {AuthService} from './auth.service';

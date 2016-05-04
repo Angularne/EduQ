@@ -1,5 +1,5 @@
-import {Injectable, Inject} from 'angular2/core';
-import {Http, Headers, Request, RequestMethod} from "angular2/http";
+import {Injectable, Inject} from '@angular/core';
+import {Http, Headers, Request, RequestMethod} from "@angular/http";
 import {User} from '../interfaces/user';
 import {Subject, SubjectUser} from '../interfaces/subject';
 import {Queue, Broadcast} from '../interfaces/subject';

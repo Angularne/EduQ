@@ -1,5 +1,6 @@
-import {Component, OnInit, OnDestroy} from "angular2/core";
-import {Router, RouteConfig, RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component, OnInit, OnDestroy} from "@angular/core";
+import {Router, RouteConfig, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
+import {AuthService} from '../../services/auth.service';
 import {AdminUsersComponent} from './users/users';
 import {AdminSubjectsComponent} from './subjects/subjects';
 import {AdminLocationComponent} from './location/location';
@@ -14,6 +15,22 @@ import {AdminLocationComponent} from './location/location';
   {path: '/users/...', component: AdminUsersComponent, as: 'AdminUsersPath'},
   {path: '/locations/...', component: AdminLocationComponent, as: 'AdminLocationsPath'}
 ])
-export class AdminpageComponent {
-  constructor(private router: Router){}
+export class AdminpageComponent implements OnInit {
+  constructor(private router: Router, private auth: AuthService){}
+
+  ngOnInit() {
+    console.log('admin init');
+    this.auth.getUser().then(user => {
+      if (user) {
+        if (user.rights != 'Admin') {
+          this.router.navigate(['MainPath']);
+        }
+        // User is admin
+      } else {
+        this.router.navigate(['MainPath']);
+      }
+    }).catch(err => {
+      this.router.navigate(['MainPath']);
+    });
+  }
 }

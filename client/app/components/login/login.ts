@@ -1,6 +1,6 @@
-import {Component, Inject} from 'angular2/core';
-import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup, NgIf} from 'angular2/common';
-import {Router, CanActivate} from 'angular2/router';
+import {Component, Inject} from '@angular/core';
+import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup, NgIf} from '@angular/common';
+import {Router, CanActivate} from '@angular/router-deprecated';
 import {AuthService} from "../../services/auth.service";
 
 @Component({

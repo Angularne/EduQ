@@ -1,5 +1,5 @@
-import {Component} from 'angular2/core';
-import {Router, RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component} from '@angular/core';
+import {Router, RouteConfig, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {LocationService} from "../../../services/location.service";
 import {EditLocationComponent} from '../../edit.location/edit.location';
 import {AdminLocationsAllComponent} from './all/all';

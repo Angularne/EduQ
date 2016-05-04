@@ -94,7 +94,6 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
   re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;  // email
 
   if (!re.test(user.email)) {
-    /* HACK: Disabled email checking */
     return res.status(400).json({errmsg: "email is not correct"});
   }
 

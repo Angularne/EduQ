@@ -1,5 +1,5 @@
 
-import { Pipe,PipeTransform } from "angular2/core";
+import { Pipe,PipeTransform } from "@angular/core";
 
 //We tell Angular that this is a pipe by applying the @Pipe decorator which we import from the core Angular library.
 

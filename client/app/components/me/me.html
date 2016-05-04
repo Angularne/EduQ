@@ -18,7 +18,7 @@
           <a class="btn btn-default" (click)="pane = 'password'">Change Password</a>
         </div>
       </div>
-      <subject-tasks class="row" *ngFor="#subject of user?.subjects" [subject]="subject">Subject tasks loading...</subject-tasks>
+      <subject-tasks class="row" *ngFor="let subject of user?.subjects" [subject]="subject">Subject tasks loading...</subject-tasks>
     </div>
   </template>
 </div>

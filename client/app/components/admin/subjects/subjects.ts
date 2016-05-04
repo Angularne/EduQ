@@ -1,5 +1,5 @@
-import {Component} from 'angular2/core';
-import {Router, RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component} from '@angular/core';
+import {Router, RouteConfig, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {EditSubjectComponent} from '../../edit.subject/edit.subject';
 import {SubjectUsersComponent} from '../../subject.users/subject.users';
 import {AdminSubjectsAllComponent} from './all/all';

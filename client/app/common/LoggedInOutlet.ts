@@ -1,5 +1,5 @@
-import {Directive, Attribute, ElementRef, ViewContainerRef, DynamicComponentLoader} from 'angular2/core';
-import {Router, RouterOutlet, ComponentInstruction} from 'angular2/router';
+import {Directive, Attribute, ElementRef, ViewContainerRef, DynamicComponentLoader} from '@angular/core';
+import {Router, RouterOutlet, ComponentInstruction} from '@angular/router-deprecated';
 
 @Directive({
   selector: 'auth-router-outlet'

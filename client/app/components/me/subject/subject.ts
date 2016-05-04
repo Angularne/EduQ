@@ -1,7 +1,7 @@
-import {Component, Input} from "angular2/core";
+import {Component, Input} from "@angular/core";
 import {Subject} from '../../../interfaces/subject';
 import {UserSubject} from '../../../interfaces/user';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 
 
 @Component({

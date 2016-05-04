@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output, Input, OnInit, OnChanges} from 'angular2/core';
+import {Component, EventEmitter, Output, Input, OnInit, OnChanges} from '@angular/core';
 import {Broadcast} from '../../../interfaces/subject';
 import {User} from "../../../interfaces/user";
 import {BroadcastDetailComponent} from '../../subject/broadcasts/broadcast/broadcast';

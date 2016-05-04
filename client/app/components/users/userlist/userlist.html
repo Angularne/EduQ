@@ -1,5 +1,5 @@
 <ul class="list-group">
-  <li class="list-group-item" *ngFor="#user of users">
+  <li class="list-group-item" *ngFor="let user of users">
 
     <a (click)="selected.emit(user)">
       {{user.firstname}} {{user.lastname}}

@@ -39,7 +39,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="#user of users" >
+          <tr *ngFor="let user of users" >
             <td>
               <input type="checkbox" [(ngModel)]="user.selected">
             </td>

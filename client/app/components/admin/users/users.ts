@@ -1,5 +1,5 @@
-import {Component, OnInit, OnDestroy} from 'angular2/core';
-import {Router, RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Router, RouteConfig, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {AddClassComponent} from '../../add.class/add.class';
 import {EditUserComponent} from '../../edit.user/edit.user';
 import {UserService} from '../../../services/user.service';

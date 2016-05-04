@@ -1,5 +1,5 @@
-import {Component, OnInit, Input, EventEmitter, Output, ViewChild} from 'angular2/core';
-import {RouteParams, Router, ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component, OnInit, Input, EventEmitter, Output, ViewChild} from '@angular/core';
+import {RouteParams, Router, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {SubjectService} from '../../services/subject.service';
 import {Subject, SubjectUser} from '../../interfaces/subject';
 import {EditRequirementComponent} from './requirement/requirement';

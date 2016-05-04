@@ -1,8 +1,8 @@
 {
-  "name": "server",
+  "name": "eduq-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "eduQ Server",
+  "main": "build/server.js",
   "scripts": {
     "start": "nodemon ./build/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,11 +15,9 @@
     "bcrypt": "^0.8.6",
     "body-parser": "^1.15.0",
     "express": "^4.13.3",
-    "jsonwebtoken": "^5.7.0",
     "mongoose": "^4.4.7",
     "morgan": "^1.7.0",
     "nodemailer": "^2.3.2",
-    "socket.io": "^1.4.5",
-    "socketio-auth": "0.0.5"
+    "socket.io": "^1.4.5"
   }
 }

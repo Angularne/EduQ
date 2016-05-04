@@ -1,5 +1,5 @@
-import {Component} from 'angular2/core';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component} from '@angular/core';
+import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {SubjectService} from '../../../../services/subject.service';
 import {Subject} from '../../../../interfaces/subject';
 import {ConfirmModalOptions, ConfirmModalComponent} from '../../../confirm.modal/confirm.modal';
@@ -53,7 +53,6 @@ export class AdminSubjectsAllComponent {
           }
         };
 
-        /** HACK:  as any*/
         ($('#confirmModal') as any).modal('show');
   }
 }

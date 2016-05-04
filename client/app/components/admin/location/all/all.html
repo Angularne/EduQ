@@ -19,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="#location of filteredLocations">
+    <tr *ngFor="let location of filteredLocations">
       <td width="100px">
         <img [src]="location.image" alt="No image" class="img-thumbnail" width="100px"/>
       </td>

@@ -1,5 +1,5 @@
-import {Component, OnInit, OnChanges} from 'angular2/core';
-import {Router, ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component, OnInit, OnChanges} from '@angular/core';
+import {Router, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {AuthService} from '../../services/auth.service';
 import {Subject} from '../../interfaces/subject';
 import {SubjectsComponent} from '../subjects/subjects';

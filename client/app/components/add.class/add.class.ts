@@ -1,5 +1,5 @@
-import {Component, Output, EventEmitter} from 'angular2/core';
-import {Router} from 'angular2/router';
+import {Component, Output, EventEmitter} from '@angular/core';
+import {Router} from '@angular/router-deprecated';
 import {UserService} from '../../services/user.service';
 import {User} from '../../interfaces/user';
 

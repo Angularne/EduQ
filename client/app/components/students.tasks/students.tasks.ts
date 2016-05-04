@@ -1,5 +1,5 @@
-import {Component, OnInit, ChangeDetectionStrategy} from 'angular2/core';
-import {RouteParams, ROUTER_DIRECTIVES, Router} from 'angular2/router';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {RouteParams, ROUTER_DIRECTIVES, Router} from '@angular/router-deprecated';
 import {SubjectService} from '../../services/subject.service';
 import {Subject, SubjectUser} from '../../interfaces/subject';
 @Component({

@@ -12,7 +12,7 @@
 
   <div id="carousel-generic" class="carousel slide" data-ride="carousel" data-interval="10000" *ngIf="locations.length > 0">
       <div class="carousel-inner" role="listbox">
-          <div *ngFor="#loc of locations" class="item" [ngClass]="{active: isActive(loc.image)}">
+          <div *ngFor="let loc of locations" class="item" [ngClass]="{active: isActive(loc.image)}">
               <img class="img-responsive" src='{{loc.image}}' alt="Oh noes! Something went wrong!">
               <div class="carousel-caption">
                 <h3>{{loc.name}}</h3>
@@ -57,12 +57,12 @@
       </td>
 
     </tr>
-    <tr *ngFor="#element of queue?.list; #i = index">
+    <tr *ngFor="let element of queue?.list; let i = index">
       <td>
         {{i+1}}
       </td>
       <td>{{element.timeEntered}} <span *ngIf="element.helper"> - Helper: {{element.helper.firstname}}</span></td>
-      <td><span *ngFor="#user of element?.users; #i = index"> <span *ngIf="i != 0"> - </span>{{user.firstname}}</span> </td>
+      <td><span *ngFor="let user of element?.users; let i = index"> <span *ngIf="i != 0"> - </span>{{user.firstname}}</span> </td>
       <td>
         <span> {{element.task}}</span>
 
@@ -111,7 +111,7 @@
       <div class="modal-body">
           <label for=""></label>
           <select class="form-control">
-            <option *ngFor="#step of steppermax; #i = index" (select)="onDelaySelect(i)">{{i+1}} places</option>
+            <option *ngFor="let step of steppermax; let i = index" (select)="onDelaySelect(i)">{{i+1}} places</option>
           </select>
       </div>
       <div class="modal-footer">
@@ -140,7 +140,7 @@
                 <b>Task</b><br>
                 <div>
                   <select size="5" class="form-control">
-                    <option *ngFor="#task of tasks" (click)="selectTask(task)">{{task.number}} - {{task.title}}</option>
+                    <option *ngFor="let task of tasks" (click)="selectTask(task)">{{task.number}} - {{task.title}}</option>
                   </select>
                 </div>
                 <br>
@@ -150,14 +150,14 @@
                   <div class="col-sm-8">
                     <b>Location</b><br>
                     <select class="form-control" size="5">
-                      <option *ngFor="#loc of locations" (click)="selectLocation(loc)">{{loc.name}}</option>
+                      <option *ngFor="let loc of locations" (click)="selectLocation(loc)">{{loc.name}}</option>
                     </select>
                     <br>
                   </div>
                   <div class="col-sm-4">
                     <b>Seat</b><br>
                     <select class="form-control">
-                      <option *ngFor="#num of _selectedLocation?.count|range; #i = index" (click)="selectSeatnumber(i+1)"> {{i+1}}</option>
+                      <option *ngFor="let num of _selectedLocation?.count|range; let i = index" (click)="selectSeatnumber(i+1)"> {{i+1}}</option>
                     </select>
                     <br>
                   </div>
@@ -171,7 +171,7 @@
                 <b>Users in subject</b><br>
                 <div>
                   <select size="5" class="form-control">
-                    <option *ngFor="#user of studentsNotInQueue" (click)="selectUser(user)" draggable="true">{{user.firstname}} {{user.lastname}}</option>
+                    <option *ngFor="let user of studentsNotInQueue" (click)="selectUser(user)" draggable="true">{{user.firstname}} {{user.lastname}}</option>
                   </select>
                 </div>
                 <br>
@@ -180,7 +180,7 @@
                 <b>Add friends</b><br>
                 <div>
                   <select size="5" class="form-control">
-                    <option *ngFor="#selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</option>
+                    <option *ngFor="let selectedUser of usersSelected" (click)="unselectUser(selectedUser)">{{selectedUser.firstname}} {{selectedUser.lastname}}</option>
                   </select>
                 </div>
                 <br>

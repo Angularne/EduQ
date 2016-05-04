@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output, Input} from 'angular2/core';
+import {Component, EventEmitter, Output, Input} from '@angular/core';
 import {Broadcast} from '../../../interfaces/subject';
 import {BroadcastDetailComponent} from './broadcast/broadcast';
 import {BroadcastService} from '../../../services/broadcast.service';
@@ -14,7 +14,7 @@ import {ReversePipe} from '../../../common/reverse';
     <button type="submit" (click)="createBroadcast(title, content)">Post</button>
   </form>
   <hr>
-  <broadcast *ngFor="#broadcast of broadcasts | reverse" [broadcast]="broadcast" (delete)="deleteBroadcast($event)" [role]="role"></broadcast>
+  <broadcast *ngFor="let broadcast of broadcasts | reverse" [broadcast]="broadcast" (delete)="deleteBroadcast($event)" [role]="role"></broadcast>
   `,
   directives: [BroadcastDetailComponent],
   pipes: [ReversePipe]

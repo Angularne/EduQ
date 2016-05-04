@@ -19,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="#user of filteredUsers">
+    <tr *ngFor="let user of filteredUsers">
       <td>
         <a [routerLink]="['EditPath', { id:user._id}]">{{user.firstname}} {{user.lastname}}</a>
       </td>

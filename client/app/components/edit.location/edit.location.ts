@@ -1,5 +1,5 @@
-import {Component, OnInit, Output, EventEmitter, ViewChild} from 'angular2/core';
-import {RouteParams, Router} from 'angular2/router';
+import {Component, OnInit, Output, EventEmitter, ViewChild} from '@angular/core';
+import {RouteParams, Router} from '@angular/router-deprecated';
 import {LocationService} from '../../services/location.service';
 import {Location} from '../../interfaces/location';
 import {AlertComponent} from '../alert/alert';

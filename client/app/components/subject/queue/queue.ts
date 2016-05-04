@@ -1,4 +1,4 @@
-import {Injector, Component, OnInit, Input, OnChanges} from 'angular2/core';
+import {Injector, Component, OnInit, Input, OnChanges} from '@angular/core';
 import {AuthService} from '../../../services/auth.service';
 import {Queue} from '../../../interfaces/subject';
 import {User, UserSubject} from '../../../interfaces/user';

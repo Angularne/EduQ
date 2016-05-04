@@ -1,13 +1,13 @@
 {
-  "name": "kosystem",
+  "name": "eduq",
   "version": "1.0.0",
-  "description": "kosystem",
+  "description": "eduQ",
   "main": "server/build/server.js",
   "scripts": {
     "start": "nodemon ./server/build/server.js",
-    "install": "npm run install.npm && npm run install.typings",
-    "install.npm": "cd server && npm i && cd ../client && npm i",
-    "install.typings": "cd server && typings i && cd ../client && typings i",
+    "install": "cd server && npm i && cd ../client && npm i",
+    "postinstall": "npm run i.typings && npm run build",
+    "i.typings": "cd server && typings i && cd ../client && typings i && cd ..",
     "build": "npm run build.server & npm run build.client",
     "build.server": "ntsc -p server",
     "build.client": "ntsc -p client",
@@ -19,17 +19,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Angularne/kosystem.git"
+    "url": "https://github.com/Angularne/eduQ.git"
   },
   "devDependencies": {
     "nodemon": "^1.9.0",
     "ntypescript": "^1.201602212305.1",
     "typings": "^0.7.11"
-  },
-  "dependencies": {
-    "es6-shim": "^0.34.4",
-    "reflect-metadata": "^0.1.3",
-    "rxjs": "^5.0.0-beta.5",
-    "zone.js": "^0.5.15"
   }
 }

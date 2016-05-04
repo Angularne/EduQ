@@ -1,7 +1,7 @@
-import {Injectable, Inject} from 'angular2/core';
-import {Router} from 'angular2/router';
+import {Injectable, Inject} from '@angular/core';
+import {Router} from '@angular/router-deprecated';
 import {Observable} from 'rxjs/Rx';
-import {Http, Headers, Response} from "angular2/http";
+import {Http, Headers, Response} from "@angular/http";
 import {authHeaders} from '../common/headers';
 import {User} from '../interfaces/user';
 import {Binding} from '../common/binding';

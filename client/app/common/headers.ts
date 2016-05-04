@@ -1,4 +1,4 @@
-import {Headers} from 'angular2/http';
+import {Headers} from '@angular/http';
 
 export function authHeaders() {
   let headers = new Headers();

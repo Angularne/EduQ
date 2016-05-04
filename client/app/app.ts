@@ -1,5 +1,5 @@
-import {Component, Inject, ApplicationRef} from 'angular2/core';
-import {Router, RouteConfig} from 'angular2/router';
+import {Component, Inject, ApplicationRef} from '@angular/core';
+import {Router, RouteConfig} from '@angular/router-deprecated';
 import {LoginComponent} from "./components/login/login";
 import {MainComponent} from "./components/main/main";
 import {SubjectsComponent} from './components/subjects/subjects';

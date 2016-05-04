@@ -10,7 +10,7 @@
           <a [routerLink]="['AdminLocationsPath']" class="list-group-item" [class.active]="router.currentInstruction.component.routeName == 'AdminLocationsPath'" >Locations</a>
 
 
-          <!-- <a *ngFor="#pane of panes" class="list-group-item clickable"
+          <!-- <a *ngFor="let pane of panes" class="list-group-item clickable"
             [routerLink]="['AdminOption1Path', {component:pane.path}]"
             [class.active]="pane.path == activePane" (click)="activePane = pane.path">{{pane.label}}</a> -->
         </ul>

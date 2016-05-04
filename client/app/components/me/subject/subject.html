@@ -14,7 +14,7 @@
 
 
   <ul  class="list-inline">
-      <li *ngFor="#task of tasks; #i = index" >
+      <li *ngFor="let task of tasks; let i = index" >
         {{i + 1}}
         <span *ngIf="task" class="glyphicon glyphicon-ok" [style.color]="'green'" ></span>
         <span *ngIf="!task" class="glyphicon glyphicon-remove" [style.color]="'red'"></span>
@@ -23,7 +23,7 @@
     </ul>
     <h5>  <span *ngIf="subject.requirements.length == 0"> No </span> Requirements</h5>
     <ul>
-      <li *ngFor="#req of subject.requirements">
+      <li *ngFor="let req of subject.requirements">
         {{req.required}} of {{req.from}}-{{req.to}}
       </li>
 

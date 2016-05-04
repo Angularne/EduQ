@@ -1,5 +1,5 @@
-import {Component} from 'angular2/core';
-import {ROUTER_DIRECTIVES, Router} from 'angular2/router';
+import {Component} from '@angular/core';
+import {ROUTER_DIRECTIVES, Router} from '@angular/router-deprecated';
 import {Location} from "../../../../interfaces/location";
 import {LocationService} from "../../../../services/location.service";
 import {ConfirmModalOptions, ConfirmModalComponent} from '../../../confirm.modal/confirm.modal';
@@ -53,7 +53,6 @@ export class AdminLocationsAllComponent {
        }
      };
 
-     /** HACK:  as any*/
      ($('#confirmModal') as any).modal('show');
   }
 

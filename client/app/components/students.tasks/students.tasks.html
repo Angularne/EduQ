@@ -4,13 +4,13 @@
 </nav>
 
 <div *ngIf="subject">
-  <div *ngFor="#user of students">
+  <div *ngFor="let user of students">
     <h4>
       {{user.firstname}} {{user.lastname}}
       <span class="label label-success" *ngIf="user.completed">Completed</span>
     </h4>
     <ul class="list-unstyled" *ngIf="user.tasks">
-      <li *ngFor="#task of user.tasks">
+      <li *ngFor="let task of user.tasks">
         <label>
           <input type="checkbox" class="" [ngModel]="task.completed" (click)="setTask(user, task)">
           {{task.number}} {{task.title}}</label><span *ngIf="task.approvedBy">,

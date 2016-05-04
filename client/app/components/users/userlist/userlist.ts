@@ -1,7 +1,7 @@
-import {Component, OnInit, Output, EventEmitter} from 'angular2/core';
+import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import {User} from '../../../interfaces/user';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 
 @Component({
   selector: 'user-list',

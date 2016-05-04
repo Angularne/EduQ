@@ -2,7 +2,7 @@
   <label class="form-control-label" for="locations" class="col-sm-2" >Locations</label>
   <div class="col-sm-10">
     <ul class="list-group">
-      <li *ngFor="#location of locations; #i = index" class="list-group-item">{{location.name}}
+      <li *ngFor="let location of locations; let i = index" class="list-group-item">{{location.name}}
         <a class="close" (click)="removeLocation(location)"><span class="glyphicon glyphicon-remove"></span></a>
       </li>
 
@@ -14,7 +14,7 @@
           </div>
         </div>
         <ul class="list-group" *ngIf="suggestions.length" style="position: absolute; z-index: 1000">
-          <a class="list-group-item" *ngFor="#sug of suggestions" (click)="addLocation(sug)" >{{sug.name}}</a>
+          <a class="list-group-item" *ngFor="let sug of suggestions" (click)="addLocation(sug)" >{{sug.name}}</a>
         </ul>
       </li>
     </ul>
