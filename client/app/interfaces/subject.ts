@@ -1,5 +1,5 @@
 import {User} from "./user";
-import {Location} from './location';
+import {Location} from "./location";
 
 /** Subject */
 export interface Subject  {
@@ -14,7 +14,7 @@ export interface Subject  {
   users?: SubjectUser[];
 }
 
-
+/** SubjectUser */
 export interface SubjectUser {
   _id?: string;
   firstname: string;
@@ -67,7 +67,7 @@ export interface QueueGroup {
 }
 
 /** Location */
-export interface Location {
+export interface QueueGroupLocation {
   _id?: string;
   room: string;
   table: string;

@@ -1,11 +1,11 @@
-import {Subject, Task, Requirement, Broadcast} from "./subject";
+import {Task, Requirement, Broadcast} from "./subject";
 
 export interface User {
   _id?: string;
   firstname: string;
   lastname: string;
-	email: string;
-	password?: string;
+  email: string;
+  password?: string;
   classOf: string;
   rights: string;
 
@@ -17,8 +17,8 @@ export interface UserSubject {
   code: string;
   name: string;
   role: string;
-  subjectTasks: Task[], // Tasks in subject
-  requirements: Requirement[],
+  subjectTasks: Task[]; // Tasks in subject
+  requirements: Requirement[];
   broadcasts: Broadcast[];
   tasks: any[];
 }

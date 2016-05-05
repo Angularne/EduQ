@@ -1,28 +1,23 @@
-import {Component} from '@angular/core';
-import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
-import {UserService} from '../../../../services/user.service';
-import {User} from '../../../../interfaces/user';
-import {ConfirmModalOptions, ConfirmModalComponent} from '../../../confirm.modal/confirm.modal';
+import {Component} from "@angular/core";
+import {ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {UserService} from "../../../../services/user.service";
+import {User} from "../../../../interfaces/user";
+import {ConfirmModalOptions, ConfirmModalComponent} from "../../../confirm.modal/confirm.modal";
 
 
 @Component({
-  selector: 'admin-users-all',
-  templateUrl: 'app/components/admin/users/all/all.html',
+  selector: "admin-users-all",
+  templateUrl: "app/components/admin/users/all/all.html",
   directives: [ROUTER_DIRECTIVES, ConfirmModalComponent]
 })
 export class AdminUsersAllComponent {
   users: User[];
   filteredUsers: User[];
-  activePane: string = 'all';
-
-
-
-  /** Modal */
   modal: ConfirmModalOptions = {};
 
   constructor(private userService: UserService) { }
 
-  ngOnInit(){
+  ngOnInit() {
     this.userService.getAllUsers().subscribe(res => {
       this.users = res;
       this.filteredUsers = res;
@@ -30,18 +25,18 @@ export class AdminUsersAllComponent {
   }
 
   filter(query: string) {
-    let regexp = new RegExp(query, 'i');
+    let regexp = new RegExp(query, "i");
 
     this.filteredUsers = this.users.filter(u => {
-      return regexp.test(u.firstname + ' ' + u.lastname);
+      return regexp.test(u.firstname + " " + u.lastname);
     });
   }
 
   delete(user: User) {
     /** Setup modal */
     this.modal = {
-      title: 'Delete User',
-      body: 'Are you sure you want to delete user ' + user.firstname + ' ' + user.lastname + '?',
+      title: "Delete User",
+      body: "Are you sure you want to delete user " + user.firstname + " " + user.lastname + "?",
       confirmed: (con) => {
         if (con) {
           this.userService.deleteUser(user._id).subscribe((res) => {
@@ -51,11 +46,11 @@ export class AdminUsersAllComponent {
       }
     };
 
-    ($('#confirmModal') as any).modal('show');
+    ($("#confirmModal") as any).modal("show");
   }
 
   ngOnDestroy() {
-    ($('.modal-backdrop') as any).remove();
+    ($(".modal-backdrop") as any).remove();
   }
 
 }

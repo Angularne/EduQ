@@ -1,7 +1,7 @@
 {
   "name": "eduq-client",
   "version": "1.0.0",
-  "description": "eduQ Client",
+  "description": "EduQ Client",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

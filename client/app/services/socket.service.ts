@@ -1,6 +1,5 @@
-import {Injectable} from '@angular/core';
-import {User} from '../interfaces/user';
-import {Subject, Queue, Broadcast} from '../interfaces/subject';
+import {Injectable} from "@angular/core";
+import {Subject, Queue, Broadcast} from "../interfaces/subject";
 
 let SERVER_ADDRESS = location.host;
 
@@ -10,18 +9,18 @@ export class SocketService {
   private socket: SocketIOClient.Socket;
   private subject: Subject;
 
-  constructor(){}
+  constructor() {}
 
 
   open(subject: Subject) {
     if (!this.socket && subject)
     this.subject = subject;
-    this.socket = io.connect(SERVER_ADDRESS + '/' + subject.code);
+    this.socket = io.connect(SERVER_ADDRESS + "/" + subject.code);
 
     /** TODO: Authenticate */
 
-    this.socket.on('queue', (queue) => {this.onQueue(queue);});
-    this.socket.on('broadcast', (broadcast) => {this.onBroadcast(broadcast);});
+    this.socket.on("queue", this.onQueue);
+    this.socket.on("broadcast", this.onBroadcast);
 
   }
 
@@ -33,7 +32,6 @@ export class SocketService {
     this.subject = null;
   }
 
-
   private onQueue(queue: Queue) {
     this.subject.queue = queue;
     this.subject.queue.list = queue.list.sort((a: any, b: any) => {
@@ -44,6 +42,4 @@ export class SocketService {
   private onBroadcast(broadcasts: Broadcast[]) {
     this.subject.broadcasts = broadcasts;
   }
-
-
 }

@@ -1,4 +1,4 @@
-# eduQ
+# EduQ
 
 NTNU Bachelor's degree Project
 
@@ -47,7 +47,7 @@ The project is depending on `node-gyp`
 
   ``` bash
 git clone https://github.com/Angularne/eduQ.git
-cd eduQ
+cd EduQ
   ```
 
 2. Install dependencies whith `npm`, this will also build the project

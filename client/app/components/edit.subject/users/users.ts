@@ -1,11 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Subject} from '../../../interfaces/subject';
-import {User} from '../../../interfaces/user';
-import {UserService} from '../../../services/user.service';
+import {Component, Input, OnInit} from "@angular/core";
+import {User} from "../../../interfaces/user";
+import {UserService} from "../../../services/user.service";
 
 @Component({
-  selector: 'edit-users',
-  templateUrl: 'app/components/edit.subject/users/users.html'
+  selector: "edit-users",
+  templateUrl: "app/components/edit.subject/users/users.html"
 })
 export class EditUsersComponent implements OnInit {
 
@@ -15,10 +14,12 @@ export class EditUsersComponent implements OnInit {
     if (this._users && this._type) {
       this.fetchAllUsers();
     }
-    this.query = '';
+    this.query = "";
     this.suggestions = [];
   }
-  get users() {return this._users;}
+  get users() {
+    return this._users;
+  }
 
   private all: User[];
 
@@ -27,7 +28,7 @@ export class EditUsersComponent implements OnInit {
   @Input() role: string;  // Teacher | Assistent
 
   private _type: string;
-  @Input() set type(type:string) {  // Teacher | Student | Admin
+  @Input() set type(type: string) {  // Teacher | Student | Admin
     this._type = type;
 
     if (this._type && this._users) {
@@ -35,9 +36,11 @@ export class EditUsersComponent implements OnInit {
 
     }
   }
-  get type() {return this._type;}
+  get type() {
+    return this._type;
+  }
 
-  query: string = '';
+  query: string = "";
   suggestions: User[] = [];
 
 
@@ -48,9 +51,9 @@ export class EditUsersComponent implements OnInit {
   }
 
   fetchAllUsers() {
-    this.userService.getAllUsers(this.type ? {rights:this.type} : null, 'firstname,lastname').subscribe((users) => {
+    this.userService.getAllUsers(this.type ? {rights: this.type} : null, "firstname,lastname").subscribe((users) => {
       this.all = [];
-      for (var user of users) {
+      for (let user of users) {
         if (!this.inUsers(user)) {
           this.all.push(user);
         }
@@ -59,8 +62,8 @@ export class EditUsersComponent implements OnInit {
   }
 
   private inUsers(user: User) {
-    for (var u of this.users) {
-      if (u._id == user._id) {
+    for (let u of this.users) {
+      if (u._id === user._id) {
         return true;
       }
     }
@@ -68,11 +71,11 @@ export class EditUsersComponent implements OnInit {
   }
 
   suggest() {
-    let q = new RegExp(this.query, 'i');
+    let q = new RegExp(this.query, "i");
     this.suggestions = [];
     if (this.query.length) {
-      for (var user of this.all) {
-        var name = `${user.firstname} ${user.lastname}`;
+      for (let user of this.all) {
+        let name = `${user.firstname} ${user.lastname}`;
         if (q.test(name)) {
           this.suggestions.push(user);
         }
@@ -90,12 +93,12 @@ export class EditUsersComponent implements OnInit {
     user.role = this.role;
 
     this.users.push(user);
-    this.query = '';
+    this.query = "";
     this.suggestions = [];
 
-    var i = 0;
-    for (var u of this.all) {
-      if (user._id == u._id) {
+    let i = 0;
+    for (let u of this.all) {
+      if (user._id === u._id) {
         this.all.splice(i, 1);
         break;
       }
@@ -104,11 +107,11 @@ export class EditUsersComponent implements OnInit {
 
   }
 
-  removeUser(user){
+  removeUser(user) {
     this.all.unshift(user);
     user.role = null;
-    for (var i in this.users) {
-      if (this.users[i]._id == user._id) {
+    for (let i in this.users) {
+      if (this.users[i]._id === user._id) {
         this.users.splice(+i, 1);
         break;
       }

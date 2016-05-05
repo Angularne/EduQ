@@ -1,17 +1,17 @@
-import {Component, OnInit, Input, EventEmitter, Output, ViewChild} from '@angular/core';
-import {RouteParams, Router, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
-import {SubjectService} from '../../services/subject.service';
-import {Subject, SubjectUser} from '../../interfaces/subject';
-import {EditRequirementComponent} from './requirement/requirement';
-import {EditTaskComponent} from './task/task';
-import {EditUsersComponent} from './users/users';
-import {EditLocationComponent} from './location/location';
-import {AlertComponent} from '../alert/alert';
+import {Component, OnInit, Input, EventEmitter, Output, ViewChild} from "@angular/core";
+import {RouteParams, Router, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {SubjectService} from "../../services/subject.service";
+import {Subject, SubjectUser} from "../../interfaces/subject";
+import {EditRequirementComponent} from "./requirement/requirement";
+import {EditTaskComponent} from "./task/task";
+import {EditUsersComponent} from "./users/users";
+import {EditLocationComponent} from "./location/location";
+import {AlertComponent} from "../alert/alert";
 
 
 @Component({
-  selector: 'edit-subject',
-  templateUrl: 'app/components/edit.subject/edit.subject.html',
+  selector: "edit-subject",
+  templateUrl: "app/components/edit.subject/edit.subject.html",
   directives: [ROUTER_DIRECTIVES, EditRequirementComponent, EditTaskComponent, EditUsersComponent, EditLocationComponent, AlertComponent]
 })
 export class EditSubjectComponent implements OnInit {
@@ -20,7 +20,9 @@ export class EditSubjectComponent implements OnInit {
     this._subject = sub;
     this.splitUsers();
   }
-  get subject() {return this._subject;}
+  get subject() {
+    return this._subject;
+  }
 
   message: string;
 
@@ -40,10 +42,10 @@ export class EditSubjectComponent implements OnInit {
   constructor(private subjectService: SubjectService, private routeParams: RouteParams, private router: Router) { }
 
   ngOnInit() {
-    if(!this.subject){
+    if (!this.subject) {
       this.subject = {
-        code: '',
-        name: '',
+        code: "",
+        name: "",
         tasks: [],
         requirements: [],
         broadcasts: [],
@@ -53,10 +55,10 @@ export class EditSubjectComponent implements OnInit {
         },
         users: [],
         locations: []
-      }
+      };
 
       // Get subject if no input
-      let code = this.routeParams.get('code') || this.routeParams.get('id');
+      let code = this.routeParams.get("code") || this.routeParams.get("id");
       if (code) {
         this.subjectService.getSubject(code).subscribe((sub) => {
           this.subject = sub;
@@ -65,28 +67,28 @@ export class EditSubjectComponent implements OnInit {
     }
   }
 
-  splitUsers(){
+  splitUsers() {
     this.students = [];
     this.assistents = [];
     this.teachers = [];
-    for (var user of this._subject.users) {
+    for (let user of this._subject.users) {
       switch (user.role) {
-        case 'Student':
+        case "Student":
           this.students.push(user);
-          break
+          break;
 
-        case 'Assistent':
+        case "Assistent":
           this.assistents.push(user);
           break;
 
-        case 'Teacher':
+        case "Teacher":
           this.teachers.push(user);
       }
     }
   }
 
   addRequirement() {
-    this.subject.requirements.push({from:1, to: this.subject.tasks.length, required:1});
+    this.subject.requirements.push({from: 1, to: this.subject.tasks.length, required: 1});
   }
 
   removeRequirement(index: number) {
@@ -95,23 +97,21 @@ export class EditSubjectComponent implements OnInit {
 
   validate() {
     this.message = "";
-    var re: RegExp  = /^\s*$/;
+    let re: RegExp  = /^\s*$/;
 
     if (re.test(this.subject.code)) {
       this.message = "Code cannot be empty: ";
       return false;
     }
 
-
     if (re.test(this.subject.name)) {
       this.message = "Name cannot be empty: ";
       return false;
     }
 
-
     for (let task of this.subject.tasks) {
       if (re.test(task.title)) {
-        this.message = "Some tasks does not have a title"
+        this.message = "Some tasks does not have a title";
         return false;
       }
     }
@@ -148,12 +148,12 @@ export class EditSubjectComponent implements OnInit {
   close() {
     let path = this.router.parent.parent.currentInstruction.component.routeName;
     switch (path) {
-      case 'AdminSubjectsPath':
+      case "AdminSubjectsPath":
       this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
       break;
 
-      case 'SubjectsPath':
-      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, 'QueuePath', {code: this.subject.code}]);
+      case "SubjectsPath":
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, "QueuePath", {code: this.subject.code}]);
       break;
     }
   }

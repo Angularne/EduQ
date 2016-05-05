@@ -1,6 +1,6 @@
 import mongoose = require("mongoose");
-import {UserDocument} from './user';
-import {SubjectDocument} from './subject';
+import {UserDocument} from "./user";
+import {SubjectDocument} from "./subject";
 
 
 
@@ -18,14 +18,14 @@ interface StudentTask {
 }
 
 let UserSubjectSchema: mongoose.Schema = new mongoose.Schema({
-  user: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
-  subject: {type:mongoose.Schema.Types.ObjectId, ref: 'Subject'},
+  user: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+  subject: {type: mongoose.Schema.Types.ObjectId, ref: "Subject"},
   role: String,
   tasks: [{
     number: Number,
     date: Date,
-    approvedBy: {type:mongoose.Schema.Types.ObjectId, ref: 'User'}
+    approvedBy: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
   }]
 });
 
-export const UserSubject = mongoose.model<UserSubjectDocument>('UserSubject', UserSubjectSchema);
+export const UserSubject = mongoose.model<UserSubjectDocument>("UserSubject", UserSubjectSchema);

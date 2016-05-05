@@ -1,16 +1,13 @@
-import socketio = require('socket.io');
+import socketio = require("socket.io");
 
-import {Subject} from './models/subject';
+import {Subject} from "./models/subject";
 
 
 
 export namespace QueueSocket {
-  var io: SocketIO.Server;
-  export function startServer(server){
+  let io: SocketIO.Server;
+  export function startServer(server) {
     io = socketio(server);
-
-
-
 
     // Create namespaces
     Subject.find({}).exec().then((subjects) => {
@@ -20,12 +17,11 @@ export namespace QueueSocket {
     });
   }
 
-
   export function createNamespace(code: string) {
-    io.of(code).on('connection', (socket) => {
-      console.log('Socket Connected: ' + socket.id);
-      socket.on('disconnect', () => {
-        console.log('Socket disconnected: ' + socket.id);
+    io.of(code).on("connection", (socket) => {
+      console.log("Socket Connected: " + socket.id);
+      socket.on("disconnect", () => {
+        console.log("Socket disconnected: " + socket.id);
       });
     });
   }
@@ -36,19 +32,17 @@ export namespace QueueSocket {
 
   export function queue(code: string) {
     if (io && code) {
-      Subject.findOne({code: code}).select('queue').populate('queue.list.users queue.list.helper', 'firstname lastname').lean().exec().then((subj) => {
-        io.of(code).emit('queue', subj.queue);
+      Subject.findOne({code: code}).select("queue").populate("queue.list.users queue.list.helper", "firstname lastname").lean().exec().then((subj) => {
+        io.of(code).emit("queue", subj.queue);
       });
 
     }
   }
 
-
   export function broadcast(code: string) {
     if (io && code) {
-      Subject.findOne({code: code}).select('broadcasts').populate('broadcasts.author', 'firstname lastname').lean().exec().then((subj) => {
-        console.log('emit broadcast');
-        io.of(code).emit('broadcast', subj.broadcasts);
+      Subject.findOne({code: code}).select("broadcasts").populate("broadcasts.author", "firstname lastname").lean().exec().then((subj) => {
+        io.of(code).emit("broadcast", subj.broadcasts);
       });
     }
   }

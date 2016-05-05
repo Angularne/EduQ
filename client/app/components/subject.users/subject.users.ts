@@ -1,14 +1,14 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {RouteParams, ROUTER_DIRECTIVES, Router} from '@angular/router-deprecated';
-import {SubjectService} from '../../services/subject.service';
-import {UserService} from '../../services/user.service';
-import {User} from '../../interfaces/user';
-import {Subject} from '../../interfaces/subject';
+import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
+import {RouteParams, ROUTER_DIRECTIVES, Router} from "@angular/router-deprecated";
+import {SubjectService} from "../../services/subject.service";
+import {UserService} from "../../services/user.service";
+import {User} from "../../interfaces/user";
+import {Subject} from "../../interfaces/subject";
 
 
 @Component({
-  selector: 'subject-users',
-  templateUrl: 'app/components/subject.users/subject.users.html',
+  selector: "subject-users",
+  templateUrl: "app/components/subject.users/subject.users.html",
   directives: [ROUTER_DIRECTIVES]
 })
 export class SubjectUsersComponent implements OnInit {
@@ -29,16 +29,16 @@ export class SubjectUsersComponent implements OnInit {
 
   constructor(private routeParams: RouteParams, private subjectService: SubjectService, private userService: UserService, private router: Router) { }
 
-  ngOnInit(){
-    var subjectAndUsers = -2;
+  ngOnInit() {
+    let subjectAndUsers = -2;
     let done = () => {
       if (!++subjectAndUsers) {
           this.setSelectedUsers();
       }
-    }
+    };
 
     if (!this.subject) {
-      let code = this.routeParams.params['code'] || this.routeParams.params['id'];
+      let code = this.routeParams.params["code"] || this.routeParams.params["id"];
 
       this.subjectService.getSubject(code).subscribe((sub) => {
         this.subject = sub;
@@ -48,7 +48,7 @@ export class SubjectUsersComponent implements OnInit {
       subjectAndUsers++;
     }
     this.userService.getAllUsers().subscribe((users) => {
-      this.all = users.filter((val)=> { return val.rights == 'Student'});
+      this.all = users.filter((val) => { return val.rights === "Student"; });
       this.users = this.all;
       done();
     });
@@ -57,7 +57,7 @@ export class SubjectUsersComponent implements OnInit {
   setSelectedUsers() {
     for (let user1 of this.subject.users) {
       for (let user2 of this.all) {
-          if (user1._id == user2._id && user1.role == 'Student') {
+          if (user1._id === user2._id && user1.role === "Student") {
             user2.selected = true;
             break;
           }
@@ -65,17 +65,15 @@ export class SubjectUsersComponent implements OnInit {
     }
   }
 
-
   doFilter() {
     this.allSelected = false;
 
 
-    let queries = this.query.split(' ');
+    let queries = this.query.split(" ");
     let qs: RegExp[] = [];
     for (let q of queries) {
-        qs.push(new RegExp(q, 'i'));
+        qs.push(new RegExp(q, "i"));
     }
-
 
     let y = new RegExp(this.year);
 
@@ -85,17 +83,10 @@ export class SubjectUsersComponent implements OnInit {
       }
 
       for (let q of qs) {
-          if (!q.test(value.firstname+value.lastname+value.classOf+value.email)) {
+          if (!q.test(value.firstname + value.lastname + value.classOf + value.email)) {
             return false;
           }
       }
-/*
-      let name = value.firstname + ' ' + value.lastname;
-      if (!q.test(name)) {
-        return false;
-      }
-
-*/
 
       return true;
     });
@@ -110,7 +101,7 @@ export class SubjectUsersComponent implements OnInit {
 
 
   save() {
-    var selectedUsers: string[] = [];
+    let selectedUsers: string[] = [];
 
     for (let user of this.all) {
       if (user.selected)
@@ -124,7 +115,7 @@ export class SubjectUsersComponent implements OnInit {
     });
   }
 
-  cancel(){
+  cancel() {
     this.canceled.emit(null);
     this.close();
   }
@@ -132,18 +123,17 @@ export class SubjectUsersComponent implements OnInit {
   close() {
     let path = this.router.parent.parent.currentInstruction.component.routeName;
     switch (path) {
-      case 'AdminSubjectsPath':
+      case "AdminSubjectsPath":
       this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
       break;
 
-      case 'SubjectsPath':
-      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, 'QueuePath', {code: this.subject.code}]);
+      case "SubjectsPath":
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, "QueuePath", {code: this.subject.code}]);
       break;
     }
   }
 
 }
-
 
 
 interface UserSelect extends User {

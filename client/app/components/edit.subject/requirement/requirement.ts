@@ -1,9 +1,10 @@
-import {Component, Input, OnInit, OnChanges, Output, EventEmitter} from '@angular/core';
-import {RangePipe} from '../../../common/range';
-import {Requirement} from '../../../interfaces/subject';
+import {Component, Input, OnInit, OnChanges} from "@angular/core";
+import {RangePipe} from "../../../common/range";
+import {Requirement} from "../../../interfaces/subject";
+
 @Component({
-  selector: 'edit-requirement',
-  templateUrl: 'app/components/edit.subject/requirement/requirement.html',
+  selector: "edit-requirement",
+  templateUrl: "app/components/edit.subject/requirement/requirement.html",
   pipes: [RangePipe]
 })
 export class EditRequirementComponent implements OnInit, OnChanges {
@@ -27,13 +28,11 @@ export class EditRequirementComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     // Validate requirement
-
-
-    for (var req of this.requirements) {
+    for (let req of this.requirements) {
       if (req.to <= 0) {
         req.to = 1;
       }
-      if (req.to> this.count) {
+      if (req.to > this.count) {
         req.to = this.count;
       }
       if (req.from < 1) {
@@ -51,7 +50,7 @@ export class EditRequirementComponent implements OnInit, OnChanges {
   }
 
   add() {
-    this.requirements.push({from: 1, to:this.count, required: 1});
+    this.requirements.push({from: 1, to: this.count, required: 1});
   }
 
   remove(i: number) {

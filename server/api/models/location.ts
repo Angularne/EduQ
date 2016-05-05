@@ -12,4 +12,4 @@ let locationSchema = new mongoose.Schema({
   count: Number,
 });
 
-export const Location = mongoose.model<LocationDocument>('Location', locationSchema);
+export const Location = mongoose.model<LocationDocument>("Location", locationSchema);

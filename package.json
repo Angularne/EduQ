@@ -1,7 +1,7 @@
 {
   "name": "eduq",
   "version": "1.0.0",
-  "description": "eduQ",
+  "description": "EduQ",
   "main": "server/build/server.js",
   "scripts": {
     "start": "nodemon ./server/build/server.js",

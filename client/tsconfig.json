@@ -58,8 +58,6 @@
     "app/components/subject/queue/queue.ts",
     "app/components/subject/subject.ts",
     "app/components/subjects/subjects.ts",
-    "app/components/users/userlist/userlist.ts",
-    "app/components/users/users.ts",
     "app/interfaces/location.ts",
     "app/interfaces/subject.ts",
     "app/interfaces/user.ts",

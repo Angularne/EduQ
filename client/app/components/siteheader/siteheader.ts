@@ -1,14 +1,12 @@
-import {Component, OnInit, OnChanges} from '@angular/core';
-import {Router, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
-import {AuthService} from '../../services/auth.service';
-import {Subject} from '../../interfaces/subject';
-import {SubjectsComponent} from '../subjects/subjects';
-import {LoggedInRouterOutlet} from '../../common/LoggedInOutlet';
-import {User} from '../../interfaces/user';
+import {Component, OnInit} from "@angular/core";
+import {Router, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {AuthService} from "../../services/auth.service";
+import {SubjectsComponent} from "../subjects/subjects";
+import {User} from "../../interfaces/user";
 
 @Component({
-  selector: 'siteheader',
-  templateUrl: 'app/components/siteheader/siteheader.html',
+  selector: "siteheader",
+  templateUrl: "app/components/siteheader/siteheader.html",
   directives: [SubjectsComponent, ROUTER_DIRECTIVES]
 })
 
@@ -30,19 +28,14 @@ export class SiteHeaderComponent implements OnInit {
       }
     });
 
-    this.router.subscribe((path: string)=> {
-      this.activeSite = path.split('/')[0];
+    this.router.subscribe((path: string) => {
+      this.activeSite = path.split("/")[0];
     });
-
-
   }
-
-
 
   onLogout() {
     this.auth.logout();
     this.user = null;
-    this.router.navigate(['LoginPath'])
-
+    this.router.navigate(["LoginPath"]);
   }
 }

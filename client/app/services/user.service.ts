@@ -1,21 +1,19 @@
-import {Injectable, Inject} from '@angular/core';
-import {Http, Headers, Request, RequestMethod} from "@angular/http";
-import {Subject} from '../interfaces/subject';
+import {Injectable} from "@angular/core";
+import {Http, Request, RequestMethod} from "@angular/http";
 import {User} from "../interfaces/user";
-import {AuthService} from './auth.service';
-import {authHeaders} from '../common/headers';
+import {AuthService} from "./auth.service";
+import {authHeaders} from "../common/headers";
 
 @Injectable()
 export class UserService {
   user: User;
-
 
   constructor(public http: Http, public authService: AuthService) {
     this.authService.authenticated$.subscribe((auth) => {
       if (auth) {
         this.authService.getUser().then((user) => {
           this.user = user;
-        }).catch((err)=>{});
+        }).catch((err) => {});
       } else {
         this.user = null;
       }
@@ -23,25 +21,25 @@ export class UserService {
   }
 
   fetchUser() {
-    return this.http.get('/api/user', {
+    return this.http.get("/api/user", {
        headers: authHeaders()
      })
-     .map((res : any) => {
+     .map((res: any) => {
        let data = res.json();
        this.user = data;
-       localStorage.setItem('user', JSON.stringify(this.user));
+       localStorage.setItem("user", JSON.stringify(this.user));
        return this.user;
      });
   }
 
 
   getUser(id: string, select: string = null, populate: string = null) {
-    let url = '/api/user/' + id + '?'
-    + (select ? 'select=' + select + '&': '')
-    + (populate ? 'populate=' + populate : '');
+    let url = "/api/user/" + id + "?"
+    + (select ? "select=" + select + "&" : "")
+    + (populate ? "populate=" + populate : "");
 
-    return this.http.get(url + id, {headers: authHeaders()}).map((res)=>{
-      if (res.status == 200) {
+    return this.http.get(url + id, {headers: authHeaders()}).map((res) => {
+      if (res.status === 200) {
         return res.json();
       }
       else {
@@ -55,11 +53,11 @@ export class UserService {
       if (!this.user) {
         this.fetchUser();
       } else {
-        var index = -1;
-        for (var i = 0; i < this.user.subjects.length; i++) {
+        let index = -1;
+        for (let i = 0; i < this.user.subjects.length; i++) {
           if (this.user.subjects[i].code === code) index = i;
         }
-        if (index != -1) {
+        if (index !== -1) {
           resolve(this.user.subjects[index].role);
         }
       }
@@ -67,13 +65,13 @@ export class UserService {
   }
 
   getAllUsers(q: any = null, select: string = null, populate: string = null) {
-    let url = '/api/user?'
-    + (q ? 'q=' + JSON.stringify(q) + '&': '')
-    + (select ? 'select=' + select + '&': '')
-    + (populate ? 'populate=' + populate : '');
+    let url = "/api/user?"
+    + (q ? "q=" + JSON.stringify(q) + "&" : "")
+    + (select ? "select=" + select + "&" : "")
+    + (populate ? "populate=" + populate : "");
 
-    return this.http.get(url, {headers: authHeaders()}).map(res=>{
-      if (res.status == 200) {
+    return this.http.get(url, {headers: authHeaders()}).map(res => {
+      if (res.status === 200) {
         return res.json();
       } else {
         return false;
@@ -82,8 +80,8 @@ export class UserService {
   }
 
   saveUser(user: User) {
-    var request: Request = new Request({
-      url: '/api/user/',
+    let request: Request = new Request({
+      url: "/api/user/",
       headers: authHeaders(),
       body: JSON.stringify(user)
     });
@@ -98,7 +96,7 @@ export class UserService {
     }
 
     return this.http.request(request).map((res) => {
-      if (res.status == 200 || res.status == 201) {
+      if (res.status === 200 || res.status === 201) {
         // User saved
         return res.json();
       } else {
@@ -111,14 +109,12 @@ export class UserService {
 
   saveUsers(users: User[]) {
     console.log(users);
-    return this.http.post('/api/user/class', JSON.stringify({users: users}), {headers: authHeaders()}).map((res) => {
-
-    });
+    return this.http.post("/api/user/class", JSON.stringify({users: users}), {headers: authHeaders()}).map((res) => res.json());
   }
 
   deleteUser(id: string) {
-    return this.http.delete('/api/user/' + id, {headers: authHeaders()}).map(res => {
-      if (res.status = 200) {
+    return this.http.delete("/api/user/" + id, {headers: authHeaders()}).map(res => {
+      if (res.status === 200) {
         return true;
       } else {
         return false;

@@ -3,7 +3,7 @@ export class Binding<T> {
   private _subscribers: ((value: T) => void)[] = [];
 
 
-  constructor(value: T = null){
+  constructor(value: T = null) {
     this._value = value;
   }
 
@@ -15,12 +15,12 @@ export class Binding<T> {
     let oldValue = this._value;
     this._value = value;
 
-    if (value != oldValue) {
+    if (value !== oldValue) {
       this.post();
     }
   }
 
-  private post(){
+  private post() {
     for (let sub of this._subscribers) {
       sub(this._value);
     }
@@ -33,5 +33,5 @@ export class Binding<T> {
     }
   }
 
-  //TODO - add unsubscribe! May cause errors when posting updates to destroyed components
+  // TODO - add unsubscribe! May cause errors when posting updates to destroyed components
 }

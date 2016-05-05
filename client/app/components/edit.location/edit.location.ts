@@ -1,20 +1,20 @@
-import {Component, OnInit, Output, EventEmitter, ViewChild} from '@angular/core';
-import {RouteParams, Router} from '@angular/router-deprecated';
-import {LocationService} from '../../services/location.service';
-import {Location} from '../../interfaces/location';
-import {AlertComponent} from '../alert/alert';
+import {Component, OnInit, Output, EventEmitter, ViewChild} from "@angular/core";
+import {RouteParams, Router} from "@angular/router-deprecated";
+import {LocationService} from "../../services/location.service";
+import {Location} from "../../interfaces/location";
+import {AlertComponent} from "../alert/alert";
 
 
 @Component({
-  selector: 'edit-location',
-  templateUrl: 'app/components/edit.location/edit.location.html',
+  selector: "edit-location",
+  templateUrl: "app/components/edit.location/edit.location.html",
   directives: [AlertComponent]
 })
-export class EditLocationComponent implements OnInit{
+export class EditLocationComponent implements OnInit {
 
   message: string;
 
-  location: Location = {name: '', count:0, image: ''};
+  location: Location = {name: "", count: 0, image: ""};
   file_src: string;
 
   @ViewChild(AlertComponent) alert: AlertComponent;
@@ -26,7 +26,7 @@ export class EditLocationComponent implements OnInit{
   constructor(private routeParams: RouteParams, private locationService: LocationService, private router: Router) { }
 
   ngOnInit() {
-    let id = this.routeParams.get('user_id') || this.routeParams.get('id');
+    let id = this.routeParams.get("user_id") || this.routeParams.get("id");
       if (id) {
         this.locationService.getLocation(id).subscribe((location) => {
           this.location = location;
@@ -36,15 +36,15 @@ export class EditLocationComponent implements OnInit{
       }
   }
 
-  validate(){
+  validate() {
 
-    if (this.location.name.trim() == '') {
-      this.message = "Name is not set."
+    if (this.location.name.trim() === "") {
+      this.message = "Name is not set.";
       return false;
     }
 
     if (this.location.count < 0) {
-      this.message = "Count must be greater than 0."
+      this.message = "Count must be greater than 0.";
       return false;
     }
 
@@ -52,7 +52,7 @@ export class EditLocationComponent implements OnInit{
     return true;
   }
 
-  save(){
+  save() {
 
     this.location.image = this.file_src;
 
@@ -73,12 +73,11 @@ export class EditLocationComponent implements OnInit{
     this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
   }
 
-  fileChange(input){
-    var reader = new FileReader();
-    reader.addEventListener("load", (event: any)=>{
+  fileChange(input) {
+    let reader = new FileReader();
+    reader.addEventListener("load", (event: any) => {
       this.file_src = event.target.result;
     }, false);
-
 
     if (input.files[0]) {
       reader.readAsDataURL(input.files[0]);

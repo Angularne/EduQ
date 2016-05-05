@@ -1,11 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Subject} from '../../../interfaces/subject';
-import {Location} from '../../../interfaces/location';
-import {LocationService} from '../../../services/location.service';
+import {Component, Input, OnInit} from "@angular/core";
+import {Location} from "../../../interfaces/location";
+import {LocationService} from "../../../services/location.service";
 
 @Component({
-  selector: 'edit-locations',
-  templateUrl: 'app/components/edit.subject/location/location.html',
+  selector: "edit-locations",
+  templateUrl: "app/components/edit.subject/location/location.html",
   providers: [LocationService]
 })
 export class EditLocationComponent implements OnInit {
@@ -14,18 +13,18 @@ export class EditLocationComponent implements OnInit {
   @Input() set locations(locations: Location[]){
     this._locations = locations;
     this.fetchAllLocations();
-    this.query = '';
+    this.query = "";
     this.suggestions = [];
   }
-  get locations() {return this._locations;}
+  get locations() {
+    return this._locations;
+  }
 
   private all: Location[];
 
-
   @Input() label: string;
 
-
-  query: string = '';
+  query: string = "";
   suggestions: Location[] = [];
 
 
@@ -38,7 +37,7 @@ export class EditLocationComponent implements OnInit {
   fetchAllLocations() {
     this.locationService.getAllLocations().subscribe((locations) => {
       this.all = [];
-      for (var location of locations) {
+      for (let location of locations) {
         if (!this.inLocations(location)) {
           this.all.push(location);
         }
@@ -47,8 +46,8 @@ export class EditLocationComponent implements OnInit {
   }
 
   private inLocations(location: Location) {
-    for (var u of this.locations || []) {
-      if (u._id == location._id) {
+    for (let u of this.locations || []) {
+      if (u._id === location._id) {
         return true;
       }
     }
@@ -56,10 +55,10 @@ export class EditLocationComponent implements OnInit {
   }
 
   suggest() {
-    let q = new RegExp(this.query, 'i');
+    let q = new RegExp(this.query, "i");
     this.suggestions = [];
     if (this.query.length) {
-      for (var location of this.all) {
+      for (let location of this.all) {
         if (q.test(location.name)) {
           this.suggestions.push(location);
         }
@@ -75,12 +74,12 @@ export class EditLocationComponent implements OnInit {
 
   addLocation(location) {
     this.locations.push(location);
-    this.query = '';
+    this.query = "";
     this.suggestions = [];
 
-    var i = 0;
-    for (var u of this.all) {
-      if (location._id == u._id) {
+    let i = 0;
+    for (let u of this.all) {
+      if (location._id === u._id) {
         this.all.splice(i, 1);
         break;
       }
@@ -89,11 +88,11 @@ export class EditLocationComponent implements OnInit {
 
   }
 
-  removeLocation(location){
+  removeLocation(location) {
     this.all.unshift(location);
     location.role = null;
-    for (var i in this.locations) {
-      if (this.locations[i]._id == location._id) {
+    for (let i in this.locations) {
+      if (this.locations[i]._id === location._id) {
         this.locations.splice(+i, 1);
         break;
       }

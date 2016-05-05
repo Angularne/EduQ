@@ -1,20 +1,20 @@
 
 
 import {User, authenticateUser, getUser} from "../models/user";
-import {Subject} from '../models/subject';
-import {Request, Response, NextFunction} from 'express';
-import express = require('express');
-import basicAuth = require('basic-auth');
-import bcrypt = require('bcrypt');
+import {Subject} from "../models/subject";
+import {Request, Response, NextFunction} from "express";
+import express = require("express");
+import basicAuth = require("basic-auth");
+import bcrypt = require("bcrypt");
 
 export namespace Auth {
 
   export var router = express.Router();
 
-  router.post('/auth/login', (req: Request, res: Response, next: NextFunction) => {
+  router.post("/auth/login", (req: Request, res: Response, next: NextFunction) => {
     let data = basicAuth(req);
     if (data && data.name && data.pass) {
-      User.findOne({email: data.name}).select('password').exec((err, user) => {
+      User.findOne({email: data.name}).select("password").exec((err, user) => {
         if (!err) {
           if (user) {
             bcrypt.compare(data.pass, user.password, (err, val) => {
@@ -25,7 +25,7 @@ export namespace Auth {
 
                 } else {
                   // Wrong password
-                  res.status(401).json({message: 'Feil passord eller brukernavn'});
+                  res.status(401).json({message: "Feil passord eller brukernavn"});
                 }
               } else {
                 res.status(400).json(err);
@@ -33,14 +33,14 @@ export namespace Auth {
             });
           } else {
             // User not found
-            res.status(401).json({message: 'Brukeren er ikke registrert'});
+            res.status(401).json({message: "Brukeren er ikke registrert"});
           }
         } else {
           res.status(400).json(err);
         }
       });
     } else {
-      res.status(401).json({message: 'Username or password not provided'});
+      res.status(401).json({message: "Username or password not provided"});
     }
   });
 
@@ -66,7 +66,7 @@ export namespace Auth {
     let data = basicAuth(req);
 
     if (data && data.name && data.pass) {
-      User.findOne({email: data.name}).select('password').exec((err, user) => {
+      User.findOne({email: data.name}).select("password").exec((err, user) => {
         if (!err) {
           if (user) {
             bcrypt.compare(data.pass, user.password, (err, val) => {
@@ -80,10 +80,10 @@ export namespace Auth {
                     next();
                   }).catch(err => {
                     res.status(400).json(err);
-                  })
+                  });
                 } else {
                   // Wrong password
-                  res.status(401).json({message: 'Feil passord eller brukernavn'});
+                  res.status(401).json({message: "Feil passord eller brukernavn"});
                 }
               } else {
                 res.status(400).json(err);
@@ -91,25 +91,25 @@ export namespace Auth {
             });
           } else {
             // User not found
-            res.status(401).json({message: 'Brukeren er ikke registrert'});
+            res.status(401).json({message: "Brukeren er ikke registrert"});
           }
         } else {
           res.status(400).json(err);
         }
       });
     } else {
-      res.status(401).json({message: 'Username or password not provided'});
+      res.status(401).json({message: "Username or password not provided"});
     }
   });
 
   function unauthorized(res) {
-    //res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+    // res.set("WWW-Authenticate", "Basic realm=Authorization Required");
     return res.sendStatus(401);
   };
 
-  export function generateRandomPassword(){
-    var password = '';
-    let dictionary = 'abcdefghijklmnopqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  export function generateRandomPassword() {
+    let password = "";
+    let dictionary = "abcdefghijklmnopqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     for (let i = 0; i < 8; i++) {
       let random = Math.floor(Math.random() * dictionary.length);
@@ -118,4 +118,4 @@ export namespace Auth {
     return password;
   }
 }
-//module.exports = router;
+// module.exports = router;

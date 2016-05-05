@@ -1,21 +1,21 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
-import {SubjectService} from '../../services/subject.service';
-import {Subject, Task} from '../../interfaces/subject';
-import {User} from '../../interfaces/user';
+import {Component, OnInit, OnDestroy} from "@angular/core";
+import {RouteParams, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {SubjectService} from "../../services/subject.service";
+import {Subject, Task} from "../../interfaces/subject";
+import {User} from "../../interfaces/user";
 import {Location} from "../../interfaces/location";
-import {QueueComponent} from './queue/queue';
-import {BroadcastComponent} from './broadcasts/broadcasts';
-import {EditSubjectComponent} from '../edit.subject/edit.subject';
-import {SocketService} from '../../services/socket.service';
-import {QueueService} from '../../services/queue.service';
-import {BroadcastService} from '../../services/broadcast.service';
-import {AuthService} from '../../services/auth.service';
+import {QueueComponent} from "./queue/queue";
+import {BroadcastComponent} from "./broadcasts/broadcasts";
+import {EditSubjectComponent} from "../edit.subject/edit.subject";
+import {SocketService} from "../../services/socket.service";
+import {QueueService} from "../../services/queue.service";
+import {BroadcastService} from "../../services/broadcast.service";
+import {AuthService} from "../../services/auth.service";
 import {LocationService} from "../../services/location.service";
 
 @Component({
-  selector: 'subject',
-  templateUrl: 'app/components/subject/subject.html',
+  selector: "subject",
+  templateUrl: "app/components/subject/subject.html",
   providers: [SubjectService, SocketService, QueueService, BroadcastService, LocationService],
   directives: [QueueComponent, BroadcastComponent, EditSubjectComponent, ROUTER_DIRECTIVES]
 })
@@ -38,10 +38,8 @@ export class SubjectComponent implements OnInit, OnDestroy {
               private locationService: LocationService) {}
 
 
-  ngOnInit(){
-    console.log('ngOnInit');
-    let code = this.params.get('code');
-    console.log(code);
+  ngOnInit() {
+    let code = this.params.get("code");
     if (code) {
       this.subjectService.getSubject(code).subscribe((sub) => {
         this.subject = sub;
@@ -56,21 +54,19 @@ export class SubjectComponent implements OnInit, OnDestroy {
         this.user = user;
 
         for (let sub of this.user.subjects) {
-          if (sub.code == code) {
+          if (sub.code === code) {
             this.userTasks = sub.tasks;
             this.role = sub.role;
             console.log("getUser async find role");
           }
         }
-      }).catch((err) => {console.log("getUser error");});
+      }).catch((err) => {console.log("getUser error"); });
 
 
     }
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.socket.close();
-
-
   }
 }

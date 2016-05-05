@@ -1,9 +1,9 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {Component, Input, Output, EventEmitter} from "@angular/core";
 
 
 @Component({
-  selector: 'confirm-modal',
-  templateUrl: 'app/components/confirm.modal/confirm.modal.html'
+  selector: "confirm-modal",
+  templateUrl: "app/components/confirm.modal/confirm.modal.html"
 })
 export class ConfirmModalComponent {
 
@@ -12,24 +12,21 @@ export class ConfirmModalComponent {
     this.body = modal.body || this.body;
     this.confirmButton = modal.confirmButton || this.confirmButton;
     this.cancelButton = modal.cancelButton || this.cancelButton;
-
-
     this.confirmed = new EventEmitter<boolean>();
     if (modal.confirmed) {
       this.confirmed.subscribe(modal.confirmed);
     }
   }
 
-  @Input() title: string = 'Title';
-  @Input() body: string = 'Message &hellip;';
+  @Input() title: string = "Title";
+  @Input() body: string = "Message &hellip;";
 
-  @Input() confirmButton: string = 'Confirm';
-  @Input() cancelButton: string = 'Decline';
+  @Input() confirmButton: string = "Confirm";
+  @Input() cancelButton: string = "Decline";
 
   @Output() confirmed: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor() { }
-
 
   confirm() {
     this.confirmed.emit(true);

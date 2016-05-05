@@ -1,15 +1,15 @@
-import {Component, Output, EventEmitter} from '@angular/core';
-import {Router} from '@angular/router-deprecated';
-import {UserService} from '../../services/user.service';
-import {User} from '../../interfaces/user';
+import {Component, Output, EventEmitter} from "@angular/core";
+import {Router} from "@angular/router-deprecated";
+import {UserService} from "../../services/user.service";
+import {User} from "../../interfaces/user";
 
 
 @Component({
-  selector: 'add-class',
-  templateUrl: 'app/components/add.class/add.class.html'
+  selector: "add-class",
+  templateUrl: "app/components/add.class/add.class.html"
 })
 export class AddClassComponent {
-  input: string = '';
+  input: string = "";
   class: string;
 
   errorMsg: string;
@@ -22,27 +22,25 @@ export class AddClassComponent {
 
 
   save() {
-    var users: User[] = [];
+    let users: User[] = [];
 
-    for (let u1 of this.input.split('\n')) {
-      let u2 = u1.split(',');
+    for (let u1 of this.input.split("\n")) {
+      let u2 = u1.split(",");
 
-      if (u1 == '') {
-        continue; //Skip
-      } else if (u2.length != 3 || !u2[0] || !u2[1] || !u2[2]) {
-        this.errorMsg = 'Error in input: ' + u1;
+      if (u1 === "") {
+        continue; // Skip
+      } else if (u2.length !== 3 || !u2[0] || !u2[1] || !u2[2]) {
+        this.errorMsg = "Error in input: " + u1;
         return;
       }
 
-      let user : User = {
+      let user: User = {
         firstname: u2[0],
         lastname: u2[1],
         email: u2[2],
-        rights: 'Student',
+        rights: "Student",
         classOf: this.class
-      }
-
-
+      };
 
       users.push(user);
     }

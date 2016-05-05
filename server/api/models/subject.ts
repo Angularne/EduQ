@@ -1,6 +1,6 @@
 import mongoose = require("mongoose");
-import {UserDocument} from './user';
-import {LocationDocument} from './location';
+import {UserDocument} from "./user";
+import {LocationDocument} from "./location";
 
 /** Subject */
 export interface SubjectDocument extends  mongoose.Document {
@@ -80,23 +80,23 @@ export interface Location {
 
 /** Schema */
 let subjectSchema = new mongoose.Schema({
-  code: {type:String, unique: true},
+  code: {type: String, unique: true},
   name: String,
 
   broadcasts: [
     {
-      author: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
+      author: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
       title: String,
       content: String,
       created: Date
     }
   ],
   queue: {
-    active: {type:Boolean, default: false},
+    active: {type: Boolean, default: false},
     list: [
       {
-        users: [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}],
-        helper: {type:mongoose.Schema.Types.ObjectId, ref: 'User'},
+        users: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
+        helper: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
         timeEntered: Date,
         comment: String,
         position: Number,
@@ -117,8 +117,8 @@ let subjectSchema = new mongoose.Schema({
     to: Number,
     required: Number
   }],
-  locations: [{type: mongoose.Schema.Types.ObjectId, ref: 'Location'}]
+  locations: [{type: mongoose.Schema.Types.ObjectId, ref: "Location"}]
 });
 
 /** Model */
-export const Subject = mongoose.model<SubjectDocument>('Subject', subjectSchema);
+export const Subject = mongoose.model<SubjectDocument>("Subject", subjectSchema);

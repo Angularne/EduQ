@@ -1,13 +1,13 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from '@angular/core';
-import {RouteParams, Router} from '@angular/router-deprecated';
-import {UserService} from '../../services/user.service';
-import {User} from '../../interfaces/user';
-import {AuthService} from '../../services/auth.service';
-import {AlertComponent} from '../alert/alert';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from "@angular/core";
+import {RouteParams, Router} from "@angular/router-deprecated";
+import {UserService} from "../../services/user.service";
+import {User} from "../../interfaces/user";
+import {AuthService} from "../../services/auth.service";
+import {AlertComponent} from "../alert/alert";
 
 @Component({
-  selector: 'edit-user',
-  templateUrl: 'app/components/edit.user/edit.user.html',
+  selector: "edit-user",
+  templateUrl: "app/components/edit.user/edit.user.html",
   directives: [AlertComponent]
 })
 export class EditUserComponent implements OnInit {
@@ -17,7 +17,6 @@ export class EditUserComponent implements OnInit {
   message: string;
 
   private _user: User;
-
   get user() {
     return this._user;
   }
@@ -27,11 +26,11 @@ export class EditUserComponent implements OnInit {
       this._user = JSON.parse(JSON.stringify(user)); // Copy object
     } else {
       this.user = {
-        firstname: '',
-        lastname: '',
-        email: '',
-        rights: 'Student',
-        classOf: '',
+        firstname: "",
+        lastname: "",
+        email: "",
+        rights: "Student",
+        classOf: "",
         subjects: []
       };
     }
@@ -47,19 +46,13 @@ export class EditUserComponent implements OnInit {
 
   private editable: any = {};
 
-
-  private oldpw: string;
-  private newpw: string;
-  private confpw: string;
-
-
   constructor(private userService: UserService, private auth: AuthService, private _params: RouteParams, private router: Router) { }
 
   ngOnInit() {
    if (!this._user) {
     this.user = null; // Creates empty user in setter
     }
-    let id = this._params.get('user_id') || this._params.get('id');
+    let id = this._params.get("user_id") || this._params.get("id");
     if (id) {
       this.userService.getUser(id).subscribe((user) => {
         this.user = user;
@@ -70,18 +63,18 @@ export class EditUserComponent implements OnInit {
   setEdits() {
     this.auth.getUser().then((user) => {
       this.editable = {};
-      if (user.rights == "Admin") {
-        this.editable['name'] = true;
-        this.editable['email'] = true;
-        this.editable['classOf'] = true;
-        this.editable['rights'] = true;
+      if (user.rights === "Admin") {
+        this.editable["name"] = true;
+        this.editable["email"] = true;
+        this.editable["classOf"] = true;
+        this.editable["rights"] = true;
       }
     });
   }
 
   validate() {
     this.message = "";
-    var re: RegExp  = /^\s*$/;
+    let re: RegExp  = /^\s*$/;
 
     if (re.test(this.user.firstname)) {
       this.message = "Firstname cannot be empty";
@@ -103,7 +96,6 @@ export class EditUserComponent implements OnInit {
 
     return true;
   }
-
 
   onSubmit() {
     if (this.validate()) {

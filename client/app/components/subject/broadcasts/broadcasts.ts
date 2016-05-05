@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Output, Input} from '@angular/core';
-import {Broadcast} from '../../../interfaces/subject';
-import {BroadcastDetailComponent} from './broadcast/broadcast';
-import {BroadcastService} from '../../../services/broadcast.service';
-import {ReversePipe} from '../../../common/reverse';
+import {Component, Input} from "@angular/core";
+import {Broadcast} from "../../../interfaces/subject";
+import {BroadcastDetailComponent} from "./broadcast/broadcast";
+import {BroadcastService} from "../../../services/broadcast.service";
+import {ReversePipe} from "../../../common/reverse";
 
 @Component({
-  selector: 'broadcasts',
+  selector: "broadcasts",
   template: `
   <h2>Broadcasts</h2>
   <form *ngIf="role == 'Teacher' || role == 'Assistent'">

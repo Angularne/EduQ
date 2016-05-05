@@ -1,9 +1,9 @@
-import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {Broadcast} from '../../../../interfaces/subject';
+import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Broadcast} from "../../../../interfaces/subject";
 
 @Component({
-  selector: 'broadcast',
-  templateUrl: 'app/components/subject/broadcasts/broadcast/broadcast.html'
+  selector: "broadcast",
+  templateUrl: "app/components/subject/broadcasts/broadcast/broadcast.html"
 })
 
 export class BroadcastDetailComponent {

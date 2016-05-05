@@ -1,25 +1,25 @@
-import express = require('express');
+import express = require("express");
 import bcrypt = require("bcrypt");
-import {User, UserDocument} from '../models/user';
-import {Subject} from '../models/subject';
-import {UserSubject} from '../models/user.subject';
+import {User, UserDocument} from "../models/user";
+import {Subject} from "../models/subject";
+import {UserSubject} from "../models/user.subject";
 import {Request, Response, NextFunction} from "express";
-import {Auth} from './auth';
+import {Auth} from "./auth";
 
-import {Mail} from '../mail';
+import {Mail} from "../mail";
 
 /** Router */
-var router = express.Router();
+let router = express.Router();
 
 /** GET: Get authenticated user */
-router.get('/me', (req: Request, res: Response, next: NextFunction) => {
+router.get("/me", (req: Request, res: Response, next: NextFunction) => {
 
   res.json(req.authenticatedUser);
 
 });
 
 /** GET: Get all user */
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
+router.get("/", (req: Request, res: Response, next: NextFunction) => {
 
   // Check user privileges
   if (!/Admin|Teacher/i.test(req.authenticatedUser.rights)) {
@@ -27,9 +27,9 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  let cond: any = JSON.parse(req.query.q || '{}');
-  let select: string = (req.query.select || '').split(',').join(' ');;
-  var populate: string = (req.query.populate || '').split(',').join(' ').split(';');
+  let cond: any = JSON.parse(req.query.q || "{}");
+  let select: string = (req.query.select || "").split(",").join(" ");
+  let populate: string = (req.query.populate || "").split(",").join(" ").split(";");
   let pop: string = populate[0];
   let popselect: string = populate[1];
 
@@ -44,18 +44,18 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 });
 
 /** GET: Get user */
-router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
+router.get("/:id", (req: Request, res: Response, next: NextFunction) => {
   let id: string = req.params.id;
 
   // Check user privileges
-  if (!/Admin|Teacher/i.test(req.authenticatedUser.rights) && String(req.authenticatedUser._id) != id) {
+  if (!/Admin|Teacher/i.test(req.authenticatedUser.rights) && String(req.authenticatedUser._id) !== id) {
     denyAccess(res);
     return;
   }
 
-  let cond: any = JSON.parse(req.query.q || '{}');
-  let select: string = (req.query.select || '').split(',').join(' ');;
-  var populate: string = (req.query.populate || '').split(',').join(' ').split(';');
+  let cond: any = JSON.parse(req.query.q || "{}");
+  let select: string = (req.query.select || "").split(",").join(" ");
+  let populate: string = (req.query.populate || "").split(",").join(" ").split(";");
   let pop: string = populate[0];
   let popselect: string = populate[1];
 
@@ -70,7 +70,7 @@ router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
 });
 
 /** POST: Create new user */
-router.post('/',(req: Request, res: Response, next: NextFunction) => {
+router.post("/", (req: Request, res: Response, next: NextFunction) => {
   // Check user privileges
   if (!/Admin/i.test(req.authenticatedUser.rights)) {
     denyAccess(res);
@@ -78,10 +78,10 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
   }
 
   req.body.subjects = [];
-  var user = new User(req.body);
+  let user = new User(req.body);
 
   // Validate
-  var re: RegExp  = /^\s*$/; // Null or empty
+  let re: RegExp  = /^\s*$/; // Null or empty
 
   if (re.test(user.firstname)) {
     return res.status(400).json({message: "firstname cannot be empty"});
@@ -111,8 +111,8 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
           Mail.newUser(user.email, password);
 
         } else {
-          if (err.code == 11000) { // Duplicate email
-              res.status(409).json({errmsg: 'Email is already registered on another user'});
+          if (+err.code === 11000) { // Duplicate email
+              res.status(409).json({errmsg: "Email is already registered on another user"});
           } else {
             res.status(409).json(err);
           }
@@ -122,14 +122,10 @@ router.post('/',(req: Request, res: Response, next: NextFunction) => {
       res.status(400).json(err);
     }
   });
-
-
-
-
 });
 
 /** POST: Create list of users */
-router.post('/class', (req: Request, res: Response, next: NextFunction) => {
+router.post("/class", (req: Request, res: Response, next: NextFunction) => {
 
   // Check user privileges
   if (!/Admin/i.test(req.authenticatedUser.rights)) {
@@ -139,8 +135,8 @@ router.post('/class', (req: Request, res: Response, next: NextFunction) => {
 
   let users = req.body.users;
 
-  for (var user of users) {
-    var re: RegExp  = /^\s*$/;
+  for (let user of users) {
+    let re: RegExp  = /^\s*$/;
     if (re.test(user.firstname)) {
       res.status(400).json({message: "firstname cannot be empty"});
       return false;
@@ -179,12 +175,12 @@ router.post('/class', (req: Request, res: Response, next: NextFunction) => {
 });
 
 /** PUT: Change password */
-router.put('/password', (req: Request, res: Response, next: NextFunction) => {
+router.put("/password", (req: Request, res: Response, next: NextFunction) => {
   let id = req.authenticatedUser._id;
   let oldPw = req.body.oldPassword;
   let newPw = req.body.newPassword;
 
-  User.findOne({_id:id}).select('password').exec((err, user) => {
+  User.findOne({_id: id}).select("password").exec((err, user) => {
     if (!err) {
       if (user) {
         bcrypt.compare(oldPw, user.password, (err: Error, same: boolean) => {
@@ -206,14 +202,14 @@ router.put('/password', (req: Request, res: Response, next: NextFunction) => {
               });
             } else {
               // Wrong password
-              res.status(401).json({message: 'Feil passord'})
+              res.status(401).json({message: "Feil passord"});
             }
           } else {
             res.status(400).json(err);
           }
         });
       } else {
-        res.status(400).json({message: 'User not found'})
+        res.status(400).json({message: "User not found"});
       }
     } else {
       res.status(400).json(err);
@@ -222,8 +218,8 @@ router.put('/password', (req: Request, res: Response, next: NextFunction) => {
 });
 
 /** PUT: Update user */
-router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
-  var id = req.params.id;
+router.put("/:id", (req: Request, res: Response, next: NextFunction) => {
+  let id = req.params.id;
 
   // Check user privileges
   if (!/Admin|Teacher/i.test(req.authenticatedUser.rights)) {
@@ -232,12 +228,12 @@ router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
   }
 
   // Remove subjects from update
-  var user = req.body;
+  let user = req.body;
   delete user.subjects;
   delete user.__v;
   delete user.password;
 
-  var re: RegExp  = /^\s*$/; // Null or empty
+  let re: RegExp  = /^\s*$/; // Null or empty
 
 
   if (re.test(user.firstname)) {
@@ -266,17 +262,17 @@ router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
 });
 
 /** DELETE: Delete user */
-router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
+router.delete("/:id", (req: Request, res: Response, next: NextFunction) => {
   // Check user privileges
   if (!/Admin/i.test(req.authenticatedUser.rights)) {
     denyAccess(res);
     return;
   }
 
-  User.remove({_id:req.params.id}, (err) => {
+  User.remove({_id: req.params.id}, (err) => {
     if (!err) {
       res.end();
-      UserSubject.remove({user: req.params.id}, (err)=>{if (err) console.log(err);});
+      UserSubject.remove({user: req.params.id}, (err) => {if (err) console.log(err); });
     } else {
       res.json(err);
     }
@@ -288,9 +284,9 @@ router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
 /**
  * Denies access
  */
-function denyAccess(res: Response, message: string = 'Access Denied') {
+function denyAccess(res: Response, message: string = "Access Denied") {
   res.status(403);
-  res.json({message:message});
+  res.json({message: message});
 }
 
 module.exports = router;

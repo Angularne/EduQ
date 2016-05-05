@@ -1,8 +1,7 @@
-import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
-import {SubjectService} from './subject.service';
-import {Subject} from '../interfaces/subject';
-import {authHeaders} from '../common/headers';
+import {Injectable} from "@angular/core";
+import {Http} from "@angular/http";
+import {Subject} from "../interfaces/subject";
+import {authHeaders} from "../common/headers";
 
 @Injectable()
 export class BroadcastService {
@@ -18,7 +17,7 @@ export class BroadcastService {
          headers: authHeaders()
        });
     } else {
-      console.error('Subject not set in BroadcastService');
+      console.error("Subject not set in BroadcastService");
     }
   }
 
@@ -28,7 +27,7 @@ export class BroadcastService {
          headers: authHeaders()
        });
     } else {
-      console.error('Subject not set in BroadcastService');
+      console.error("Subject not set in BroadcastService");
     }
   }
 }

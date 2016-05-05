@@ -1,20 +1,20 @@
-import nodemailer = require('nodemailer');
+import nodemailer = require("nodemailer");
 
-let smtp = require('../../config').smtp;
+let smtp = require("../../config").smtp;
 
 let defaults = {
   from:  `"${smtp.name}" ${smtp.auth.user}`
-}
+};
 
 
-var transporter = nodemailer.createTransport(smtp, defaults);
+let transporter = nodemailer.createTransport(smtp, defaults);
 
 
 export namespace Mail {
   export function newUser(email: string, password: string) {
     let options = {
       to: email,
-      subject: 'Ny bruker opprettet',
+      subject: "Ny bruker opprettet",
       html: `
         <b> Ny bruker registert </b>
         <br>
@@ -41,7 +41,7 @@ export namespace Mail {
   export function forgotpassword(email: string, password: string) {
     let options = {
       to: email,
-      subject: 'Nytt passord',
+      subject: "Nytt passord",
       html: `
         <b> Nytt passord </b>
         <br>

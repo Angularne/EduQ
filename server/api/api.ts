@@ -1,24 +1,23 @@
-import express = require('express');
-import mongoose = require('mongoose');
-import {Auth} from './routes/auth';
-//mongoose.Promise = global.Promise as any;
+import express = require("express");
+import mongoose = require("mongoose");
+import {Auth} from "./routes/auth";
 
-var router = express.Router();
+let router = express.Router();
 
 /** Pupluc routes */
-router.use(require('./routes/public'))
+router.use(require("./routes/public"));
 
 /** Authentication */
 router.use(Auth.router);
 
 /** User */
-router.use('/user', require('./routes/user'));
+router.use("/user", require("./routes/user"));
 
 /** Subject */
-router.use('/subject', require('./routes/subject'));
+router.use("/subject", require("./routes/subject"));
 
 /** Location */
-router.use('/location', require('./routes/location'));
+router.use("/location", require("./routes/location"));
 
 
 

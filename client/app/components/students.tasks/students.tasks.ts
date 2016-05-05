@@ -1,10 +1,10 @@
-import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
-import {RouteParams, ROUTER_DIRECTIVES, Router} from '@angular/router-deprecated';
-import {SubjectService} from '../../services/subject.service';
-import {Subject, SubjectUser} from '../../interfaces/subject';
+import {Component, OnInit} from "@angular/core";
+import {RouteParams, ROUTER_DIRECTIVES, Router} from "@angular/router-deprecated";
+import {SubjectService} from "../../services/subject.service";
+import {Subject, SubjectUser} from "../../interfaces/subject";
 @Component({
-  selector: 'students-tasks',
-  templateUrl: 'app/components/students.tasks/students.tasks.html',
+  selector: "students-tasks",
+  templateUrl: "app/components/students.tasks/students.tasks.html",
   directives: [ROUTER_DIRECTIVES]
 })
 
@@ -15,15 +15,15 @@ export class StudentsTasksComponent implements OnInit {
   constructor(private subjectService: SubjectService, private routeParams: RouteParams, private router: Router) { }
 
 
-  ngOnInit(){
+  ngOnInit() {
 
-    let code = this.routeParams.get('code');
+    let code = this.routeParams.get("code");
     if (code) {
       this.subjectService.getSubject(code).subscribe(sub => {
         this.subject = sub;
         // Filter Students
         this.students = this.subject.users.filter((usr) => {
-          return usr.role == 'Student';
+          return usr.role === "Student";
         });
 
         this.mapTasks();
@@ -34,9 +34,8 @@ export class StudentsTasksComponent implements OnInit {
   /* Map tasks */
   mapTasks() {
     for (let stud of this.students) {
-
-      var tasks = [];
-      for (var i = 0; i < this.subject.tasks.length; i++) {
+      let tasks = [];
+      for (let i = 0; i < this.subject.tasks.length; i++) {
         tasks.push({
         number: i + 1,
         title: this.subject.tasks[i].title
@@ -48,14 +47,11 @@ export class StudentsTasksComponent implements OnInit {
           t.completed = true;
           t.date = new Date(task.date).toLocaleDateString();
           t.approvedBy = task.approvedBy;
-
         }
       }
       stud.tasks = tasks;
-
       this.checkTasks(stud);
     }
-
   }
 
   setTask(user, task, completed: boolean = null) {
@@ -66,10 +62,10 @@ export class StudentsTasksComponent implements OnInit {
   // Check if requirements are met
   checkTasks(user) {
     user.completed = true;
-    for (var req of this.subject.requirements) {
-      var count = 0;
-      for (var t = req.from; t <= req.to; t++) {
-        if (user.tasks[t-1].completed) {
+    for (let req of this.subject.requirements) {
+      let count = 0;
+      for (let t = req.from; t <= req.to; t++) {
+        if (user.tasks[t - 1].completed) {
           count++;
         }
       }
@@ -84,7 +80,7 @@ export class StudentsTasksComponent implements OnInit {
 
   save() {
 
-    var users: {
+    let users: {
       _id: string,
       tasks: number[]
     }[] = [];
@@ -117,12 +113,12 @@ export class StudentsTasksComponent implements OnInit {
   close() {
     let path = this.router.parent.parent.currentInstruction.component.routeName;
     switch (path) {
-      case 'AdminSubjectsPath':
+      case "AdminSubjectsPath":
       this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName]);
       break;
 
-      case 'SubjectsPath':
-      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, 'QueuePath', {code: this.subject.code}]);
+      case "SubjectsPath":
+      this.router.parent.navigate([this.router.parent.parent.currentInstruction.component.routeName, "QueuePath", {code: this.subject.code}]);
       break;
     }
   }
