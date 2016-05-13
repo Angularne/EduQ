@@ -89,6 +89,8 @@ router.get("/:code", (req: Request, res: Response, next: NextFunction) => {
             delete user.__v;
             delete user.user;
             delete user.subject;
+
+
           }
           // Send subject
           res.json(subject);
@@ -99,6 +101,9 @@ router.get("/:code", (req: Request, res: Response, next: NextFunction) => {
       }, (err) => {
         res.json(err);
       });
+    } else {
+      // not found
+      res.end();
     }
   }, (err) => {
     // ERROR
@@ -158,7 +163,23 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
         });
       }
 
-      UserSubject.create(users).then((res) => {});
+      for (let user of req.body.users || []) {
+        user.user = user._id;
+        user.subject = subject._id;
+
+        UserSubject.findOneAndUpdate({
+          user: user.user,
+          subject: user.subject
+        }, {
+          role: user.role
+        }, {
+          upsert: true
+        }).exec().then((u) => {
+        }, (err) => {
+          console.log(err);
+        });
+      }
+
       QueueSocket.createNamespace(subject.code);
     } else {
       res.status(409).json({errmsg: "Code is alredy registered on another subject."});

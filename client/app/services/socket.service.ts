@@ -19,9 +19,8 @@ export class SocketService {
 
     /** TODO: Authenticate */
 
-    this.socket.on("queue", this.onQueue);
-    this.socket.on("broadcast", this.onBroadcast);
-
+    this.socket.on("queue", (data) => {this.onQueue(data); });
+    this.socket.on("broadcast", (data) => {this.onBroadcast(data); });
   }
 
   close() {
