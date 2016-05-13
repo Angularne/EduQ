@@ -3,20 +3,34 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=utf-8">
   <title>Ng App Unit Tests</title>
+  <!--add the system.js library -->
+
+  <!-- add jasmine-core library-->
   <link rel="stylesheet" href="/node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
   <script src="/node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
   <script src="/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
   <script src="/node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
+
+
 </head>
 <body>
+  <script src="node_modules/es6-shim/es6-shim.min.js"></script>
 
-  <p>
-    Proof of life. Nothing to see here!
-  </p>
-  <!-- Unit Testing Chapter #1: Proof of life.  -->
+  <script src="node_modules/zone.js/dist/zone.js"></script>
+  <script src="node_modules/reflect-metadata/Reflect.js"></script>
+  <script src="node_modules/systemjs/dist/system.src.js"></script>
+
+  <script src="systemjs.config.js" charset="utf-8"></script>
   <script>
-    it('true equals true', function(){ expect(true).toEqual(true); });
 
+
+    Promise.all([
+      System.import('build/common/range.spec.js'),
+      System.import('build/common/reverse.spec.js')
+
+    ])
+    .then(window.load)
+    .catch(console.error.bind(console));
   </script>
 </body>
 </html>
