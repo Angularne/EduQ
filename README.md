@@ -46,7 +46,7 @@ The project is depending on `node-gyp`
 1. Clone the repository from github using `git`:
 
   ``` bash
-git clone https://github.com/Angularne/eduQ.git
+git clone https://github.com/Angularne/EduQ.git
 cd EduQ
   ```
 
