@@ -9,8 +9,9 @@ import socket = require("./api/socket");
 import socketio = require("socket.io");
 let config = require("../config");
 import {QueueSocket} from "./api/socket";
-// import minimist = require("minimist");
-// var argv = minimist(process.argv.slice(2));
+import {Auth} from "./api/routes/auth";
+import minimist = require("minimist");
+let argv = minimist(process.argv.slice(2)) as any;
 // console.log(argv);
 
 
@@ -39,6 +40,10 @@ mongoose.connect(uri, (err, res) => {
     console.error("ERROR connecting to: " + uri + ". " + err);
   } else {
     console.log ("Successfully connected to: " + uri);
+
+    if (argv.init || argv.I) {
+      Auth.initAdmin();
+    }
   }
 });
 

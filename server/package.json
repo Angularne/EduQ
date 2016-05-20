@@ -15,6 +15,7 @@
     "bcrypt": "^0.8.6",
     "body-parser": "^1.15.0",
     "express": "^4.13.3",
+    "minimist": "^1.2.0",
     "mongoose": "^4.4.7",
     "morgan": "^1.7.0",
     "nodemailer": "^2.3.2",

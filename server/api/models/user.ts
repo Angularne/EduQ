@@ -32,7 +32,7 @@ export interface UserDocument extends mongoose.Document {
 let UserSchema: mongoose.Schema = new mongoose.Schema({
   firstname: String,
   lastname: String,
-  email: {type: String, unique: true},
+  email: {type: String, lowercase: true, trim: true, unique: true},
   password: {type: String, select: false},
   rights: {type: String, enum: ["Admin", "Teacher", "Student"], default: "Student"},
   classOf: String
@@ -115,7 +115,7 @@ export function getUser(id: string) {
 export function authenticateUser(username: string, password: string) {
   return new Promise<UserDocument>((resolve, reject) => {
     User.aggregate().match({
-      email: username
+      email: new RegExp("^" + username + "$", "i")
     }).limit(1)
     .append({
       $lookup: {

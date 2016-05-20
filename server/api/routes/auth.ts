@@ -14,7 +14,7 @@ export namespace Auth {
   router.post("/auth/login", (req: Request, res: Response, next: NextFunction) => {
     let data = basicAuth(req);
     if (data && data.name && data.pass) {
-      User.findOne({email: data.name}).select("password").exec((err, user) => {
+      User.findOne({email: data.name.toLowerCase()}).select("password").exec((err, user) => {
         if (!err) {
           if (user) {
             bcrypt.compare(data.pass, user.password, (err, val) => {
@@ -33,7 +33,7 @@ export namespace Auth {
             });
           } else {
             // User not found
-            res.status(401).json({message: "Brukeren er ikke registrert"});
+            res.status(401).json({message: "Feil passord eller brukernavn"});
           }
         } else {
           res.status(400).json(err);
@@ -66,7 +66,7 @@ export namespace Auth {
     let data = basicAuth(req);
 
     if (data && data.name && data.pass) {
-      User.findOne({email: data.name}).select("password").exec((err, user) => {
+      User.findOne({email: data.name.toLowerCase()}).select("password").exec((err, user) => {
         if (!err) {
           if (user) {
             bcrypt.compare(data.pass, user.password, (err, val) => {
@@ -116,6 +116,31 @@ export namespace Auth {
       password += dictionary.charAt(random);
     }
     return password;
+  }
+
+
+  export function initAdmin() {
+
+    let admin = {
+      firstname: "Admin",
+      lastname: "Admin",
+      email: "admin",
+      rights: "Admin",
+      password: ""
+    };
+
+    bcrypt.hash("admin", 11, (err: Error, encrypted: string) => {
+      if (!err) {
+        admin.password = encrypted;
+        User.findOneAndUpdate({email: "admin"}, admin, {upsert: true}, (err, doc) => {
+          if (!err) {
+            console.log("Admin Successfully Created");
+          } else {
+            console.log(err);
+          }
+        });
+      }
+    });
   }
 }
 // module.exports = router;
